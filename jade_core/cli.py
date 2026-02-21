@@ -287,6 +287,170 @@ def _find_base():
             return c
     return os.getcwd()
 
+
+
+# Key Management
+# ============================================================
+
+import hashlib
+import secrets
+import time as _time
+
+KEYSTORE_DIR = os.path.expanduser("~/.jadegate")
+KEYSTORE_FILE = os.path.join(KEYSTORE_DIR, "owner.key.json")
+KEYSTORE_HISTORY = os.path.join(KEYSTORE_DIR, "key_history.json")
+
+def _ensure_keystore():
+    os.makedirs(KEYSTORE_DIR, mode=0o700, exist_ok=True)
+
+def _generate_keypair():
+    seed = secrets.token_hex(32)
+    pub = hashlib.sha256(('jadegate-pub:' + seed).encode()).hexdigest()[:40]
+    return f"jade-sk-{seed}", f"jade-pk-{pub}"
+
+def _load_current_key():
+    if not os.path.exists(KEYSTORE_FILE):
+        return None
+    with open(KEYSTORE_FILE) as f:
+        return json.load(f)
+
+def _save_key(private_key, public_key, version=1):
+    _ensure_keystore()
+    data = {
+        "version": version,
+        "created": int(_time.time()),
+        "private_key": private_key,
+        "public_key": public_key,
+        "algorithm": "sha256-derive"
+    }
+    with open(KEYSTORE_FILE, 'w') as f:
+        json.dump(data, f, indent=2)
+    os.chmod(KEYSTORE_FILE, 0o600)  # owner read/write only
+    return data
+
+def _append_history(key_data, action="generate"):
+    _ensure_keystore()
+    history = []
+    if os.path.exists(KEYSTORE_HISTORY):
+        with open(KEYSTORE_HISTORY) as f:
+            history = json.load(f)
+    history.append({
+        "action": action,
+        "public_key": key_data["public_key"],
+        "created": key_data["created"],
+        "retired": int(_time.time()) if action == "rotate" else None,
+        "version": key_data["version"]
+    })
+    with open(KEYSTORE_HISTORY, 'w') as f:
+        json.dump(history, f, indent=2)
+    os.chmod(KEYSTORE_HISTORY, 0o600)
+
+def cmd_key(args):
+    """Key management: generate, rotate, show"""
+    sub = args.key_action if hasattr(args, 'key_action') else "show"
+
+    if sub == "generate":
+        current = _load_current_key()
+        if current:
+            print(f"  {C.YELLOW}⚠️  已有密钥存在。如需更换请用 jade key rotate{C.RESET}")
+            print(f"  {C.DIM}当前公钥: {current['public_key']}{C.RESET}")
+            return
+
+        print(jade_banner())
+        print()
+        print(f"  {C.BOLD}🔑 生成 JadeGate Owner 密钥对...{C.RESET}")
+        print()
+
+        sk, pk = _generate_keypair()
+        key_data = _save_key(sk, pk, version=1)
+        _append_history(key_data, "generate")
+
+        print(f"  {C.RED}🔐 私钥 (绝对保密，不要泄露):{C.RESET}")
+        print(f"  {C.BOLD}{sk}{C.RESET}")
+        print()
+        print(f"  {C.JADE}🔓 公钥 (写进项目配置):{C.RESET}")
+        print(f"  {C.BOLD}{pk}{C.RESET}")
+        print()
+        print(f"  {C.DIM}密钥已保存到: {KEYSTORE_FILE}{C.RESET}")
+        print(f"  {C.DIM}权限: 仅所有者可读 (600){C.RESET}")
+        print()
+        print(f"  {C.GREEN}✅ 密钥生成完成。这是你在 AI 世界的身份证。{C.RESET}")
+
+    elif sub == "rotate":
+        current = _load_current_key()
+        if not current:
+            print(f"  {C.RED}❌ 没有现有密钥。请先运行 jade key generate{C.RESET}")
+            return
+
+        print(jade_banner())
+        print()
+        print(f"  {C.BOLD}🔄 密钥轮换...{C.RESET}")
+        print()
+        print(f"  {C.DIM}旧公钥: {current['public_key']}{C.RESET}")
+
+        # Archive old key
+        _append_history(current, "rotate")
+
+        # Generate new
+        sk, pk = _generate_keypair()
+        new_version = current.get("version", 1) + 1
+        key_data = _save_key(sk, pk, version=new_version)
+        _append_history(key_data, "generate")
+
+        print(f"  {C.JADE}新公钥: {pk}{C.RESET}")
+        print()
+        print(f"  {C.RED}🔐 新私钥 (绝对保密):{C.RESET}")
+        print(f"  {C.BOLD}{sk}{C.RESET}")
+        print()
+        print(f"  {C.DIM}版本: v{new_version} | 旧密钥已归档到 key_history.json{C.RESET}")
+        print(f"  {C.GREEN}✅ 轮换完成。记得更新仓库里的 jadegate.pub.json{C.RESET}")
+
+    elif sub == "show":
+        current = _load_current_key()
+        if not current:
+            print(f"  {C.DIM}没有密钥。运行 jade key generate 创建。{C.RESET}")
+            return
+
+        print(jade_banner())
+        print()
+        print(f"  {C.BOLD}🔑 当前密钥信息{C.RESET}")
+        print()
+        print(f"  公钥:    {C.JADE}{current['public_key']}{C.RESET}")
+        print(f"  版本:    v{current.get('version', 1)}")
+        created = _time.strftime('%Y-%m-%d %H:%M:%S', _time.localtime(current['created']))
+        print(f"  创建时间: {created}")
+        print(f"  存储位置: {KEYSTORE_FILE}")
+
+        # Show history
+        if os.path.exists(KEYSTORE_HISTORY):
+            with open(KEYSTORE_HISTORY) as f:
+                history = json.load(f)
+            rotations = [h for h in history if h["action"] == "rotate"]
+            if rotations:
+                print(f"\n  {C.DIM}历史轮换: {len(rotations)} 次{C.RESET}")
+
+    elif sub == "export":
+        current = _load_current_key()
+        if not current:
+            print(f"  {C.RED}❌ 没有密钥{C.RESET}")
+            return
+        # Export public key as jadegate.pub.json
+        pub_data = {
+            "version": current.get("version", 1),
+            "created": current["created"],
+            "public_key": current["public_key"],
+            "algorithm": current.get("algorithm", "sha256-derive")
+        }
+        out = args.output if hasattr(args, 'output') and args.output else "jadegate.pub.json"
+        with open(out, 'w') as f:
+            json.dump(pub_data, f, indent=2)
+        print(f"  {C.GREEN}✅ 公钥已导出到 {out}{C.RESET}")
+
+    else:
+        print(f"  用法: jade key [generate|rotate|show|export]")
+
+
+
 def main():
     parser = argparse.ArgumentParser(
         prog="jade",
@@ -311,6 +475,11 @@ def main():
 
     # jade info
     p_info = sub.add_parser("info", help="Show skill details")
+
+    p_key = sub.add_parser("key", help="Key management: generate, rotate, show, export")
+    p_key.add_argument("key_action", nargs="?", default="show", choices=["generate", "rotate", "show", "export"])
+    p_key.add_argument("--output", "-o", help="Export output path")
+    p_key.set_defaults(func=cmd_key)
     p_info.add_argument("skill_id", help="Skill ID")
     p_info.set_defaults(func=cmd_info)
 
@@ -323,3 +492,9 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+# ============================================================
+
+
+# ============================================================
