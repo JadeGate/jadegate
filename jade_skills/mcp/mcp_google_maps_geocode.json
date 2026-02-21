@@ -1,0 +1,127 @@
+{
+  "jade_version": "1.0.0",
+  "skill_id": "mcp_google_maps_geocode",
+  "metadata": {
+    "name": "MCP Google Maps Geocode",
+    "version": "1.0.0",
+    "description": "Geocode address to coordinates via Google Maps API.",
+    "author": "jade-mcp-bridge",
+    "tags": [
+      "mcp",
+      "google",
+      "maps",
+      "geocode"
+    ],
+    "license": "BSL-1.1",
+    "created_at": "2026-02-21T00:00:00Z",
+    "updated_at": "2026-02-21T00:00:00Z"
+  },
+  "trigger": {
+    "type": "task_intent",
+    "conditions": [
+      {
+        "field": "task.type",
+        "operator": "in",
+        "value": [
+          "mcp_google_maps_geocode"
+        ]
+      }
+    ]
+  },
+  "input_schema": {
+    "required_params": [
+      {
+        "name": "address",
+        "type": "string",
+        "description": "Address to geocode"
+      }
+    ],
+    "optional_params": []
+  },
+  "output_schema": {
+    "fields": [
+      {
+        "name": "lat",
+        "type": "number",
+        "description": "Latitude"
+      },
+      {
+        "name": "lng",
+        "type": "number",
+        "description": "Longitude"
+      }
+    ]
+  },
+  "execution_dag": {
+    "nodes": [
+      {
+        "id": "geocode",
+        "action": "http_get",
+        "params": {
+          "url": "https://maps.googleapis.com/maps/api/geocode/json?address={{input.address}}&key={{env.GOOGLE_MAPS_KEY}}",
+          "timeout_ms": 10000
+        }
+      },
+      {
+        "id": "check",
+        "action": "condition_check",
+        "params": {
+          "field": "{{geocode.output.status_code}}",
+          "operator": "equals",
+          "value": 200
+        }
+      },
+      {
+        "id": "extract",
+        "action": "json_extract",
+        "params": {
+          "data": "{{geocode.output.body}}",
+          "path": "$.results[0].geometry.location"
+        }
+      },
+      {
+        "id": "ret",
+        "action": "return_result",
+        "params": {
+          "lat": "{{extract.output.value.lat}}",
+          "lng": "{{extract.output.value.lng}}"
+        }
+      }
+    ],
+    "edges": [
+      {
+        "from": "geocode",
+        "to": "check"
+      },
+      {
+        "from": "check",
+        "to": "extract"
+      },
+      {
+        "from": "extract",
+        "to": "ret"
+      }
+    ],
+    "entry_node": "geocode",
+    "exit_node": [
+      "ret"
+    ]
+  },
+  "security": {
+    "network_whitelist": [
+      "maps.googleapis.com"
+    ],
+    "file_permissions": {
+      "read": [],
+      "write": []
+    },
+    "max_execution_time_ms": 15000,
+    "max_retries": 1,
+    "sandbox_level": "standard",
+    "dangerous_patterns": []
+  },
+  "mcp_compatible": true,
+  "required_mcp_capabilities": [
+    "google-maps"
+  ]
+}

@@ -145,6 +145,20 @@
             "connection_id": "string"
           },
           "risk_level": "medium"
+        },
+        "http_delete": {
+          "description": "HTTP DELETE request",
+          "params": {
+            "url": {
+              "type": "string",
+              "required": true
+            }
+          },
+          "returns": {
+            "status_code": "number",
+            "body": "string"
+          },
+          "risk_level": "high"
         }
       }
     },
@@ -322,6 +336,36 @@
             "success": "boolean"
           },
           "risk_level": "medium"
+        },
+        "file_search": {
+          "description": "Search files by pattern",
+          "params": {
+            "directory": {
+              "type": "string",
+              "required": true
+            },
+            "pattern": {
+              "type": "string",
+              "required": true
+            }
+          },
+          "returns": {
+            "files": "array"
+          },
+          "risk_level": "low"
+        },
+        "dir_list": {
+          "description": "List directory contents",
+          "params": {
+            "path": {
+              "type": "string",
+              "required": true
+            }
+          },
+          "returns": {
+            "entries": "array"
+          },
+          "risk_level": "low"
         }
       }
     },
@@ -584,6 +628,32 @@
           },
           "returns": {
             "text": "string"
+          },
+          "risk_level": "low"
+        },
+        "xml_parse": {
+          "description": "Parse XML to object",
+          "params": {
+            "xml": {
+              "type": "string",
+              "required": true
+            }
+          },
+          "returns": {
+            "data": "object"
+          },
+          "risk_level": "low"
+        },
+        "yaml_parse": {
+          "description": "Parse YAML to object",
+          "params": {
+            "yaml": {
+              "type": "string",
+              "required": true
+            }
+          },
+          "returns": {
+            "data": "object"
           },
           "risk_level": "low"
         }
@@ -1064,6 +1134,58 @@
             "value": "string"
           },
           "risk_level": "low"
+        },
+        "docker_list": {
+          "description": "List Docker containers",
+          "params": {
+            "all": {
+              "type": "boolean",
+              "required": false
+            }
+          },
+          "returns": {
+            "containers": "array"
+          },
+          "risk_level": "medium"
+        },
+        "docker_start": {
+          "description": "Start Docker container",
+          "params": {
+            "container_id": {
+              "type": "string",
+              "required": true
+            }
+          },
+          "returns": {
+            "success": "boolean"
+          },
+          "risk_level": "high"
+        },
+        "docker_stop": {
+          "description": "Stop Docker container",
+          "params": {
+            "container_id": {
+              "type": "string",
+              "required": true
+            }
+          },
+          "returns": {
+            "success": "boolean"
+          },
+          "risk_level": "high"
+        },
+        "docker_logs": {
+          "description": "Get Docker container logs",
+          "params": {
+            "container_id": {
+              "type": "string",
+              "required": true
+            }
+          },
+          "returns": {
+            "logs": "string"
+          },
+          "risk_level": "low"
         }
       }
     },
@@ -1323,6 +1445,53 @@
             "messages": "array"
           },
           "risk_level": "low"
+        },
+        "telegram_send": {
+          "description": "Send Telegram message",
+          "params": {
+            "chat_id": {
+              "type": "string",
+              "required": true
+            },
+            "text": {
+              "type": "string",
+              "required": true
+            }
+          },
+          "returns": {
+            "message_id": "string"
+          },
+          "risk_level": "medium"
+        },
+        "discord_webhook": {
+          "description": "Send Discord webhook message",
+          "params": {
+            "webhook_url": {
+              "type": "string",
+              "required": true
+            },
+            "content": {
+              "type": "string",
+              "required": true
+            }
+          },
+          "returns": {
+            "success": "boolean"
+          },
+          "risk_level": "medium"
+        },
+        "email_read": {
+          "description": "Read emails via IMAP",
+          "params": {
+            "folder": {
+              "type": "string",
+              "required": false
+            }
+          },
+          "returns": {
+            "messages": "array"
+          },
+          "risk_level": "medium"
         }
       }
     },
@@ -1411,6 +1580,19 @@
             "format": "string"
           },
           "risk_level": "low"
+        },
+        "rss_parse": {
+          "description": "Parse RSS/Atom feed",
+          "params": {
+            "xml": {
+              "type": "string",
+              "required": true
+            }
+          },
+          "returns": {
+            "items": "array"
+          },
+          "risk_level": "low"
         }
       }
     },
@@ -1470,6 +1652,68 @@
           "returns": {
             "rows": "array",
             "columns": "array"
+          },
+          "risk_level": "medium"
+        },
+        "postgres_query": {
+          "description": "Execute PostgreSQL query",
+          "params": {
+            "connection": {
+              "type": "string",
+              "required": true
+            },
+            "query": {
+              "type": "string",
+              "required": true
+            }
+          },
+          "returns": {
+            "rows": "array",
+            "columns": "array"
+          },
+          "risk_level": "medium"
+        },
+        "redis_get": {
+          "description": "Get Redis key value",
+          "params": {
+            "key": {
+              "type": "string",
+              "required": true
+            }
+          },
+          "returns": {
+            "value": "string",
+            "found": "boolean"
+          },
+          "risk_level": "low"
+        },
+        "redis_set": {
+          "description": "Set Redis key value",
+          "params": {
+            "key": {
+              "type": "string",
+              "required": true
+            },
+            "value": {
+              "type": "string",
+              "required": true
+            }
+          },
+          "returns": {
+            "success": "boolean"
+          },
+          "risk_level": "medium"
+        },
+        "redis_delete": {
+          "description": "Delete Redis key",
+          "params": {
+            "key": {
+              "type": "string",
+              "required": true
+            }
+          },
+          "returns": {
+            "success": "boolean"
           },
           "risk_level": "medium"
         }

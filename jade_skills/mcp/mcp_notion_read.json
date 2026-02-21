@@ -1,0 +1,124 @@
+{
+  "jade_version": "1.0.0",
+  "skill_id": "mcp_notion_read",
+  "metadata": {
+    "name": "MCP Notion Read Page",
+    "version": "1.0.0",
+    "description": "Read a Notion page by ID.",
+    "author": "jade-mcp-bridge",
+    "tags": [
+      "mcp",
+      "notion",
+      "read",
+      "page"
+    ],
+    "license": "BSL-1.1",
+    "created_at": "2026-02-21T00:00:00Z",
+    "updated_at": "2026-02-21T00:00:00Z"
+  },
+  "trigger": {
+    "type": "task_intent",
+    "conditions": [
+      {
+        "field": "task.type",
+        "operator": "in",
+        "value": [
+          "mcp_notion_read"
+        ]
+      }
+    ]
+  },
+  "input_schema": {
+    "required_params": [
+      {
+        "name": "page_id",
+        "type": "string",
+        "description": "Notion page ID"
+      }
+    ],
+    "optional_params": []
+  },
+  "output_schema": {
+    "fields": [
+      {
+        "name": "page",
+        "type": "object",
+        "description": "Page data"
+      }
+    ]
+  },
+  "execution_dag": {
+    "nodes": [
+      {
+        "id": "fetch",
+        "action": "http_get",
+        "params": {
+          "url": "https://api.notion.com/v1/pages/{{input.page_id}}",
+          "headers": {
+            "Authorization": "Bearer {{env.NOTION_TOKEN}}",
+            "Notion-Version": "2022-06-28"
+          },
+          "timeout_ms": 10000
+        }
+      },
+      {
+        "id": "check",
+        "action": "condition_check",
+        "params": {
+          "field": "{{fetch.output.status_code}}",
+          "operator": "equals",
+          "value": 200
+        }
+      },
+      {
+        "id": "parse",
+        "action": "json_parse",
+        "params": {
+          "text": "{{fetch.output.body}}"
+        }
+      },
+      {
+        "id": "ret",
+        "action": "return_result",
+        "params": {
+          "page": "{{parse.output.data}}"
+        }
+      }
+    ],
+    "edges": [
+      {
+        "from": "fetch",
+        "to": "check"
+      },
+      {
+        "from": "check",
+        "to": "parse"
+      },
+      {
+        "from": "parse",
+        "to": "ret"
+      }
+    ],
+    "entry_node": "fetch",
+    "exit_node": [
+      "ret"
+    ]
+  },
+  "security": {
+    "network_whitelist": [
+      "api.notion.com"
+    ],
+    "file_permissions": {
+      "read": [],
+      "write": []
+    },
+    "max_execution_time_ms": 15000,
+    "max_retries": 1,
+    "sandbox_level": "standard",
+    "dangerous_patterns": []
+  },
+  "mcp_compatible": true,
+  "required_mcp_capabilities": [
+    "notion"
+  ]
+}

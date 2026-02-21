@@ -1,0 +1,129 @@
+{
+  "jade_version": "1.0.0",
+  "skill_id": "mcp_discord_webhook",
+  "metadata": {
+    "name": "MCP Discord Webhook",
+    "version": "1.0.0",
+    "description": "Send message via Discord webhook.",
+    "author": "jade-mcp-bridge",
+    "tags": [
+      "mcp",
+      "discord",
+      "webhook",
+      "send"
+    ],
+    "license": "BSL-1.1",
+    "created_at": "2026-02-21T00:00:00Z",
+    "updated_at": "2026-02-21T00:00:00Z"
+  },
+  "trigger": {
+    "type": "task_intent",
+    "conditions": [
+      {
+        "field": "task.type",
+        "operator": "in",
+        "value": [
+          "mcp_discord_webhook"
+        ]
+      }
+    ]
+  },
+  "input_schema": {
+    "required_params": [
+      {
+        "name": "webhook_url",
+        "type": "string",
+        "description": "Discord webhook URL"
+      },
+      {
+        "name": "content",
+        "type": "string",
+        "description": "Message content"
+      }
+    ],
+    "optional_params": [
+      {
+        "name": "username",
+        "type": "string",
+        "description": "Bot username",
+        "default": "JadeGate"
+      }
+    ]
+  },
+  "output_schema": {
+    "fields": [
+      {
+        "name": "success",
+        "type": "boolean",
+        "description": "Success"
+      }
+    ]
+  },
+  "execution_dag": {
+    "nodes": [
+      {
+        "id": "send",
+        "action": "http_post",
+        "params": {
+          "url": "{{input.webhook_url}}",
+          "body": {
+            "content": "{{input.content}}",
+            "username": "{{input.username | default:JadeGate}}"
+          },
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "timeout_ms": 10000
+        }
+      },
+      {
+        "id": "check",
+        "action": "condition_check",
+        "params": {
+          "field": "{{send.output.status_code}}",
+          "operator": "equals",
+          "value": 204
+        }
+      },
+      {
+        "id": "ret",
+        "action": "return_result",
+        "params": {
+          "success": true
+        }
+      }
+    ],
+    "edges": [
+      {
+        "from": "send",
+        "to": "check"
+      },
+      {
+        "from": "check",
+        "to": "ret"
+      }
+    ],
+    "entry_node": "send",
+    "exit_node": [
+      "ret"
+    ]
+  },
+  "security": {
+    "network_whitelist": [
+      "discord.com",
+      "*.discord.com"
+    ],
+    "file_permissions": {
+      "read": [],
+      "write": []
+    },
+    "max_execution_time_ms": 15000,
+    "max_retries": 1,
+    "sandbox_level": "standard",
+    "dangerous_patterns": []
+  },
+  "mcp_compatible": true,
+  "required_mcp_capabilities": [
+    "discord"
+  ]
+}

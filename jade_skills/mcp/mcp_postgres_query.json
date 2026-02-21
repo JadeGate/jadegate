@@ -1,0 +1,111 @@
+{
+  "jade_version": "1.0.0",
+  "skill_id": "mcp_postgres_query",
+  "metadata": {
+    "name": "MCP PostgreSQL Query",
+    "version": "1.0.0",
+    "description": "Execute read-only SQL query on PostgreSQL.",
+    "author": "jade-mcp-bridge",
+    "tags": [
+      "mcp",
+      "postgres",
+      "sql",
+      "database"
+    ],
+    "license": "BSL-1.1",
+    "created_at": "2026-02-21T00:00:00Z",
+    "updated_at": "2026-02-21T00:00:00Z"
+  },
+  "trigger": {
+    "type": "task_intent",
+    "conditions": [
+      {
+        "field": "task.type",
+        "operator": "in",
+        "value": [
+          "mcp_postgres_query"
+        ]
+      }
+    ]
+  },
+  "input_schema": {
+    "required_params": [
+      {
+        "name": "query",
+        "type": "string",
+        "description": "SQL query (read-only)"
+      }
+    ],
+    "optional_params": []
+  },
+  "output_schema": {
+    "fields": [
+      {
+        "name": "rows",
+        "type": "array",
+        "description": "Query results"
+      },
+      {
+        "name": "columns",
+        "type": "array",
+        "description": "Column names"
+      }
+    ]
+  },
+  "execution_dag": {
+    "nodes": [
+      {
+        "id": "validate",
+        "action": "sql_validate",
+        "params": {
+          "query": "{{input.query}}"
+        }
+      },
+      {
+        "id": "execute",
+        "action": "postgres_query",
+        "params": {
+          "connection": "{{env.POSTGRES_URL}}",
+          "query": "{{input.query}}"
+        }
+      },
+      {
+        "id": "ret",
+        "action": "return_result",
+        "params": {
+          "rows": "{{execute.output.rows}}",
+          "columns": "{{execute.output.columns}}"
+        }
+      }
+    ],
+    "edges": [
+      {
+        "from": "validate",
+        "to": "execute"
+      },
+      {
+        "from": "execute",
+        "to": "ret"
+      }
+    ],
+    "entry_node": "validate",
+    "exit_node": [
+      "ret"
+    ]
+  },
+  "security": {
+    "network_whitelist": [],
+    "file_permissions": {
+      "read": [],
+      "write": []
+    },
+    "max_execution_time_ms": 15000,
+    "max_retries": 1,
+    "sandbox_level": "strict",
+    "dangerous_patterns": []
+  },
+  "mcp_compatible": true,
+  "required_mcp_capabilities": [
+    "postgres"
+  ]
+}

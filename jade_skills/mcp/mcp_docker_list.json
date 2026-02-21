@@ -1,0 +1,127 @@
+{
+  "jade_version": "1.0.0",
+  "skill_id": "mcp_docker_list",
+  "metadata": {
+    "name": "MCP Docker List Containers",
+    "version": "1.0.0",
+    "description": "List Docker containers via Docker API.",
+    "author": "jade-mcp-bridge",
+    "tags": [
+      "mcp",
+      "docker",
+      "containers",
+      "list"
+    ],
+    "license": "BSL-1.1",
+    "created_at": "2026-02-21T00:00:00Z",
+    "updated_at": "2026-02-21T00:00:00Z"
+  },
+  "trigger": {
+    "type": "task_intent",
+    "conditions": [
+      {
+        "field": "task.type",
+        "operator": "in",
+        "value": [
+          "mcp_docker_list"
+        ]
+      }
+    ]
+  },
+  "input_schema": {
+    "required_params": [],
+    "optional_params": [
+      {
+        "name": "all",
+        "type": "boolean",
+        "description": "Include stopped containers",
+        "default": false
+      }
+    ]
+  },
+  "output_schema": {
+    "fields": [
+      {
+        "name": "containers",
+        "type": "array",
+        "description": "Container list"
+      }
+    ]
+  },
+  "execution_dag": {
+    "nodes": [
+      {
+        "id": "list",
+        "action": "shell_exec",
+        "params": {
+          "command": "docker ps --format json",
+          "timeout_ms": 5000
+        }
+      },
+      {
+        "id": "check",
+        "action": "condition_check",
+        "params": {
+          "field": "{{list.output.status_code}}",
+          "operator": "equals",
+          "value": 200
+        }
+      },
+      {
+        "id": "extract",
+        "action": "json_extract",
+        "params": {
+          "data": "{{list.output.body}}",
+          "path": "$[*]",
+          "fields": [
+            "Id",
+            "Names",
+            "State",
+            "Status",
+            "Image"
+          ]
+        }
+      },
+      {
+        "id": "ret",
+        "action": "return_result",
+        "params": {
+          "containers": "{{extract.output.value}}"
+        }
+      }
+    ],
+    "edges": [
+      {
+        "from": "list",
+        "to": "check"
+      },
+      {
+        "from": "check",
+        "to": "extract"
+      },
+      {
+        "from": "extract",
+        "to": "ret"
+      }
+    ],
+    "entry_node": "list",
+    "exit_node": [
+      "ret"
+    ]
+  },
+  "security": {
+    "network_whitelist": [],
+    "file_permissions": {
+      "read": [],
+      "write": []
+    },
+    "max_execution_time_ms": 15000,
+    "max_retries": 1,
+    "sandbox_level": "strict",
+    "dangerous_patterns": []
+  },
+  "mcp_compatible": true,
+  "required_mcp_capabilities": [
+    "docker"
+  ]
+}

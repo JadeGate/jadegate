@@ -1,0 +1,142 @@
+{
+  "jade_version": "1.0.0",
+  "skill_id": "mcp_exa_search",
+  "metadata": {
+    "name": "MCP Exa Semantic Search",
+    "version": "1.0.0",
+    "description": "Neural semantic search via Exa API.",
+    "author": "jade-mcp-bridge",
+    "tags": [
+      "mcp",
+      "exa",
+      "search",
+      "semantic"
+    ],
+    "license": "BSL-1.1",
+    "created_at": "2026-02-21T00:00:00Z",
+    "updated_at": "2026-02-21T00:00:00Z"
+  },
+  "trigger": {
+    "type": "task_intent",
+    "conditions": [
+      {
+        "field": "task.type",
+        "operator": "in",
+        "value": [
+          "mcp_exa_search"
+        ]
+      }
+    ]
+  },
+  "input_schema": {
+    "required_params": [
+      {
+        "name": "query",
+        "type": "string",
+        "description": "Search query"
+      }
+    ],
+    "optional_params": [
+      {
+        "name": "num_results",
+        "type": "number",
+        "description": "Number of results",
+        "default": 10
+      }
+    ]
+  },
+  "output_schema": {
+    "fields": [
+      {
+        "name": "results",
+        "type": "array",
+        "description": "Search results"
+      }
+    ]
+  },
+  "execution_dag": {
+    "nodes": [
+      {
+        "id": "search",
+        "action": "http_post",
+        "params": {
+          "url": "https://api.exa.ai/search",
+          "headers": {
+            "x-api-key": "{{env.EXA_API_KEY}}",
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "query": "{{input.query}}",
+            "num_results": "{{input.num_results | default:10}}",
+            "type": "neural"
+          },
+          "timeout_ms": 15000
+        }
+      },
+      {
+        "id": "check",
+        "action": "condition_check",
+        "params": {
+          "field": "{{search.output.status_code}}",
+          "operator": "equals",
+          "value": 200
+        }
+      },
+      {
+        "id": "extract",
+        "action": "json_extract",
+        "params": {
+          "data": "{{search.output.body}}",
+          "path": "$.results[*]",
+          "fields": [
+            "title",
+            "url",
+            "score"
+          ]
+        }
+      },
+      {
+        "id": "ret",
+        "action": "return_result",
+        "params": {
+          "results": "{{extract.output.value}}"
+        }
+      }
+    ],
+    "edges": [
+      {
+        "from": "search",
+        "to": "check"
+      },
+      {
+        "from": "check",
+        "to": "extract"
+      },
+      {
+        "from": "extract",
+        "to": "ret"
+      }
+    ],
+    "entry_node": "search",
+    "exit_node": [
+      "ret"
+    ]
+  },
+  "security": {
+    "network_whitelist": [
+      "api.exa.ai"
+    ],
+    "file_permissions": {
+      "read": [],
+      "write": []
+    },
+    "max_execution_time_ms": 15000,
+    "max_retries": 1,
+    "sandbox_level": "standard",
+    "dangerous_patterns": []
+  },
+  "mcp_compatible": true,
+  "required_mcp_capabilities": [
+    "exa"
+  ]
+}

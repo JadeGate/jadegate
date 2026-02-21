@@ -1,0 +1,132 @@
+{
+  "jade_version": "1.0.0",
+  "skill_id": "mcp_telegram_send",
+  "metadata": {
+    "name": "MCP Telegram Send Message",
+    "version": "1.0.0",
+    "description": "Send message via Telegram Bot API.",
+    "author": "jade-mcp-bridge",
+    "tags": [
+      "mcp",
+      "telegram",
+      "send",
+      "message"
+    ],
+    "license": "BSL-1.1",
+    "created_at": "2026-02-21T00:00:00Z",
+    "updated_at": "2026-02-21T00:00:00Z"
+  },
+  "trigger": {
+    "type": "task_intent",
+    "conditions": [
+      {
+        "field": "task.type",
+        "operator": "in",
+        "value": [
+          "mcp_telegram_send"
+        ]
+      }
+    ]
+  },
+  "input_schema": {
+    "required_params": [
+      {
+        "name": "chat_id",
+        "type": "string",
+        "description": "Telegram chat ID"
+      },
+      {
+        "name": "text",
+        "type": "string",
+        "description": "Message text"
+      }
+    ],
+    "optional_params": [
+      {
+        "name": "parse_mode",
+        "type": "string",
+        "description": "Parse mode",
+        "default": "Markdown"
+      }
+    ]
+  },
+  "output_schema": {
+    "fields": [
+      {
+        "name": "message_id",
+        "type": "string",
+        "description": "Sent message ID"
+      },
+      {
+        "name": "success",
+        "type": "boolean",
+        "description": "Success"
+      }
+    ]
+  },
+  "execution_dag": {
+    "nodes": [
+      {
+        "id": "send",
+        "action": "http_post",
+        "params": {
+          "url": "https://api.telegram.org/bot{{env.TELEGRAM_BOT_TOKEN}}/sendMessage",
+          "body": {
+            "chat_id": "{{input.chat_id}}",
+            "text": "{{input.text}}",
+            "parse_mode": "{{input.parse_mode | default:Markdown}}"
+          },
+          "timeout_ms": 10000
+        }
+      },
+      {
+        "id": "check",
+        "action": "condition_check",
+        "params": {
+          "field": "{{send.output.status_code}}",
+          "operator": "equals",
+          "value": 200
+        }
+      },
+      {
+        "id": "ret",
+        "action": "return_result",
+        "params": {
+          "message_id": "{{send.output.body.result.message_id}}",
+          "success": true
+        }
+      }
+    ],
+    "edges": [
+      {
+        "from": "send",
+        "to": "check"
+      },
+      {
+        "from": "check",
+        "to": "ret"
+      }
+    ],
+    "entry_node": "send",
+    "exit_node": [
+      "ret"
+    ]
+  },
+  "security": {
+    "network_whitelist": [
+      "api.telegram.org"
+    ],
+    "file_permissions": {
+      "read": [],
+      "write": []
+    },
+    "max_execution_time_ms": 15000,
+    "max_retries": 1,
+    "sandbox_level": "standard",
+    "dangerous_patterns": []
+  },
+  "mcp_compatible": true,
+  "required_mcp_capabilities": [
+    "telegram"
+  ]
+}

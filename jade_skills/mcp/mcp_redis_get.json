@@ -1,0 +1,99 @@
+{
+  "jade_version": "1.0.0",
+  "skill_id": "mcp_redis_get",
+  "metadata": {
+    "name": "MCP Redis Get",
+    "version": "1.0.0",
+    "description": "Get value from Redis by key.",
+    "author": "jade-mcp-bridge",
+    "tags": [
+      "mcp",
+      "redis",
+      "get",
+      "cache"
+    ],
+    "license": "BSL-1.1",
+    "created_at": "2026-02-21T00:00:00Z",
+    "updated_at": "2026-02-21T00:00:00Z"
+  },
+  "trigger": {
+    "type": "task_intent",
+    "conditions": [
+      {
+        "field": "task.type",
+        "operator": "in",
+        "value": [
+          "mcp_redis_get"
+        ]
+      }
+    ]
+  },
+  "input_schema": {
+    "required_params": [
+      {
+        "name": "key",
+        "type": "string",
+        "description": "Redis key"
+      }
+    ],
+    "optional_params": []
+  },
+  "output_schema": {
+    "fields": [
+      {
+        "name": "value",
+        "type": "string",
+        "description": "Value"
+      },
+      {
+        "name": "found",
+        "type": "boolean",
+        "description": "Key exists"
+      }
+    ]
+  },
+  "execution_dag": {
+    "nodes": [
+      {
+        "id": "get",
+        "action": "redis_get",
+        "params": {
+          "key": "{{input.key}}"
+        }
+      },
+      {
+        "id": "ret",
+        "action": "return_result",
+        "params": {
+          "value": "{{get.output.value}}",
+          "found": "{{get.output.found}}"
+        }
+      }
+    ],
+    "edges": [
+      {
+        "from": "get",
+        "to": "ret"
+      }
+    ],
+    "entry_node": "get",
+    "exit_node": [
+      "ret"
+    ]
+  },
+  "security": {
+    "network_whitelist": [],
+    "file_permissions": {
+      "read": [],
+      "write": []
+    },
+    "max_execution_time_ms": 15000,
+    "max_retries": 1,
+    "sandbox_level": "strict",
+    "dangerous_patterns": []
+  },
+  "mcp_compatible": true,
+  "required_mcp_capabilities": [
+    "redis"
+  ]
+}

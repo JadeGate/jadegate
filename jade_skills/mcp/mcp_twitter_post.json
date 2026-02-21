@@ -1,0 +1,135 @@
+{
+  "jade_version": "1.0.0",
+  "skill_id": "mcp_twitter_post",
+  "metadata": {
+    "name": "MCP Twitter/X Post",
+    "version": "1.0.0",
+    "description": "Post a tweet via Twitter API v2.",
+    "author": "jade-mcp-bridge",
+    "tags": [
+      "mcp",
+      "twitter",
+      "x",
+      "post",
+      "tweet"
+    ],
+    "license": "BSL-1.1",
+    "created_at": "2026-02-21T00:00:00Z",
+    "updated_at": "2026-02-21T00:00:00Z"
+  },
+  "trigger": {
+    "type": "task_intent",
+    "conditions": [
+      {
+        "field": "task.type",
+        "operator": "in",
+        "value": [
+          "mcp_twitter_post"
+        ]
+      }
+    ]
+  },
+  "input_schema": {
+    "required_params": [
+      {
+        "name": "text",
+        "type": "string",
+        "description": "Tweet text (max 280 chars)"
+      }
+    ],
+    "optional_params": []
+  },
+  "output_schema": {
+    "fields": [
+      {
+        "name": "tweet_id",
+        "type": "string",
+        "description": "Tweet ID"
+      },
+      {
+        "name": "text",
+        "type": "string",
+        "description": "Posted text"
+      }
+    ]
+  },
+  "execution_dag": {
+    "nodes": [
+      {
+        "id": "post",
+        "action": "http_post",
+        "params": {
+          "url": "https://api.twitter.com/2/tweets",
+          "headers": {
+            "Authorization": "Bearer {{env.TWITTER_BEARER}}",
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "text": "{{input.text}}"
+          },
+          "timeout_ms": 10000
+        }
+      },
+      {
+        "id": "check",
+        "action": "condition_check",
+        "params": {
+          "field": "{{post.output.status_code}}",
+          "operator": "equals",
+          "value": 201
+        }
+      },
+      {
+        "id": "extract",
+        "action": "json_extract",
+        "params": {
+          "data": "{{post.output.body}}",
+          "path": "$.data"
+        }
+      },
+      {
+        "id": "ret",
+        "action": "return_result",
+        "params": {
+          "tweet_id": "{{extract.output.value.id}}",
+          "text": "{{extract.output.value.text}}"
+        }
+      }
+    ],
+    "edges": [
+      {
+        "from": "post",
+        "to": "check"
+      },
+      {
+        "from": "check",
+        "to": "extract"
+      },
+      {
+        "from": "extract",
+        "to": "ret"
+      }
+    ],
+    "entry_node": "post",
+    "exit_node": [
+      "ret"
+    ]
+  },
+  "security": {
+    "network_whitelist": [
+      "api.twitter.com"
+    ],
+    "file_permissions": {
+      "read": [],
+      "write": []
+    },
+    "max_execution_time_ms": 15000,
+    "max_retries": 1,
+    "sandbox_level": "standard",
+    "dangerous_patterns": []
+  },
+  "mcp_compatible": true,
+  "required_mcp_capabilities": [
+    "twitter"
+  ]
+}

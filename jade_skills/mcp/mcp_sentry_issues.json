@@ -1,0 +1,142 @@
+{
+  "jade_version": "1.0.0",
+  "skill_id": "mcp_sentry_issues",
+  "metadata": {
+    "name": "MCP Sentry List Issues",
+    "version": "1.0.0",
+    "description": "List recent Sentry error issues.",
+    "author": "jade-mcp-bridge",
+    "tags": [
+      "mcp",
+      "sentry",
+      "errors",
+      "monitoring"
+    ],
+    "license": "BSL-1.1",
+    "created_at": "2026-02-21T00:00:00Z",
+    "updated_at": "2026-02-21T00:00:00Z"
+  },
+  "trigger": {
+    "type": "task_intent",
+    "conditions": [
+      {
+        "field": "task.type",
+        "operator": "in",
+        "value": [
+          "mcp_sentry_issues"
+        ]
+      }
+    ]
+  },
+  "input_schema": {
+    "required_params": [
+      {
+        "name": "org",
+        "type": "string",
+        "description": "Sentry org slug"
+      },
+      {
+        "name": "project",
+        "type": "string",
+        "description": "Project slug"
+      }
+    ],
+    "optional_params": [
+      {
+        "name": "query",
+        "type": "string",
+        "description": "Search query",
+        "default": "is:unresolved"
+      }
+    ]
+  },
+  "output_schema": {
+    "fields": [
+      {
+        "name": "issues",
+        "type": "array",
+        "description": "Issue list"
+      }
+    ]
+  },
+  "execution_dag": {
+    "nodes": [
+      {
+        "id": "fetch",
+        "action": "http_get",
+        "params": {
+          "url": "https://sentry.io/api/0/projects/{{input.org}}/{{input.project}}/issues/?query={{input.query | default:is:unresolved}}",
+          "headers": {
+            "Authorization": "Bearer {{env.SENTRY_TOKEN}}"
+          },
+          "timeout_ms": 10000
+        }
+      },
+      {
+        "id": "check",
+        "action": "condition_check",
+        "params": {
+          "field": "{{fetch.output.status_code}}",
+          "operator": "equals",
+          "value": 200
+        }
+      },
+      {
+        "id": "extract",
+        "action": "json_extract",
+        "params": {
+          "data": "{{fetch.output.body}}",
+          "path": "$[*]",
+          "fields": [
+            "id",
+            "title",
+            "count",
+            "lastSeen"
+          ]
+        }
+      },
+      {
+        "id": "ret",
+        "action": "return_result",
+        "params": {
+          "issues": "{{extract.output.value}}"
+        }
+      }
+    ],
+    "edges": [
+      {
+        "from": "fetch",
+        "to": "check"
+      },
+      {
+        "from": "check",
+        "to": "extract"
+      },
+      {
+        "from": "extract",
+        "to": "ret"
+      }
+    ],
+    "entry_node": "fetch",
+    "exit_node": [
+      "ret"
+    ]
+  },
+  "security": {
+    "network_whitelist": [
+      "sentry.io"
+    ],
+    "file_permissions": {
+      "read": [],
+      "write": []
+    },
+    "max_execution_time_ms": 15000,
+    "max_retries": 1,
+    "sandbox_level": "standard",
+    "dangerous_patterns": []
+  },
+  "mcp_compatible": true,
+  "required_mcp_capabilities": [
+    "sentry"
+  ]
+}

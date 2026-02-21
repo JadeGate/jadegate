@@ -1,0 +1,121 @@
+{
+  "jade_version": "1.0.0",
+  "skill_id": "mcp_git_log",
+  "metadata": {
+    "name": "MCP Git Log",
+    "version": "1.0.0",
+    "description": "Get git commit log for a repository.",
+    "author": "jade-mcp-bridge",
+    "tags": [
+      "mcp",
+      "git",
+      "log",
+      "history"
+    ],
+    "license": "BSL-1.1",
+    "created_at": "2026-02-21T00:00:00Z",
+    "updated_at": "2026-02-21T00:00:00Z"
+  },
+  "trigger": {
+    "type": "task_intent",
+    "conditions": [
+      {
+        "field": "task.type",
+        "operator": "in",
+        "value": [
+          "mcp_git_log"
+        ]
+      }
+    ]
+  },
+  "input_schema": {
+    "required_params": [
+      {
+        "name": "repo_path",
+        "type": "string",
+        "description": "Path to git repository"
+      }
+    ],
+    "optional_params": [
+      {
+        "name": "count",
+        "type": "number",
+        "description": "Number of commits",
+        "default": 10
+      }
+    ]
+  },
+  "output_schema": {
+    "fields": [
+      {
+        "name": "commits",
+        "type": "array",
+        "description": "Commit list"
+      },
+      {
+        "name": "count",
+        "type": "number",
+        "description": "Commit count"
+      }
+    ]
+  },
+  "execution_dag": {
+    "nodes": [
+      {
+        "id": "log",
+        "action": "shell_exec",
+        "params": {
+          "command": "git -C {{input.repo_path}} log --oneline -{{input.count | default:10}}",
+          "timeout_ms": 5000
+        }
+      },
+      {
+        "id": "parse",
+        "action": "text_split",
+        "params": {
+          "text": "{{log.output.stdout}}",
+          "delimiter": "\\n"
+        }
+      },
+      {
+        "id": "ret",
+        "action": "return_result",
+        "params": {
+          "commits": "{{parse.output.parts}}",
+          "count": "{{parse.output.count}}"
+        }
+      }
+    ],
+    "edges": [
+      {
+        "from": "log",
+        "to": "parse"
+      },
+      {
+        "from": "parse",
+        "to": "ret"
+      }
+    ],
+    "entry_node": "log",
+    "exit_node": [
+      "ret"
+    ]
+  },
+  "security": {
+    "network_whitelist": [],
+    "file_permissions": {
+      "read": [
+        "{{input.repo_path}}"
+      ],
+      "write": []
+    },
+    "max_execution_time_ms": 15000,
+    "max_retries": 1,
+    "sandbox_level": "strict",
+    "dangerous_patterns": []
+  },
+  "mcp_compatible": true,
+  "required_mcp_capabilities": [
+    "git"
+  ]
+}
