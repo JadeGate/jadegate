@@ -6,7 +6,7 @@
 
 *春风不度玉门关*
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
+[![License: MIT](https://img.shields.io/badge/License-BSL_1.1-blue.svg)](#license)
 [![PyPI](https://img.shields.io/pypi/v/jadegate.svg)](https://pypi.org/project/jadegate/)
 [![crates.io](https://img.shields.io/crates/v/jadegate.svg)](https://crates.io/crates/jadegate)
 [![Skills](https://img.shields.io/badge/Verified_Skills-35-blue.svg)](#skill-registry)
