@@ -4,18 +4,14 @@
   "issuer": "JadeGate Root CA",
   "subject": "JadeGate Root CA",
   "algorithm": "Ed25519",
-  "fingerprint": "SHA256:qXEdtwUlyBn7LJVPiqftBRnuCrKQx6kYOb43c0Xz2yk=",
-  "public_key": "jade-pk-root-CSoKNMpd17huyuQvkIW4pfKaixcJ6pUtLT2ljfnzJis=",
-  "created": "2026-02-21T08:34:49Z",
+  "fingerprint": "SHA256:2P1URTCynzJwNMCHuWGr9RJb6GK3qbv57Ituc4gZibI=",
+  "public_key": "jade-pk-root-nahtqppiTuY+3eXtr9Hh+LgVlOnSZy+pN5i/r4tVck8=",
+  "created": "2026-02-21T09:41:46Z",
   "expires": "2036-01-01T00:00:00Z",
   "permissions": [
     "sign:skill",
     "sign:org-ca",
     "sign:revocation",
     "sign:registry"
-  ],
-  "self_test": {
-    "message": "JadeGate Root CA self-test",
-    "signature": "DS5ib6TmGWdUTmD3ECs/SV3UC6AE89KtSGzh6sBkzlFade0DXhApqUR7hliwZ7ev4wSRA6wn+1KT7gIDBB+gBg=="
-  }
+  ]
 }
