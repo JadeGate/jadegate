@@ -11,6 +11,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
 [![Skills](https://img.shields.io/badge/Skills-35-blue.svg)](#skill-registry)
 [![Schema](https://img.shields.io/badge/Schema-v1.0-purple.svg)](#jade-schema)
+[![crates.io](https://img.shields.io/crates/v/jadegate.svg)](https://crates.io/crates/jadegate)
 
 ---
 
@@ -62,6 +63,16 @@ Layer 5: DAG Safety — cycle detection + reachability proof
 ```
 
 All layers pass = 💠. Any layer fails = ❌.
+
+## Install
+
+```bash
+# Python
+pip install jadegate
+
+# Rust
+cargo add jadegate
+```
 
 ## Quick Start
 
@@ -172,6 +183,6 @@ MIT — Free to use, free to build on.
 
 **💠 JadeGate** — *Pass the Gate. Trust the Jade.*
 
-[GitHub](https://github.com/JadeGate) · [Skills](./jade_skills/) · [Schema](./jade_schema/)
+[GitHub](https://github.com/JadeGate) · [PyPI](https://pypi.org/project/jadegate/) · [crates.io](https://crates.io/crates/jadegate) · [Skills](./jade_skills/) · [Schema](./jade_schema/)
 
 </div>
