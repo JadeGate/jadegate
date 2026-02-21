@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-💠 JadeGate Root CA Key Generator
+💠 JadeGate Key Generator
 ==================================
 在本地生成根密钥对。私钥永远不离开你的机器。
 
@@ -163,12 +163,14 @@ def main():
 
     # Role
     print("  角色说明:")
-    print("    root — 最高权限（签发一切：skill、组织CA、撤销证书）")
-    print("           整个 JadeGate 只有一个 root。你是创始人，选这个。")
-    print("    org  — 组织级别（只能签自己组织的 skill）")
-    print("           给企业/开源组织发的二级证书用这个。")
+    print("    org  — 组织级别（签发你组织的 skill）")
+    print("    dev  — 开发者（签发个人 skill）")
     print()
-    role = input("  密钥角色 [root/org]: ").strip() or "root"
+    role = input("  密钥角色 [org/dev]: ").strip() or "org"
+    if role == "root":
+        print("\n  ❌ root 密钥由 JadeGate 项目方持有，不可自行生成。")
+        print("  如需申请组织认证，请联系: ca@jadegate.io")
+        sys.exit(1)
 
     # Passphrase (optional)
     print()
