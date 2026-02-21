@@ -162,6 +162,12 @@ def main():
     print()
 
     # Role
+    print("  角色说明:")
+    print("    root — 最高权限（签发一切：skill、组织CA、撤销证书）")
+    print("           整个 JadeGate 只有一个 root。你是创始人，选这个。")
+    print("    org  — 组织级别（只能签自己组织的 skill）")
+    print("           给企业/开源组织发的二级证书用这个。")
+    print()
     role = input("  密钥角色 [root/org]: ").strip() or "root"
 
     # Passphrase (optional)
