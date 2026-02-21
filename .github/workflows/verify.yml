@@ -1,0 +1,119 @@
+name: "💠 JadeGate Verify"
+
+on:
+  pull_request:
+    paths:
+      - 'jade_skills/**/*.json'
+  push:
+    branches: [main]
+    paths:
+      - 'jade_skills/**/*.json'
+
+jobs:
+  verify:
+    name: "5-Layer Security Verification"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Verify all skills
+        run: |
+          python -c "
+          import os, sys, json
+          sys.path.insert(0, '.')
+          from jade_core.validator import JadeValidator
+
+          v = JadeValidator()
+          passed = failed = 0
+          failures = []
+
+          for d in ['jade_skills/mcp', 'jade_skills/tools']:
+              if not os.path.exists(d): continue
+              for f in sorted(os.listdir(d)):
+                  if not f.endswith('.json') or f.endswith('.sig.json'): continue
+                  r = v.validate_file(os.path.join(d, f))
+                  if r.valid:
+                      passed += 1
+                      warns = [i for i in r.issues if i.severity.value == 'warning']
+                      status = f'⚠️ {len(warns)} warnings' if warns else ''
+                      print(f'✅ {f} {status}')
+                  else:
+                      failed += 1
+                      errs = [i for i in r.issues if i.severity.value == 'error']
+                      print(f'❌ {f}')
+                      for e in errs:
+                          print(f'   {e.code}: {e.message}')
+                      failures.append(f)
+
+          print(f'\n{"="*50}')
+          print(f'💠 {passed} passed, {failed} failed')
+          print(f'{"="*50}')
+
+          if failed > 0:
+              print(f'\nFailed skills: {failures}')
+              sys.exit(1)
+          "
+
+  auto-sign:
+    name: "💠 Auto-Sign (on merge to main)"
+    needs: verify
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Sign unsigned skills
+        env:
+          JADE_CI_SIGNING_KEY: ${{ secrets.JADE_CI_SIGNING_KEY }}
+        run: |
+          if [ -z "$JADE_CI_SIGNING_KEY" ]; then
+            echo "⚠️ No CI signing key configured, skipping auto-sign"
+            exit 0
+          fi
+          python -c "
+          import os, sys, json
+          sys.path.insert(0, '.')
+          from jade_core.crypto import JadeKeyPair, JadeSkillSigner
+
+          key = os.environ['JADE_CI_SIGNING_KEY']
+          kp = JadeKeyPair.from_private_key(key)
+          signer = JadeSkillSigner(kp)
+          signed = 0
+
+          for d in ['jade_skills/mcp', 'jade_skills/tools']:
+              if not os.path.exists(d): continue
+              for f in sorted(os.listdir(d)):
+                  if not f.endswith('.json') or f.endswith('.sig.json'): continue
+                  path = os.path.join(d, f)
+                  with open(path) as fh:
+                      skill = json.load(fh)
+                  if 'jade_signature' not in skill:
+                      signer.sign_skill(path)
+                      print(f'💠 Signed: {f}')
+                      signed += 1
+
+          print(f'\n{signed} skills signed')
+          "
+
+      - name: Commit signatures
+        run: |
+          git config user.name "JadeGate CI"
+          git config user.email "ci@jadegate.io"
+          git diff --quiet && exit 0
+          git add jade_skills/
+          git commit -m "💠 Auto-sign: CI signer applied to new skills"
+          git push
