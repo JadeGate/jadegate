@@ -24,6 +24,7 @@ setup(
     },
     entry_points={
         "console_scripts": [
+            "jade=jade_core.cli:main",
             "jade-validate=jade_core.validator:main",
         ],
     },
