@@ -28,7 +28,9 @@ Traditional agent skills (Markdown, Python, YAML) can contain hidden executable 
 
 ```
 💠 Verified    — Passed all 5 security layers
-❌ Rejected     — Structural violation detected
+⚠️  Warning     — Passed with risk flags (broad permissions, unknown domains)
+🔒 Locked      — Signature expired or revoked
+❌ Rejected     — Structural violation, refused to load
 ```
 
 ## Why JadeGate
