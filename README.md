@@ -161,15 +161,77 @@ cargo add jadegate
 
 ## Trust Model
 
-JadeGate uses asymmetric cryptography for skill certification:
+JadeGate uses a hierarchical certificate authority (CA) model — the same architecture that secures the entire internet (HTTPS/TLS).
 
-- **Owner** holds the private key (`jade-sk-...`)
-- **Public key** is published in the repository (`jadegate.pub.json`)
-- Skills signed by the owner key receive 💠 certification
-- Anyone can verify signatures, but only the owner can issue them
-- Key rotation is supported — old signatures remain valid
+### Root CA (Owner)
 
-This is the same trust model used by package managers (npm, PyPI) and certificate authorities.
+```
+🔑 Root CA — You
+│
+├── 💠 Directly certify official skills
+├── 🏢 Issue Sub-CA certificates to enterprises/labs
+│   ├── ✅ They can certify skills within their scope
+│   └── ❌ They CANNOT forge root signatures
+└── 🚫 Revoke any Sub-CA at any time
+```
+
+- The **root private key** (`jade-sk-...`) is held exclusively by the project owner
+- The **root public key** is published in `jadegate.pub.json`
+- All trust chains terminate at the root — no exceptions
+
+### Sub-CA (Enterprise / Lab)
+
+Organizations can apply for a Sub-CA certificate to certify skills within their own ecosystem:
+
+```bash
+# Owner issues a Sub-CA certificate
+jade ca issue --org "Anthropic" --scope "claude.*" --expires 365d
+
+# Enterprise uses their Sub-CA to sign skills
+jade sign skill.json --key enterprise-sk-...
+
+# Anyone can verify the full chain
+jade verify skill.json
+# → 💠 Verified (signed by Anthropic, chain → JadeGate Root CA)
+```
+
+Sub-CA certificates:
+- Are scoped (e.g., only `claude.*` namespace)
+- Have expiration dates
+- Can be revoked by the root at any time
+- Cannot issue further Sub-CAs (depth = 1)
+
+### Signature Enforcement
+
+Starting from v0.2.0, JadeGate supports **strict mode**:
+
+```python
+validator = JadeValidator(strict_mode=True)
+# Unsigned skills → ❌ Rejected (not just Warning)
+```
+
+```bash
+jade verify skill.json --strict
+# Unsigned → ❌ Rejected
+```
+
+| Mode | Unsigned Skill | Signed (valid) | Signed (expired) |
+|------|---------------|----------------|-------------------|
+| Default | ⚠️ Warning | 💠 Verified | 🔒 Locked |
+| Strict | ❌ Rejected | 💠 Verified | 🔒 Locked |
+
+**Recommendation:** All production deployments should enable strict mode.
+
+### Why Fork Won't Help
+
+The code is MIT-licensed — anyone can fork it. But:
+
+1. **They can't forge your signature.** Without the root private key, they cannot issue 💠 certifications that trace back to JadeGate.
+2. **The official registry is yours.** `jadegate.io` is the canonical source of truth for skill trust scores.
+3. **Network effect.** Once hundreds of skills are certified under your root key, the switching cost is prohibitive.
+
+This is the same trust model used by certificate authorities (DigiCert, Let's Encrypt), package managers (npm, PyPI), and mobile app stores (Apple, Google).
+
 
 ## Skill Registry
 
