@@ -29,7 +29,7 @@ def main():
     print()
     
     # 输入私钥
-    private_key = getpass.getpass("  输入你的 root 私钥 (jade-sk-root-...): ")
+    private_key = input("  输入你的 root 私钥 (jade-sk-root-...): ")
     private_key = private_key.strip()
     
     if not private_key.startswith("jade-sk-"):
