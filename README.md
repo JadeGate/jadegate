@@ -2,225 +2,196 @@
 
 # 💠 JadeGate
 
-**Deterministic security protocol for AI agent skills.**
+**Deterministic Security for AI Agent Skills**
 
-Zero trust. Five-layer mathematical verification. Runs locally. No cloud. No LLM. No token cost.
+*"Code is fluid. Jade is solid."*
 
-[![License: Apache-2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
-[![Python 3.8+](https://img.shields.io/badge/python-3.8+-green.svg)](https://python.org)
-[![Zero Dependencies](https://img.shields.io/badge/dependencies-zero-brightgreen.svg)](#)
+*以玉为契，不可篡改。*
 
-[Website](https://jadegate.io) · [Documentation](https://jadegate.io/docs) · [Skill Registry](https://jadegate.io/registry) · [中文](#中文)
+[![PyPI](https://img.shields.io/pypi/v/jadegate?color=jade&label=pip%20install%20jadegate)](https://pypi.org/project/jadegate/)
+[![Skills](https://img.shields.io/badge/skills-101%20verified-jade)](CATALOG.md)
+[![License](https://img.shields.io/badge/license-Apache%202.0-blue)](LICENSE)
+[![Zero Dependencies](https://img.shields.io/badge/dependencies-zero-brightgreen)]()
 
 </div>
 
 ---
 
-## Why JadeGate?
+## What is JadeGate?
 
-AI agents are powerful. They call tools, execute skills, access APIs. But **who verifies those skills are safe?**
+**JADE** (JSON-based Agent Deterministic Execution) is a zero-trust security protocol for AI agent skills.
 
-Current approaches rely on trust, reputation, or LLM-based review. JadeGate takes a different path:
+Every skill is a pure JSON file — non-Turing-complete, structurally verifiable, mathematically provable safe.
 
-- **Mathematical verification** — 5 deterministic layers, no probabilistic guessing
-- **Runs 100% locally** — `pip install jadegate`, done. No server, no cloud, no account
-- **Zero token cost** — Pure Python, zero dependencies, no LLM calls
-- **Open source** — Every line of code is auditable. Security through transparency, not obscurity
-- **Agent-native** — Designed for machines to query, not just humans to browse
-
-```bash
-pip install jadegate
-jade verify my_skill.json
-# ✅ Passed 5/5 layers | Confidence: 0.97 | 💠 Verified
-```
-
-## The Five Layers
-
-Every skill must pass all 5 layers. No exceptions. No overrides.
-
-| Layer | Name | What it does |
-|-------|------|-------------|
-| 1 | **Structural Integrity** | JSON Schema validation. Malformed = rejected. |
-| 2 | **Code Injection Scan** | 47 dangerous patterns (eval, exec, subprocess, shell injection...) |
-| 3 | **Bayesian Confidence** | Probabilistic risk scoring based on complexity + anomaly patterns |
-| 4 | **Network & Data Leak** | URL whitelist enforcement + sensitive data exfiltration detection |
-| 5 | **DAG Integrity** | Execution graph must be acyclic, no orphan nodes, valid dependencies |
-
-## For AI Agents 🤖
-
-JadeGate is built to be queried by agents, not just humans.
-
-```python
-from jadegate import JadeValidator
-
-# Validate before executing any skill
-validator = JadeValidator()
-result = validator.validate_file("skill.json")
-
-if result.valid:
-    # Safe to execute
-    execute_skill(skill)
-else:
-    # Reject with specific reasons
-    for issue in result.issues:
-        print(f"[{issue.severity}] {issue.code}: {issue.message}")
-```
-
-**Agent integration patterns:**
-- MCP servers can call JadeGate before loading any skill
-- LangChain/LlamaIndex tool loaders can validate on import
-- Any framework — JadeGate is framework-agnostic
-
-**Machine-readable output:**
-```json
-{
-  "valid": true,
-  "skill_hash": "sha256:7db927bf...",
-  "issues": [],
-  "checked_at": 1771669175.92
-}
-```
-
-## Cryptographic Trust Chain
-
-Skills can be signed by verified publishers using Ed25519 signatures.
+No `eval()`. No `exec()`. No `import`. No escape.
 
 ```
-Root CA (JadeGate) → Org CA (e.g., Alibaba Cloud) → Skill Signature
+羌笛何须怨杨柳，春风不度玉门关。
+Malicious code shall not pass the JadeGate.
 ```
 
-- **Root key** held offline by project maintainer
-- **Org keys** issued to verified organizations
-- **Anyone can verify** — public keys are in this repo
-- **Key rotation** supported via signed rotation declarations
+## Why?
 
-```bash
-jade verify --check-signature skill.json
-# ✅ Signature valid | Signer: Alibaba Cloud (org) | Expires: 2027-02-21
-```
+MCP is powerful but permissive. Any MCP server can run arbitrary code. JadeGate adds a security layer:
 
-## Red Team Tested
-
-We run adversarial attacks against our own engine. Current results:
-
-| Attack Type | Status |
-|------------|--------|
-| Unicode homoglyph bypass | ✅ Blocked |
-| Base64 encoded payloads | ✅ Blocked |
-| Template injection | ✅ Blocked |
-| Split command across fields | ✅ Blocked |
-| DAG cycle attack | ✅ Blocked |
-| Subdomain whitelist spoof | ✅ Blocked |
-| Data exfiltration via URL | ✅ Blocked |
-| eval/exec obfuscation | ✅ Blocked |
-| curl pipe bash | ✅ Blocked |
-| Reverse shell (netcat) | ✅ Blocked |
-| Env variable exfiltration | ✅ Blocked |
-| subprocess injection | ✅ Blocked |
-
-**12/12 attacks blocked.** Full report available in our security audits.
+| | MCP | JadeGate |
+|---|---|---|
+| Format | Arbitrary code | Pure JSON |
+| Verification | Trust the server | 5-layer deterministic proof |
+| Signatures | None | Ed25519 chain of trust |
+| Sandbox | Server-dependent | Enforced by protocol |
+| Dependencies | Runtime-dependent | Zero |
 
 ## Quick Start
 
 ```bash
-# Install (zero dependencies)
 pip install jadegate
+```
 
-# Verify a skill
-jade verify skill.json
+```bash
+# Browse all verified skills
+jade list
 
-# Verify all skills in a directory
-jade verify ./skills/
+# Search for what you need
+jade search "github"
 
-# Check signature
-jade verify --check-signature skill.json
+# Check skill details
+jade info mcp_brave_search
 
-# Batch verify with JSON output (for CI/CD)
-jade verify ./skills/ --format json
+# Verify any skill file
+jade verify my_skill.json
+
+# System status
+jade status
+```
+
+## 5-Layer Verification
+
+Every skill passes through 5 deterministic security layers:
+
+```
+Layer 1: Schema Validation     — Structure must be valid JADE JSON
+Layer 2: DAG Integrity         — Execution graph must be acyclic, no loops
+Layer 3: Security Policy       — Sandbox, network whitelist, permissions
+Layer 4: Injection Detection   — No code injection, no template attacks
+Layer 5: Cryptographic Seal    — Ed25519 signature chain verification
+```
+
+All layers are deterministic. Same input → same result. Every time.
+
+## Trust Hierarchy
+
+```
+💠 Root Seal        — Project authority, highest trust
+🔷 Org Seal         — Authorized organizations
+🔹 Community Seal   — Anyone can sign; 5+ sigs = Community Verified
+```
+
+```bash
+# Generate your community signing key
+python jade_community_sign.py keygen
+
+# Sign a skill you've reviewed
+python jade_community_sign.py sign jade_skills/mcp/mcp_brave_search.json
+
+# Check all signatures on a skill
+python jade_community_sign.py check jade_skills/mcp/mcp_brave_search.json
+```
+
+## 101 Verified Skills
+
+JadeGate ships with **101 pre-verified skills** across two categories:
+
+### MCP Skills (61)
+GitHub, Slack, Discord, OpenAI, Anthropic, AWS, GCP, Firebase, MongoDB, Redis, Elasticsearch, Stripe, Twilio, SendGrid, Jira, Confluence, Vercel, Shopify, and more.
+
+### Tool Skills (40)
+CSV analysis, DNS lookup, QR code, image resize, JWT decode, regex tester, password generator, UUID, YAML/JSON converter, and more.
+
+→ Full list: [CATALOG.md](CATALOG.md)
+
+## For AI Agents
+
+All commands support `--json` for machine-readable output:
+
+```bash
+jade search --json "web search"
+jade list --json --type mcp
+jade info --json mcp_brave_search
+```
+
+```python
+from jade_core.validator import JadeValidator
+
+v = JadeValidator()
+result = v.validate_file("my_skill.json")
+print(result.valid)  # True/False
+print(result.issues) # Detailed security findings
 ```
 
 ## Skill Format
 
+A JadeGate skill is a single JSON file:
+
 ```json
 {
   "jade_version": "1.0.0",
-  "skill_id": "brave_web_search",
+  "skill_id": "my_skill",
   "metadata": {
-    "name": "Brave Web Search",
+    "name": "My Skill",
+    "description": "What it does",
     "version": "1.0.0",
-    "description": "Search the web via Brave Search API",
-    "author": "jadegate-official",
-    "tags": ["search", "web", "mcp"]
+    "tags": ["example"]
   },
-  "trigger": { "type": "mcp_call", "conditions": {} },
-  "input_schema": {
-    "required_params": [
-      { "name": "query", "type": "string", "description": "Search query" }
-    ]
-  },
-  "output_schema": {
-    "fields": [
-      { "name": "results", "type": "array", "description": "Search results" }
-    ]
-  },
+  "input_schema": { ... },
+  "output_schema": { ... },
   "execution_dag": {
-    "nodes": [{ "id": "search", "type": "mcp_call", "params": {...} }],
-    "edges": [],
-    "entry_node": "search",
-    "exit_node": "search"
+    "nodes": [ ... ],
+    "edges": [ ... ]
   },
   "security": {
-    "network_whitelist": ["api.search.brave.com"],
-    "sandbox_level": "standard",
+    "sandbox": "strict",
+    "network_whitelist": ["api.example.com"],
     "max_execution_time_ms": 10000
   }
 }
 ```
 
-## Hosting & Security
-
-- **GitHub Pages** for the website — DDoS protection by GitHub's CDN
-- **GitHub** for code hosting — tamper-proof with signed commits
-- **No backend servers** — nothing to hack, nothing to DDoS
-- **No user data collected** — ever
+No code. Just structure. Verifiable by anyone.
 
 ## Contributing
 
-We welcome contributions! See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+1. Create a skill JSON file
+2. Run `jade verify your_skill.json`
+3. Submit a PR — CI auto-verifies
+4. Community signs → merged
 
-- 🐛 Found a vulnerability? Open a security advisory (not a public issue)
-- 💡 New detection pattern? Submit a PR with test cases
-- 📦 New skill? Follow the skill format and run `jade verify` before submitting
+## Architecture
+
+```
+┌─────────────────────────────────────────┐
+│              AI Agent                    │
+├─────────────────────────────────────────┤
+│         JadeGate Protocol               │
+│  ┌─────────┐ ┌──────────┐ ┌──────────┐ │
+│  │ Verify  │ │ Search   │ │ Execute  │ │
+│  │ 5-Layer │ │ Catalog  │ │ Sandbox  │ │
+│  └─────────┘ └──────────┘ └──────────┘ │
+├─────────────────────────────────────────┤
+│  💠 Ed25519 Signature Chain             │
+├─────────────────────────────────────────┤
+│  Skills (Pure JSON, no code)            │
+└─────────────────────────────────────────┘
+```
 
 ## License
 
-Apache 2.0 — Use it, modify it, ship it. Just keep the attribution.
+Apache 2.0
 
 ---
 
 <div align="center">
 
-## 中文
-
-**JadeGate — AI 技能的确定性安全协议**
-
-零信任。五层数学验证。本地运行。无需云端。无需 LLM。零 token 消耗。
-
-### 为什么选择 JadeGate？
-
-- 🔒 **完全开源** — 每一行代码都可审计
-- 💻 **本地运行** — `pip install jadegate`，不连任何服务器
-- 🧮 **数学验证** — 5 层确定性检测，不靠概率猜测
-- 🤖 **Agent 原生** — 为 AI agent 设计的查询接口
-- 💰 **零成本** — 纯 Python，零依赖，不调用任何 LLM
-- 🛡️ **红队测试** — 12 种攻击手法全部拦截
-
-### 核心理念
-
-JadeGate 不需要你的算力，不收集你的数据，不需要你注册账号。
-
-它是一个纯数学的安全协议——像 HTTPS 保护网页一样，JadeGate 保护 AI 技能。
-
-下载到本地，验证你的技能，就这么简单。
+**💠 JadeGate** — *Trust is not assumed. Trust is proven.*
 
 </div>
