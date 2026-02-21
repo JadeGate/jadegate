@@ -9,7 +9,7 @@
 [![License: BSL 1.1](https://img.shields.io/badge/License-BSL_1.1-blue.svg)](#license)
 [![PyPI](https://img.shields.io/pypi/v/jadegate.svg)](https://pypi.org/project/jadegate/)
 [![crates.io](https://img.shields.io/crates/v/jadegate.svg)](https://crates.io/crates/jadegate)
-[![Skills](https://img.shields.io/badge/Verified_Skills-35-blue.svg)](#skill-registry)
+[![Skills](https://img.shields.io/badge/Verified_Skills-61-blue.svg)](#skill-registry)
 [![Schema](https://img.shields.io/badge/Schema-v1.0-purple.svg)](#jade-schema)
 
 **中文** | [English](#english-docs)
@@ -73,6 +73,82 @@ JadeGate 使用非对称加密进行技能认证：
 - 支持密钥轮换，旧签名依然有效
 
 这和 npm、PyPI 等包管理器以及 CA 证书机构使用的信任模型一致。
+
+
+## 组织认证（Enterprise Certification）
+
+JadeGate 支持组织级别的技能签发和认证。企业和开源组织可以申请二级 CA 证书，用自己的品牌为技能背书。
+
+### 工作原理
+
+```
+JadeGate Root CA（根信任）
+  └── Alibaba Cloud CA（二级证书）
+       └── 💠 Alibaba Authentic — aliyun_oss_upload.json
+  └── Tencent CA
+       └── 💠 Tencent Verified — wechat_send.json
+  └── Your Org CA
+       └── 💠 Your Custom Badge — your_skill.json
+```
+
+### 自定义认证标识
+
+组织可以自定义验证通过后的显示文字和样式：
+
+```json
+{
+  "org_certification": {
+    "org_id": "alibaba-cloud",
+    "display_name": "Alibaba Cloud",
+    "badge_text": "Alibaba Authentic",
+    "badge_icon": "💠",
+    "badge_color": "#FF6A00",
+    "verification_url": "https://alibaba.jadegate.io/verify",
+    "ca_public_key": "jade-pk-alibaba-..."
+  }
+}
+```
+
+验证输出效果：
+
+```
+💠 JadeGate VERIFIED
+  Layer 1: JSON Schema ............... ✅ PASS
+  Layer 2: Code Injection Scan ....... ✅ PASS
+  Layer 3: Bayesian Confidence ....... ✅ PASS (0.9847)
+  Layer 4: Network & Data Leak ....... ✅ PASS
+  Layer 5: DAG Integrity ............. ✅ PASS
+
+  🏢 Alibaba Authentic
+     Signed by: Alibaba Cloud CA
+     Issued: 2026-02-21
+     Expires: 2027-02-21
+```
+
+### 申请组织认证
+
+```bash
+# 1. 生成组织密钥对
+jade key generate --org "Your Company"
+
+# 2. 提交 CSR（证书签名请求）到 JadeGate
+jade ca request --org "Your Company" --domain "yourcompany.jadegate.io"
+
+# 3. 审核通过后，用组织密钥签发技能
+jade sign your_skill.json --org-key jade-sk-yourcompany-...
+
+# 4. 验证时自动显示组织认证信息
+jade verify your_skill.json
+```
+
+### 认证层级
+
+| 层级 | 说明 | 费用 |
+|------|------|------|
+| 🌱 社区认证 | 通过 5 层验证，JadeGate 根签名 | 免费 |
+| 🏢 组织认证 | 二级 CA + 自定义 badge | 免费（开源）/ 付费（企业） |
+| 🛡️ 企业认证 | 专属验证节点 + SLA + 优先审核 | 联系我们 |
+
 
 ## CLI 命令
 
@@ -352,6 +428,50 @@ jade-core/
 ├── tests/              # 135 test cases
 └── tools/              # Converters and utilities
 ```
+
+
+## Organization Certification (Enterprise)
+
+JadeGate supports organization-level skill signing and certification. Enterprises and open-source organizations can apply for a sub-CA certificate to endorse skills under their own brand.
+
+### How It Works
+
+```
+JadeGate Root CA (root trust)
+  └── Alibaba Cloud CA (sub-CA)
+       └── 💠 Alibaba Authentic — aliyun_oss_upload.json
+  └── Tencent CA
+       └── 💠 Tencent Verified — wechat_send.json
+  └── Your Org CA
+       └── 💠 Your Custom Badge — your_skill.json
+```
+
+### Custom Certification Badge
+
+Organizations can customize the verification display text and style:
+
+```json
+{
+  "org_certification": {
+    "org_id": "alibaba-cloud",
+    "display_name": "Alibaba Cloud",
+    "badge_text": "Alibaba Authentic",
+    "badge_icon": "💠",
+    "badge_color": "#FF6A00",
+    "verification_url": "https://alibaba.jadegate.io/verify",
+    "ca_public_key": "jade-pk-alibaba-..."
+  }
+}
+```
+
+### Certification Tiers
+
+| Tier | Description | Cost |
+|------|-------------|------|
+| 🌱 Community | 5-layer verification + JadeGate root signature | Free |
+| 🏢 Organization | Sub-CA + custom badge text | Free (OSS) / Paid (Enterprise) |
+| 🛡️ Enterprise | Dedicated verification node + SLA + priority review | Contact us |
+
 
 ## Contributing
 
