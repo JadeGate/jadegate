@@ -9,7 +9,7 @@ setup(
     author="JadeGate",
     author_email="jadegate@users.noreply.github.com",
     url="https://github.com/JadeGate/jade-core",
-    license="MIT",
+    license="BSL-1.1",
     packages=find_packages(exclude=["tests", "tests.*"]),
     package_data={
         "jade_schema": ["*.json"],
