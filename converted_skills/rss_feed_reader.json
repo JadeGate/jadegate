@@ -1,0 +1,153 @@
+{
+  "jade_version": "1.0.0",
+  "skill_id": "rss_feed_reader",
+  "metadata": {
+    "name": "RSS Feed Reader",
+    "version": "1.0.0",
+    "description": "Fetch and parse RSS/Atom feed with entry extraction",
+    "author": "jadegate-community",
+    "tags": [
+      "rss",
+      "feed",
+      "news",
+      "atom"
+    ],
+    "license": "MIT",
+    "created_at": "2026-02-21T03:00:00Z",
+    "updated_at": "2026-02-21T03:00:00Z"
+  },
+  "trigger": {
+    "type": "task_intent",
+    "conditions": [
+      {
+        "field": "task.type",
+        "operator": "in",
+        "value": [
+          "read_rss",
+          "rss_feed",
+          "fetch_feed"
+        ]
+      }
+    ]
+  },
+  "input_schema": {
+    "required_params": [
+      {
+        "name": "feed_url",
+        "type": "string",
+        "description": "RSS feed URL"
+      }
+    ]
+  },
+  "output_schema": {
+    "fields": [
+      {
+        "name": "title",
+        "type": "string",
+        "description": "Feed title"
+      },
+      {
+        "name": "entries",
+        "type": "array",
+        "description": "Feed entries"
+      },
+      {
+        "name": "count",
+        "type": "number",
+        "description": "Number of entries"
+      }
+    ]
+  },
+  "execution_dag": {
+    "nodes": [
+      {
+        "id": "fetch",
+        "action": "http_get",
+        "params": {
+          "url": "{{input.feed_url}}",
+          "headers": {
+            "User-Agent": "JadeBot/1.0"
+          },
+          "timeout_ms": 15000
+        }
+      },
+      {
+        "id": "check",
+        "action": "condition_check",
+        "params": {
+          "field": "{{fetch.output.status_code}}",
+          "operator": "equals",
+          "value": 200
+        }
+      },
+      {
+        "id": "parse",
+        "action": "text_extract",
+        "params": {
+          "input": "{{fetch.output.body}}",
+          "pattern": "item",
+          "max_items": 20
+        }
+      },
+      {
+        "id": "ret_ok",
+        "action": "return_result",
+        "params": {
+          "title": "{{parse.output.feed_title}}",
+          "entries": "{{parse.output.items}}",
+          "count": "{{parse.output.count}}"
+        }
+      },
+      {
+        "id": "ret_fail",
+        "action": "return_error",
+        "params": {
+          "error_code": "RSS_FAILED",
+          "message": "Failed to fetch or parse RSS feed"
+        }
+      }
+    ],
+    "edges": [
+      {
+        "from": "fetch",
+        "to": "check"
+      },
+      {
+        "from": "check",
+        "to": "parse",
+        "condition": "success"
+      },
+      {
+        "from": "check",
+        "to": "ret_fail",
+        "condition": "failure"
+      },
+      {
+        "from": "parse",
+        "to": "ret_ok"
+      }
+    ],
+    "entry_node": "fetch",
+    "exit_node": [
+      "ret_ok",
+      "ret_fail"
+    ]
+  },
+  "security": {
+    "network_whitelist": [
+      "*"
+    ],
+    "file_permissions": {
+      "read": [],
+      "write": []
+    },
+    "max_execution_time_ms": 30000,
+    "max_retries": 2,
+    "sandbox_level": "strict",
+    "dangerous_patterns": []
+  },
+  "mcp_compatible": true,
+  "required_mcp_capabilities": [
+    "http"
+  ]
+}

@@ -1,0 +1,143 @@
+{
+  "jade_version": "1.0.0",
+  "skill_id": "json_data_transform",
+  "metadata": {
+    "name": "JSON Data Transform",
+    "version": "1.0.0",
+    "description": "Parse, extract, and transform JSON data with JSONPath queries",
+    "author": "jadegate-community",
+    "tags": [
+      "json",
+      "transform",
+      "parse",
+      "extract"
+    ],
+    "license": "MIT",
+    "created_at": "2026-02-21T03:00:00Z",
+    "updated_at": "2026-02-21T03:00:00Z"
+  },
+  "trigger": {
+    "type": "task_intent",
+    "conditions": [
+      {
+        "field": "task.type",
+        "operator": "in",
+        "value": [
+          "json_transform",
+          "parse_json",
+          "extract_json"
+        ]
+      }
+    ]
+  },
+  "input_schema": {
+    "required_params": [
+      {
+        "name": "input_json",
+        "type": "string",
+        "description": "JSON string to process"
+      },
+      {
+        "name": "jsonpath",
+        "type": "string",
+        "description": "JSONPath expression to extract"
+      }
+    ]
+  },
+  "output_schema": {
+    "fields": [
+      {
+        "name": "extracted",
+        "type": "string",
+        "description": "Extracted value"
+      },
+      {
+        "name": "type",
+        "type": "string",
+        "description": "Type of extracted value"
+      }
+    ]
+  },
+  "execution_dag": {
+    "nodes": [
+      {
+        "id": "parse",
+        "action": "json_parse",
+        "params": {
+          "input": "{{input.input_json}}"
+        }
+      },
+      {
+        "id": "check_parse",
+        "action": "condition_check",
+        "params": {
+          "field": "{{parse.output.data}}",
+          "operator": "exists",
+          "value": true
+        }
+      },
+      {
+        "id": "extract",
+        "action": "json_extract",
+        "params": {
+          "data": "{{parse.output.data}}",
+          "path": "{{input.jsonpath}}"
+        }
+      },
+      {
+        "id": "ret_ok",
+        "action": "return_result",
+        "params": {
+          "extracted": "{{extract.output.value}}",
+          "type": "{{extract.output.type}}"
+        }
+      },
+      {
+        "id": "ret_fail",
+        "action": "return_error",
+        "params": {
+          "error_code": "JSON_PARSE_FAILED",
+          "message": "Invalid JSON input"
+        }
+      }
+    ],
+    "edges": [
+      {
+        "from": "parse",
+        "to": "check_parse"
+      },
+      {
+        "from": "check_parse",
+        "to": "extract",
+        "condition": "success"
+      },
+      {
+        "from": "check_parse",
+        "to": "ret_fail",
+        "condition": "failure"
+      },
+      {
+        "from": "extract",
+        "to": "ret_ok"
+      }
+    ],
+    "entry_node": "parse",
+    "exit_node": [
+      "ret_ok",
+      "ret_fail"
+    ]
+  },
+  "security": {
+    "network_whitelist": [],
+    "file_permissions": {
+      "read": [],
+      "write": []
+    },
+    "max_execution_time_ms": 30000,
+    "max_retries": 2,
+    "sandbox_level": "strict",
+    "dangerous_patterns": []
+  },
+  "mcp_compatible": true,
+  "required_mcp_capabilities": []
+}

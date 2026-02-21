@@ -1,0 +1,161 @@
+{
+  "jade_version": "1.0.0",
+  "skill_id": "discord_webhook_send",
+  "metadata": {
+    "name": "Discord Webhook Sender",
+    "version": "1.0.0",
+    "description": "Send messages to Discord channels via webhook with embed support",
+    "author": "jadegate-community",
+    "tags": [
+      "discord",
+      "webhook",
+      "message",
+      "chat"
+    ],
+    "license": "MIT",
+    "created_at": "2026-02-21T03:00:00Z",
+    "updated_at": "2026-02-21T03:00:00Z"
+  },
+  "trigger": {
+    "type": "task_intent",
+    "conditions": [
+      {
+        "field": "task.type",
+        "operator": "in",
+        "value": [
+          "discord_send",
+          "send_discord"
+        ]
+      }
+    ]
+  },
+  "input_schema": {
+    "required_params": [
+      {
+        "name": "webhook_url",
+        "type": "string",
+        "description": "Discord webhook URL"
+      },
+      {
+        "name": "content",
+        "type": "string",
+        "description": "Message content"
+      }
+    ]
+  },
+  "output_schema": {
+    "fields": [
+      {
+        "name": "sent",
+        "type": "boolean",
+        "description": "Message sent successfully"
+      },
+      {
+        "name": "message_id",
+        "type": "string",
+        "description": "Discord message ID"
+      }
+    ]
+  },
+  "execution_dag": {
+    "nodes": [
+      {
+        "id": "build",
+        "action": "text_template",
+        "params": {
+          "template": "{\"content\":\"{{input.content}}\"}"
+        }
+      },
+      {
+        "id": "send",
+        "action": "http_post",
+        "params": {
+          "url": "{{input.webhook_url}}?wait=true",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "body": "{{build.output.result}}",
+          "timeout_ms": 10000
+        }
+      },
+      {
+        "id": "check",
+        "action": "condition_check",
+        "params": {
+          "field": "{{send.output.status_code}}",
+          "operator": "equals",
+          "value": 200
+        }
+      },
+      {
+        "id": "parse",
+        "action": "json_parse",
+        "params": {
+          "input": "{{send.output.body}}"
+        }
+      },
+      {
+        "id": "ret_ok",
+        "action": "return_result",
+        "params": {
+          "sent": true,
+          "message_id": "{{parse.output.data.id}}"
+        }
+      },
+      {
+        "id": "ret_fail",
+        "action": "return_error",
+        "params": {
+          "error_code": "DISCORD_FAILED",
+          "message": "Discord webhook failed"
+        }
+      }
+    ],
+    "edges": [
+      {
+        "from": "build",
+        "to": "send"
+      },
+      {
+        "from": "send",
+        "to": "check"
+      },
+      {
+        "from": "check",
+        "to": "parse",
+        "condition": "success"
+      },
+      {
+        "from": "check",
+        "to": "ret_fail",
+        "condition": "failure"
+      },
+      {
+        "from": "parse",
+        "to": "ret_ok"
+      }
+    ],
+    "entry_node": "build",
+    "exit_node": [
+      "ret_ok",
+      "ret_fail"
+    ]
+  },
+  "security": {
+    "network_whitelist": [
+      "discord.com"
+    ],
+    "file_permissions": {
+      "read": [],
+      "write": []
+    },
+    "max_execution_time_ms": 30000,
+    "max_retries": 2,
+    "sandbox_level": "strict",
+    "dangerous_patterns": []
+  },
+  "mcp_compatible": true,
+  "required_mcp_capabilities": [
+    "http"
+  ]
+}

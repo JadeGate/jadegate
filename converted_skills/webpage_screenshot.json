@@ -1,0 +1,162 @@
+{
+  "jade_version": "1.0.0",
+  "skill_id": "webpage_screenshot",
+  "metadata": {
+    "name": "Webpage Screenshot",
+    "version": "1.0.0",
+    "description": "Take a screenshot of a webpage using headless browser navigation",
+    "author": "jadegate-community",
+    "tags": [
+      "screenshot",
+      "webpage",
+      "capture",
+      "browser"
+    ],
+    "license": "MIT",
+    "created_at": "2026-02-21T03:00:00Z",
+    "updated_at": "2026-02-21T03:00:00Z"
+  },
+  "trigger": {
+    "type": "task_intent",
+    "conditions": [
+      {
+        "field": "task.type",
+        "operator": "in",
+        "value": [
+          "take_screenshot",
+          "webpage_screenshot"
+        ]
+      }
+    ]
+  },
+  "input_schema": {
+    "required_params": [
+      {
+        "name": "url",
+        "type": "string",
+        "description": "URL to screenshot"
+      }
+    ]
+  },
+  "output_schema": {
+    "fields": [
+      {
+        "name": "image_path",
+        "type": "string",
+        "description": "Path to saved screenshot"
+      },
+      {
+        "name": "width",
+        "type": "number",
+        "description": "Page width"
+      },
+      {
+        "name": "height",
+        "type": "number",
+        "description": "Page height"
+      }
+    ]
+  },
+  "execution_dag": {
+    "nodes": [
+      {
+        "id": "nav",
+        "action": "page_navigate",
+        "params": {
+          "url": "{{input.url}}",
+          "timeout_ms": 15000
+        }
+      },
+      {
+        "id": "wait_load",
+        "action": "page_wait",
+        "params": {
+          "condition": "networkidle",
+          "timeout_ms": 10000
+        }
+      },
+      {
+        "id": "shot",
+        "action": "page_screenshot",
+        "params": {
+          "path": "/tmp/jade_screenshot.png",
+          "full_page": true
+        }
+      },
+      {
+        "id": "check",
+        "action": "condition_check",
+        "params": {
+          "field": "{{shot.output.success}}",
+          "operator": "equals",
+          "value": true
+        }
+      },
+      {
+        "id": "ret_ok",
+        "action": "return_result",
+        "params": {
+          "image_path": "{{shot.output.path}}",
+          "width": "{{shot.output.width}}",
+          "height": "{{shot.output.height}}"
+        }
+      },
+      {
+        "id": "ret_fail",
+        "action": "return_error",
+        "params": {
+          "error_code": "SCREENSHOT_FAILED",
+          "message": "Failed to capture screenshot"
+        }
+      }
+    ],
+    "edges": [
+      {
+        "from": "nav",
+        "to": "wait_load"
+      },
+      {
+        "from": "wait_load",
+        "to": "shot"
+      },
+      {
+        "from": "shot",
+        "to": "check"
+      },
+      {
+        "from": "check",
+        "to": "ret_ok",
+        "condition": "success"
+      },
+      {
+        "from": "check",
+        "to": "ret_fail",
+        "condition": "failure"
+      }
+    ],
+    "entry_node": "nav",
+    "exit_node": [
+      "ret_ok",
+      "ret_fail"
+    ]
+  },
+  "security": {
+    "network_whitelist": [
+      "*"
+    ],
+    "file_permissions": {
+      "read": [],
+      "write": [
+        "/tmp/jade_screenshot.png"
+      ]
+    },
+    "max_execution_time_ms": 30000,
+    "max_retries": 2,
+    "sandbox_level": "standard",
+    "dangerous_patterns": []
+  },
+  "mcp_compatible": true,
+  "required_mcp_capabilities": [
+    "browser"
+  ]
+}

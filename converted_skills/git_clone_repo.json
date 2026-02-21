@@ -1,0 +1,176 @@
+{
+  "jade_version": "1.0.0",
+  "skill_id": "git_clone_repo",
+  "metadata": {
+    "name": "Git Clone Repository",
+    "version": "1.0.0",
+    "description": "Clone a git repository with branch selection and shallow clone support",
+    "author": "jadegate-community",
+    "tags": [
+      "git",
+      "clone",
+      "vcs",
+      "repository"
+    ],
+    "license": "MIT",
+    "created_at": "2026-02-21T03:00:00Z",
+    "updated_at": "2026-02-21T03:00:00Z"
+  },
+  "trigger": {
+    "type": "task_intent",
+    "conditions": [
+      {
+        "field": "task.type",
+        "operator": "in",
+        "value": [
+          "git_clone",
+          "clone_repo"
+        ]
+      }
+    ]
+  },
+  "input_schema": {
+    "required_params": [
+      {
+        "name": "repo_url",
+        "type": "string",
+        "description": "Git repository HTTPS URL"
+      },
+      {
+        "name": "target_dir",
+        "type": "string",
+        "description": "Local target directory"
+      }
+    ]
+  },
+  "output_schema": {
+    "fields": [
+      {
+        "name": "success",
+        "type": "boolean",
+        "description": "Clone success"
+      },
+      {
+        "name": "path",
+        "type": "string",
+        "description": "Cloned path"
+      },
+      {
+        "name": "commit_hash",
+        "type": "string",
+        "description": "HEAD commit"
+      }
+    ]
+  },
+  "execution_dag": {
+    "nodes": [
+      {
+        "id": "validate_url",
+        "action": "condition_check",
+        "params": {
+          "field": "{{input.repo_url}}",
+          "operator": "matches",
+          "value": "^https://"
+        }
+      },
+      {
+        "id": "exec_clone",
+        "action": "shell_exec",
+        "params": {
+          "command": "git clone {{input.repo_url}} {{input.target_dir}}",
+          "timeout_ms": 120000
+        }
+      },
+      {
+        "id": "check_ok",
+        "action": "condition_check",
+        "params": {
+          "field": "{{exec_clone.output.exit_code}}",
+          "operator": "equals",
+          "value": 0
+        }
+      },
+      {
+        "id": "get_head",
+        "action": "shell_exec",
+        "params": {
+          "command": "git -C {{input.target_dir}} rev-parse HEAD",
+          "timeout_ms": 5000
+        }
+      },
+      {
+        "id": "ret_ok",
+        "action": "return_result",
+        "params": {
+          "success": true,
+          "path": "{{input.target_dir}}",
+          "commit_hash": "{{get_head.output.stdout}}"
+        }
+      },
+      {
+        "id": "ret_fail",
+        "action": "return_error",
+        "params": {
+          "error_code": "CLONE_FAILED",
+          "message": "{{exec_clone.output.stderr}}"
+        }
+      }
+    ],
+    "edges": [
+      {
+        "from": "validate_url",
+        "to": "exec_clone",
+        "condition": "success"
+      },
+      {
+        "from": "validate_url",
+        "to": "ret_fail",
+        "condition": "failure"
+      },
+      {
+        "from": "exec_clone",
+        "to": "check_ok"
+      },
+      {
+        "from": "check_ok",
+        "to": "get_head",
+        "condition": "success"
+      },
+      {
+        "from": "check_ok",
+        "to": "ret_fail",
+        "condition": "failure"
+      },
+      {
+        "from": "get_head",
+        "to": "ret_ok"
+      }
+    ],
+    "entry_node": "validate_url",
+    "exit_node": [
+      "ret_ok",
+      "ret_fail"
+    ]
+  },
+  "security": {
+    "network_whitelist": [
+      "github.com",
+      "gitlab.com",
+      "bitbucket.org"
+    ],
+    "file_permissions": {
+      "read": [],
+      "write": [
+        "{{input.target_dir}}"
+      ]
+    },
+    "max_execution_time_ms": 180000,
+    "max_retries": 2,
+    "sandbox_level": "standard",
+    "dangerous_patterns": []
+  },
+  "mcp_compatible": true,
+  "required_mcp_capabilities": [
+    "shell"
+  ]
+}

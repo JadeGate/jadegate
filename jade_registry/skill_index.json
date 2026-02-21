@@ -1,0 +1,717 @@
+{
+  "jade_version": "1.0.0",
+  "index_version": "1.0.0",
+  "generated_at": "2026-02-21T03:32:17Z",
+  "total_skills": 35,
+  "categories": {
+    "jade.core": 5,
+    "jadegate.community": 30
+  },
+  "skills": [
+    {
+      "skill_id": "email_send_safe",
+      "name": "Safe Email Sending SOP",
+      "version": "1.0.0",
+      "description": "Securely send emails via SMTP with mandatory confirmation step, content sanitization, and attachment size limits. Prevents accidental mass-mailing and sensitive data leakage through strict guardrails.",
+      "author": "jade-core-team",
+      "tags": [
+        "email",
+        "smtp",
+        "send",
+        "safe",
+        "communication"
+      ],
+      "category": "jade.core",
+      "network_required": true,
+      "sandbox_level": "strict",
+      "node_count": 16,
+      "mcp_compatible": true,
+      "hash": "sha256:3a868d3ed4b2d879",
+      "source_path": "jade_skills/email_send_safe.json"
+    },
+    {
+      "skill_id": "file_batch_rename",
+      "name": "File Batch Rename SOP",
+      "version": "1.0.0",
+      "description": "Safely batch rename files in a directory using regex patterns. Includes dry-run preview, collision detection, and automatic rollback on failure. Zero network access required.",
+      "author": "jade-core-team",
+      "tags": [
+        "file",
+        "batch",
+        "rename",
+        "regex",
+        "local"
+      ],
+      "category": "jade.core",
+      "network_required": false,
+      "sandbox_level": "strict",
+      "node_count": 11,
+      "mcp_compatible": true,
+      "hash": "sha256:8c02331d0afcd01e",
+      "source_path": "jade_skills/file_batch_rename.json"
+    },
+    {
+      "skill_id": "pdf_table_parser",
+      "name": "PDF Table Parser SOP",
+      "version": "1.0.0",
+      "description": "Safely read and parse complex tables from local PDF files. Extracts structured tabular data without executing any embedded scripts or macros. Pure local file operation.",
+      "author": "jade-core-team",
+      "tags": [
+        "pdf",
+        "table",
+        "parser",
+        "data-extraction",
+        "local"
+      ],
+      "category": "jade.core",
+      "network_required": false,
+      "sandbox_level": "strict",
+      "node_count": 9,
+      "mcp_compatible": true,
+      "hash": "sha256:d2a623bb51f23adf",
+      "source_path": "jade_skills/pdf_table_parser.json"
+    },
+    {
+      "skill_id": "weather_api_query",
+      "name": "Weather API Query SOP",
+      "version": "1.0.0",
+      "description": "Query current weather data from free public APIs (wttr.in, Open-Meteo). Zero API key required. Deterministic, error-free weather retrieval with automatic fallback between providers.",
+      "author": "jade-core-team",
+      "tags": [
+        "weather",
+        "api",
+        "free",
+        "public",
+        "query"
+      ],
+      "category": "jade.core",
+      "network_required": true,
+      "sandbox_level": "strict",
+      "node_count": 10,
+      "mcp_compatible": true,
+      "hash": "sha256:9bb380529c8538eb",
+      "source_path": "jade_skills/weather_api.json"
+    },
+    {
+      "skill_id": "web_anti_crawl_bypass",
+      "name": "Web Anti-Crawl Bypass SOP",
+      "version": "1.0.0",
+      "description": "Standard operating procedure for bypassing common web anti-crawl mechanisms (Cloudflare, rate limiting) using ethical and compliant methods. Rotates headers, respects robots.txt, and uses exponential ",
+      "author": "jade-core-team",
+      "tags": [
+        "web",
+        "anti-crawl",
+        "scraping",
+        "cloudflare",
+        "http"
+      ],
+      "category": "jade.core",
+      "network_required": true,
+      "sandbox_level": "strict",
+      "node_count": 10,
+      "mcp_compatible": true,
+      "hash": "sha256:05b32d68938af254",
+      "source_path": "jade_skills/web_anti_crawl.json"
+    },
+    {
+      "skill_id": "base64_file_encode",
+      "name": "Base64 File Encoder",
+      "version": "1.0.0",
+      "description": "Read a file and encode its content to Base64 string",
+      "author": "jadegate-community",
+      "tags": [
+        "base64",
+        "encode",
+        "file",
+        "binary"
+      ],
+      "category": "jadegate.community",
+      "network_required": false,
+      "sandbox_level": "strict",
+      "node_count": 5,
+      "mcp_compatible": true,
+      "hash": "sha256:fa5f6b9f576b6fb0",
+      "source_path": "converted_skills/base64_file_encode.json"
+    },
+    {
+      "skill_id": "csv_data_analysis",
+      "name": "CSV Data Analysis",
+      "version": "1.0.0",
+      "description": "Read and analyze CSV files with column stats, filtering and sorting",
+      "author": "jadegate-community",
+      "tags": [
+        "csv",
+        "data",
+        "analysis",
+        "statistics"
+      ],
+      "category": "jadegate.community",
+      "network_required": false,
+      "sandbox_level": "strict",
+      "node_count": 6,
+      "mcp_compatible": true,
+      "hash": "sha256:0eeba386128a8628",
+      "source_path": "converted_skills/csv_data_analysis.json"
+    },
+    {
+      "skill_id": "discord_webhook_send",
+      "name": "Discord Webhook Sender",
+      "version": "1.0.0",
+      "description": "Send messages to Discord channels via webhook with embed support",
+      "author": "jadegate-community",
+      "tags": [
+        "discord",
+        "webhook",
+        "message",
+        "chat"
+      ],
+      "category": "jadegate.community",
+      "network_required": true,
+      "sandbox_level": "strict",
+      "node_count": 6,
+      "mcp_compatible": true,
+      "hash": "sha256:4928cf69a5041b15",
+      "source_path": "converted_skills/discord_webhook_send.json"
+    },
+    {
+      "skill_id": "dns_lookup",
+      "name": "DNS Lookup",
+      "version": "1.0.0",
+      "description": "Resolve domain name to IP addresses using DNS",
+      "author": "jadegate-community",
+      "tags": [
+        "dns",
+        "lookup",
+        "network",
+        "resolve"
+      ],
+      "category": "jadegate.community",
+      "network_required": false,
+      "sandbox_level": "strict",
+      "node_count": 4,
+      "mcp_compatible": true,
+      "hash": "sha256:d5f5c108a1de2251",
+      "source_path": "converted_skills/dns_lookup.json"
+    },
+    {
+      "skill_id": "docker_container_list",
+      "name": "Docker Container List",
+      "version": "1.0.0",
+      "description": "List running Docker containers via Docker socket API",
+      "author": "jadegate-community",
+      "tags": [
+        "docker",
+        "container",
+        "devops",
+        "list"
+      ],
+      "category": "jadegate.community",
+      "network_required": true,
+      "sandbox_level": "standard",
+      "node_count": 5,
+      "mcp_compatible": true,
+      "hash": "sha256:59f2b1a7b70b52f0",
+      "source_path": "converted_skills/docker_container_list.json"
+    },
+    {
+      "skill_id": "exa_semantic_search",
+      "name": "Exa AI Semantic Search",
+      "version": "1.0.0",
+      "description": "Search the web semantically using Exa AI API with neural search",
+      "author": "jadegate-community",
+      "tags": [
+        "search",
+        "semantic",
+        "exa",
+        "neural"
+      ],
+      "category": "jadegate.community",
+      "network_required": true,
+      "sandbox_level": "strict",
+      "node_count": 6,
+      "mcp_compatible": true,
+      "hash": "sha256:3bb236c661a1f778",
+      "source_path": "converted_skills/exa_semantic_search.json"
+    },
+    {
+      "skill_id": "git_clone_repo",
+      "name": "Git Clone Repository",
+      "version": "1.0.0",
+      "description": "Clone a git repository with branch selection and shallow clone support",
+      "author": "jadegate-community",
+      "tags": [
+        "git",
+        "clone",
+        "vcs",
+        "repository"
+      ],
+      "category": "jadegate.community",
+      "network_required": true,
+      "sandbox_level": "standard",
+      "node_count": 6,
+      "mcp_compatible": true,
+      "hash": "sha256:1b408ec57cea267b",
+      "source_path": "converted_skills/git_clone_repo.json"
+    },
+    {
+      "skill_id": "git_diff_summary",
+      "name": "Git Diff Summary",
+      "version": "1.0.0",
+      "description": "Get git diff and summarize changes using LLM",
+      "author": "jadegate-community",
+      "tags": [
+        "git",
+        "diff",
+        "summary",
+        "changes"
+      ],
+      "category": "jadegate.community",
+      "network_required": false,
+      "sandbox_level": "standard",
+      "node_count": 6,
+      "mcp_compatible": true,
+      "hash": "sha256:3f6d47abbfaea24b",
+      "source_path": "converted_skills/git_diff_summary.json"
+    },
+    {
+      "skill_id": "github_create_issue",
+      "name": "GitHub Issue Creator",
+      "version": "1.0.0",
+      "description": "Create a new issue on a GitHub repository via API",
+      "author": "jadegate-community",
+      "tags": [
+        "github",
+        "issue",
+        "api",
+        "repository"
+      ],
+      "category": "jadegate.community",
+      "network_required": true,
+      "sandbox_level": "strict",
+      "node_count": 6,
+      "mcp_compatible": true,
+      "hash": "sha256:d94e0d58e5ae0b31",
+      "source_path": "converted_skills/github_create_issue.json"
+    },
+    {
+      "skill_id": "hash_file_verify",
+      "name": "File Hash Verification",
+      "version": "1.0.0",
+      "description": "Compute and verify SHA-256 hash of a file for integrity checking",
+      "author": "jadegate-community",
+      "tags": [
+        "hash",
+        "sha256",
+        "verify",
+        "integrity"
+      ],
+      "category": "jadegate.community",
+      "network_required": false,
+      "sandbox_level": "strict",
+      "node_count": 7,
+      "mcp_compatible": true,
+      "hash": "sha256:363d5ae6b1813100",
+      "source_path": "converted_skills/hash_file_verify.json"
+    },
+    {
+      "skill_id": "http_health_check",
+      "name": "HTTP Health Check",
+      "version": "1.0.0",
+      "description": "Check if a website is up by sending HTTP GET and measuring response time",
+      "author": "jadegate-community",
+      "tags": [
+        "ping",
+        "health",
+        "uptime",
+        "monitor"
+      ],
+      "category": "jadegate.community",
+      "network_required": true,
+      "sandbox_level": "strict",
+      "node_count": 4,
+      "mcp_compatible": true,
+      "hash": "sha256:625dca96c348f8b9",
+      "source_path": "converted_skills/http_health_check.json"
+    },
+    {
+      "skill_id": "image_resize_convert",
+      "name": "Image Resize and Convert",
+      "version": "1.0.0",
+      "description": "Resize images and convert between formats (PNG, JPG, WebP)",
+      "author": "jadegate-community",
+      "tags": [
+        "image",
+        "resize",
+        "convert",
+        "format"
+      ],
+      "category": "jadegate.community",
+      "network_required": false,
+      "sandbox_level": "strict",
+      "node_count": 6,
+      "mcp_compatible": true,
+      "hash": "sha256:3a1107dc303049c4",
+      "source_path": "converted_skills/image_resize_convert.json"
+    },
+    {
+      "skill_id": "ip_geolocation",
+      "name": "IP Geolocation Lookup",
+      "version": "1.0.0",
+      "description": "Look up geographic location of an IP address using free API",
+      "author": "jadegate-community",
+      "tags": [
+        "ip",
+        "geolocation",
+        "location",
+        "network"
+      ],
+      "category": "jadegate.community",
+      "network_required": true,
+      "sandbox_level": "strict",
+      "node_count": 6,
+      "mcp_compatible": true,
+      "hash": "sha256:c60a3b4a096a4379",
+      "source_path": "converted_skills/ip_geolocation.json"
+    },
+    {
+      "skill_id": "json_data_transform",
+      "name": "JSON Data Transform",
+      "version": "1.0.0",
+      "description": "Parse, extract, and transform JSON data with JSONPath queries",
+      "author": "jadegate-community",
+      "tags": [
+        "json",
+        "transform",
+        "parse",
+        "extract"
+      ],
+      "category": "jadegate.community",
+      "network_required": false,
+      "sandbox_level": "strict",
+      "node_count": 5,
+      "mcp_compatible": true,
+      "hash": "sha256:0d5a492fe88e048a",
+      "source_path": "converted_skills/json_data_transform.json"
+    },
+    {
+      "skill_id": "log_error_analyzer",
+      "name": "Log Error Analyzer",
+      "version": "1.0.0",
+      "description": "Analyze log files to extract errors, warnings and generate summary",
+      "author": "jadegate-community",
+      "tags": [
+        "log",
+        "error",
+        "analysis",
+        "debug"
+      ],
+      "category": "jadegate.community",
+      "network_required": false,
+      "sandbox_level": "strict",
+      "node_count": 7,
+      "mcp_compatible": true,
+      "hash": "sha256:d921256455c7747c",
+      "source_path": "converted_skills/log_error_analyzer.json"
+    },
+    {
+      "skill_id": "notion_page_read",
+      "name": "Notion Page Reader",
+      "version": "1.0.0",
+      "description": "Read a Notion page content via official API with block parsing",
+      "author": "jadegate-community",
+      "tags": [
+        "notion",
+        "api",
+        "page",
+        "read"
+      ],
+      "category": "jadegate.community",
+      "network_required": true,
+      "sandbox_level": "strict",
+      "node_count": 7,
+      "mcp_compatible": true,
+      "hash": "sha256:53dbb922e64f9b6f",
+      "source_path": "converted_skills/notion_page_read.json"
+    },
+    {
+      "skill_id": "qr_code_generate",
+      "name": "QR Code Generator",
+      "version": "1.0.0",
+      "description": "Generate QR code image from text using public API",
+      "author": "jadegate-community",
+      "tags": [
+        "qrcode",
+        "generate",
+        "image",
+        "barcode"
+      ],
+      "category": "jadegate.community",
+      "network_required": true,
+      "sandbox_level": "strict",
+      "node_count": 6,
+      "mcp_compatible": true,
+      "hash": "sha256:a099c1ca1f977b4b",
+      "source_path": "converted_skills/qr_code_generate.json"
+    },
+    {
+      "skill_id": "rss_feed_reader",
+      "name": "RSS Feed Reader",
+      "version": "1.0.0",
+      "description": "Fetch and parse RSS/Atom feed with entry extraction",
+      "author": "jadegate-community",
+      "tags": [
+        "rss",
+        "feed",
+        "news",
+        "atom"
+      ],
+      "category": "jadegate.community",
+      "network_required": true,
+      "sandbox_level": "strict",
+      "node_count": 5,
+      "mcp_compatible": true,
+      "hash": "sha256:df785cfce8a2695a",
+      "source_path": "converted_skills/rss_feed_reader.json"
+    },
+    {
+      "skill_id": "slack_send_message",
+      "name": "Slack Message Sender",
+      "version": "1.0.0",
+      "description": "Send messages to Slack channels via webhook or API with formatting support",
+      "author": "jadegate-community",
+      "tags": [
+        "slack",
+        "message",
+        "chat",
+        "notification"
+      ],
+      "category": "jadegate.community",
+      "network_required": true,
+      "sandbox_level": "strict",
+      "node_count": 5,
+      "mcp_compatible": true,
+      "hash": "sha256:6ec7c5fa1146f730",
+      "source_path": "converted_skills/slack_send_message.json"
+    },
+    {
+      "skill_id": "sqlite_db_query",
+      "name": "SQLite Database Query",
+      "version": "1.0.0",
+      "description": "Execute read-only SQL queries on a local SQLite database file",
+      "author": "jadegate-community",
+      "tags": [
+        "database",
+        "sqlite",
+        "sql",
+        "query"
+      ],
+      "category": "jadegate.community",
+      "network_required": false,
+      "sandbox_level": "standard",
+      "node_count": 7,
+      "mcp_compatible": true,
+      "hash": "sha256:533de8e4590fd51e",
+      "source_path": "converted_skills/sqlite_db_query.json"
+    },
+    {
+      "skill_id": "ssh_remote_exec",
+      "name": "SSH Remote Command",
+      "version": "1.0.0",
+      "description": "Execute a command on a remote server via SSH proxy API",
+      "author": "jadegate-community",
+      "tags": [
+        "ssh",
+        "remote",
+        "server",
+        "command"
+      ],
+      "category": "jadegate.community",
+      "network_required": false,
+      "sandbox_level": "standard",
+      "node_count": 7,
+      "mcp_compatible": true,
+      "hash": "sha256:0ee211ddf6903a14",
+      "source_path": "converted_skills/ssh_remote_exec.json"
+    },
+    {
+      "skill_id": "ssl_cert_check",
+      "name": "SSL Certificate Check",
+      "version": "1.0.0",
+      "description": "Check SSL certificate validity and expiration for a domain",
+      "author": "jadegate-community",
+      "tags": [
+        "ssl",
+        "certificate",
+        "security",
+        "https"
+      ],
+      "category": "jadegate.community",
+      "network_required": true,
+      "sandbox_level": "strict",
+      "node_count": 5,
+      "mcp_compatible": true,
+      "hash": "sha256:6ac6fbc217e5f01e",
+      "source_path": "converted_skills/ssl_cert_check.json"
+    },
+    {
+      "skill_id": "telegram_send_msg",
+      "name": "Telegram Send Message",
+      "version": "1.0.0",
+      "description": "Send a message via Telegram Bot API",
+      "author": "jadegate-community",
+      "tags": [
+        "telegram",
+        "message",
+        "bot",
+        "chat"
+      ],
+      "category": "jadegate.community",
+      "network_required": true,
+      "sandbox_level": "strict",
+      "node_count": 6,
+      "mcp_compatible": true,
+      "hash": "sha256:f0143663b7d71046",
+      "source_path": "converted_skills/telegram_send_msg.json"
+    },
+    {
+      "skill_id": "text_sentiment",
+      "name": "Text Sentiment Analysis",
+      "version": "1.0.0",
+      "description": "Analyze sentiment of text using LLM classification (positive/negative/neutral)",
+      "author": "jadegate-community",
+      "tags": [
+        "sentiment",
+        "nlp",
+        "analysis",
+        "text"
+      ],
+      "category": "jadegate.community",
+      "network_required": false,
+      "sandbox_level": "strict",
+      "node_count": 4,
+      "mcp_compatible": true,
+      "hash": "sha256:87c67eb0aa759c51",
+      "source_path": "converted_skills/text_sentiment.json"
+    },
+    {
+      "skill_id": "text_translation",
+      "name": "Multi-Language Translation",
+      "version": "1.0.0",
+      "description": "Translate text between languages using free translation APIs with fallback",
+      "author": "jadegate-community",
+      "tags": [
+        "translate",
+        "language",
+        "i18n",
+        "multilingual"
+      ],
+      "category": "jadegate.community",
+      "network_required": true,
+      "sandbox_level": "strict",
+      "node_count": 10,
+      "mcp_compatible": true,
+      "hash": "sha256:a25a12b7938c1f8e",
+      "source_path": "converted_skills/text_translation.json"
+    },
+    {
+      "skill_id": "timezone_query",
+      "name": "Time Zone Query",
+      "version": "1.0.0",
+      "description": "Get current time in any timezone and convert between timezones",
+      "author": "jadegate-community",
+      "tags": [
+        "time",
+        "timezone",
+        "clock",
+        "convert"
+      ],
+      "category": "jadegate.community",
+      "network_required": false,
+      "sandbox_level": "strict",
+      "node_count": 4,
+      "mcp_compatible": true,
+      "hash": "sha256:3d8d69c1fccd0a9b",
+      "source_path": "converted_skills/timezone_query.json"
+    },
+    {
+      "skill_id": "web_search_query",
+      "name": "Web Search Query",
+      "version": "1.0.0",
+      "description": "Search the web using DuckDuckGo HTML with result extraction and fallback",
+      "author": "jadegate-community",
+      "tags": [
+        "search",
+        "web",
+        "duckduckgo",
+        "query"
+      ],
+      "category": "jadegate.community",
+      "network_required": true,
+      "sandbox_level": "strict",
+      "node_count": 6,
+      "mcp_compatible": true,
+      "hash": "sha256:806c45b0c4c0f7a3",
+      "source_path": "converted_skills/web_search_query.json"
+    },
+    {
+      "skill_id": "webpage_content_extract",
+      "name": "Webpage Content Extractor",
+      "version": "1.0.0",
+      "description": "Fetch a webpage and extract main content, removing navigation and ads",
+      "author": "jadegate-community",
+      "tags": [
+        "webpage",
+        "extract",
+        "content",
+        "readability"
+      ],
+      "category": "jadegate.community",
+      "network_required": true,
+      "sandbox_level": "strict",
+      "node_count": 7,
+      "mcp_compatible": true,
+      "hash": "sha256:677d2414bf03d512",
+      "source_path": "converted_skills/webpage_content_extract.json"
+    },
+    {
+      "skill_id": "webpage_screenshot",
+      "name": "Webpage Screenshot",
+      "version": "1.0.0",
+      "description": "Take a screenshot of a webpage using headless browser navigation",
+      "author": "jadegate-community",
+      "tags": [
+        "screenshot",
+        "webpage",
+        "capture",
+        "browser"
+      ],
+      "category": "jadegate.community",
+      "network_required": true,
+      "sandbox_level": "standard",
+      "node_count": 6,
+      "mcp_compatible": true,
+      "hash": "sha256:c6d6c161d25daaa0",
+      "source_path": "converted_skills/webpage_screenshot.json"
+    },
+    {
+      "skill_id": "whois_lookup",
+      "name": "WHOIS Domain Lookup",
+      "version": "1.0.0",
+      "description": "Query WHOIS information for a domain via public API",
+      "author": "jadegate-community",
+      "tags": [
+        "whois",
+        "domain",
+        "lookup",
+        "registrar"
+      ],
+      "category": "jadegate.community",
+      "network_required": true,
+      "sandbox_level": "strict",
+      "node_count": 6,
+      "mcp_compatible": true,
+      "hash": "sha256:7abcf12be0956bbb",
+      "source_path": "converted_skills/whois_lookup.json"
+    }
+  ]
+}

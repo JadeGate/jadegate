@@ -1,0 +1,194 @@
+{
+  "jade_version": "1.0.0",
+  "skill_id": "image_resize_convert",
+  "metadata": {
+    "name": "Image Resize and Convert",
+    "version": "1.0.0",
+    "description": "Resize images and convert between formats (PNG, JPG, WebP)",
+    "author": "jadegate-community",
+    "tags": [
+      "image",
+      "resize",
+      "convert",
+      "format"
+    ],
+    "license": "MIT",
+    "created_at": "2026-02-21T03:00:00Z",
+    "updated_at": "2026-02-21T03:00:00Z"
+  },
+  "trigger": {
+    "type": "task_intent",
+    "conditions": [
+      {
+        "field": "task.type",
+        "operator": "in",
+        "value": [
+          "resize_image",
+          "convert_image"
+        ]
+      }
+    ]
+  },
+  "input_schema": {
+    "required_params": [
+      {
+        "name": "input_path",
+        "type": "string",
+        "description": "Input image path"
+      },
+      {
+        "name": "output_path",
+        "type": "string",
+        "description": "Output image path"
+      }
+    ],
+    "optional_params": [
+      {
+        "name": "width",
+        "type": "number",
+        "description": "Target width"
+      },
+      {
+        "name": "height",
+        "type": "number",
+        "description": "Target height"
+      },
+      {
+        "name": "format",
+        "type": "string",
+        "description": "Output format: png, jpg, webp"
+      }
+    ]
+  },
+  "output_schema": {
+    "fields": [
+      {
+        "name": "success",
+        "type": "boolean",
+        "description": "Operation success"
+      },
+      {
+        "name": "output_path",
+        "type": "string",
+        "description": "Output file path"
+      },
+      {
+        "name": "size_bytes",
+        "type": "number",
+        "description": "Output file size"
+      }
+    ]
+  },
+  "execution_dag": {
+    "nodes": [
+      {
+        "id": "check_input",
+        "action": "condition_check",
+        "params": {
+          "field": "{{input.input_path}}",
+          "operator": "exists",
+          "value": true
+        }
+      },
+      {
+        "id": "resize",
+        "action": "image_resize",
+        "params": {
+          "input_path": "{{input.input_path}}",
+          "output_path": "{{input.output_path}}",
+          "width": "{{input.width}}",
+          "height": "{{input.height}}"
+        }
+      },
+      {
+        "id": "convert",
+        "action": "image_convert",
+        "params": {
+          "input_path": "{{input.output_path}}",
+          "output_path": "{{input.output_path}}",
+          "format": "{{input.format | default:'png'}}"
+        }
+      },
+      {
+        "id": "verify",
+        "action": "condition_check",
+        "params": {
+          "field": "{{convert.output.success}}",
+          "operator": "equals",
+          "value": true
+        }
+      },
+      {
+        "id": "ret_ok",
+        "action": "return_result",
+        "params": {
+          "success": true,
+          "output_path": "{{convert.output.output_path}}",
+          "size_bytes": "{{convert.output.size}}"
+        }
+      },
+      {
+        "id": "ret_fail",
+        "action": "return_error",
+        "params": {
+          "error_code": "IMAGE_FAILED",
+          "message": "Image processing failed"
+        }
+      }
+    ],
+    "edges": [
+      {
+        "from": "check_input",
+        "to": "resize",
+        "condition": "success"
+      },
+      {
+        "from": "check_input",
+        "to": "ret_fail",
+        "condition": "failure"
+      },
+      {
+        "from": "resize",
+        "to": "convert"
+      },
+      {
+        "from": "convert",
+        "to": "verify"
+      },
+      {
+        "from": "verify",
+        "to": "ret_ok",
+        "condition": "success"
+      },
+      {
+        "from": "verify",
+        "to": "ret_fail",
+        "condition": "failure"
+      }
+    ],
+    "entry_node": "check_input",
+    "exit_node": [
+      "ret_ok",
+      "ret_fail"
+    ]
+  },
+  "security": {
+    "network_whitelist": [],
+    "file_permissions": {
+      "read": [
+        "{{input.input_path}}"
+      ],
+      "write": [
+        "{{input.output_path}}"
+      ]
+    },
+    "max_execution_time_ms": 30000,
+    "max_retries": 2,
+    "sandbox_level": "strict",
+    "dangerous_patterns": []
+  },
+  "mcp_compatible": true,
+  "required_mcp_capabilities": [
+    "image"
+  ]
+}

@@ -1,0 +1,180 @@
+{
+  "jade_version": "1.0.0",
+  "skill_id": "web_anti_crawl_bypass",
+  "metadata": {
+    "name": "Web Anti-Crawl Bypass SOP",
+    "version": "1.0.0",
+    "description": "Standard operating procedure for bypassing common web anti-crawl mechanisms (Cloudflare, rate limiting) using ethical and compliant methods. Rotates headers, respects robots.txt, and uses exponential backoff.",
+    "author": "jade-core-team",
+    "tags": ["web", "anti-crawl", "scraping", "cloudflare", "http"],
+    "license": "MIT",
+    "created_at": "2026-02-21T00:00:00Z",
+    "updated_at": "2026-02-21T00:00:00Z"
+  },
+  "trigger": {
+    "type": "error_code",
+    "conditions": [
+      {
+        "field": "error.code",
+        "operator": "in",
+        "value": ["403", "429", "503"]
+      },
+      {
+        "field": "error.context",
+        "operator": "contains",
+        "value": "http_request"
+      }
+    ]
+  },
+  "input_schema": {
+    "required_params": [
+      {
+        "name": "target_url",
+        "type": "string",
+        "description": "The URL to access that is being blocked by anti-crawl"
+      }
+    ],
+    "optional_params": [
+      {
+        "name": "max_retries",
+        "type": "number",
+        "description": "Maximum number of retry attempts",
+        "default": 5
+      },
+      {
+        "name": "initial_delay_ms",
+        "type": "number",
+        "description": "Initial delay before first retry in milliseconds",
+        "default": 1000
+      }
+    ]
+  },
+  "output_schema": {
+    "fields": [
+      { "name": "status_code", "type": "number", "description": "Final HTTP status code" },
+      { "name": "body", "type": "string", "description": "Response body content" },
+      { "name": "retries_used", "type": "number", "description": "Number of retries performed" }
+    ]
+  },
+  "execution_dag": {
+    "nodes": [
+      {
+        "id": "check_robots",
+        "action": "http_get",
+        "params": {
+          "url": "{{input.target_url | domain}}/robots.txt",
+          "timeout_ms": 5000
+        }
+      },
+      {
+        "id": "validate_robots",
+        "action": "condition_check",
+        "params": {
+          "field": "{{check_robots.output.body}}",
+          "operator": "not_contains",
+          "value": "Disallow: {{input.target_url | path}}"
+        }
+      },
+      {
+        "id": "build_headers",
+        "action": "text_template",
+        "params": {
+          "template": "{\"User-Agent\": \"Mozilla/5.0 (compatible; JadeBot/1.0; +https://github.com/project-jade)\", \"Accept\": \"text/html,application/xhtml+xml\", \"Accept-Language\": \"en-US,en;q=0.9\", \"Accept-Encoding\": \"gzip, deflate\", \"Connection\": \"keep-alive\"}",
+          "variables": {}
+        }
+      },
+      {
+        "id": "initial_request",
+        "action": "http_get",
+        "params": {
+          "url": "{{input.target_url}}",
+          "headers": "{{build_headers.output.result}}",
+          "timeout_ms": 10000
+        }
+      },
+      {
+        "id": "check_success",
+        "action": "condition_check",
+        "params": {
+          "field": "{{initial_request.output.status_code}}",
+          "operator": "equals",
+          "value": 200
+        }
+      },
+      {
+        "id": "wait_backoff",
+        "action": "wait",
+        "params": {
+          "duration_ms": "{{input.initial_delay_ms | default:1000}}"
+        }
+      },
+      {
+        "id": "retry_request",
+        "action": "http_get",
+        "params": {
+          "url": "{{input.target_url}}",
+          "headers": "{{build_headers.output.result}}",
+          "timeout_ms": 15000
+        }
+      },
+      {
+        "id": "return_success",
+        "action": "return_result",
+        "params": {
+          "status_code": "{{initial_request.output.status_code}}",
+          "body": "{{initial_request.output.body}}",
+          "retries_used": 0
+        }
+      },
+      {
+        "id": "return_retry_result",
+        "action": "return_result",
+        "params": {
+          "status_code": "{{retry_request.output.status_code}}",
+          "body": "{{retry_request.output.body}}",
+          "retries_used": "{{_retry_count}}"
+        }
+      },
+      {
+        "id": "abort_blocked",
+        "action": "return_error",
+        "params": {
+          "error_code": "ROBOTS_BLOCKED",
+          "message": "Target URL is disallowed by robots.txt. JADE respects robots.txt."
+        }
+      }
+    ],
+    "edges": [
+      { "from": "check_robots", "to": "validate_robots" },
+      { "from": "validate_robots", "to": "build_headers", "condition": "success" },
+      { "from": "validate_robots", "to": "abort_blocked", "condition": "failure" },
+      { "from": "build_headers", "to": "initial_request" },
+      { "from": "initial_request", "to": "check_success" },
+      { "from": "check_success", "to": "return_success", "condition": "success" },
+      { "from": "check_success", "to": "wait_backoff", "condition": "failure" },
+      { "from": "wait_backoff", "to": "retry_request" },
+      { "from": "retry_request", "to": "return_retry_result" }
+    ],
+    "entry_node": "check_robots",
+    "exit_node": ["return_success", "return_retry_result", "abort_blocked"],
+    "max_retries": {
+      "node": "retry_request",
+      "max_count": "{{input.max_retries | default:5}}",
+      "backoff_strategy": "exponential",
+      "backoff_base_ms": "{{input.initial_delay_ms | default:1000}}"
+    }
+  },
+  "security": {
+    "network_whitelist": ["*"],
+    "file_permissions": {
+      "read": [],
+      "write": []
+    },
+    "max_execution_time_ms": 60000,
+    "max_retries": 5,
+    "sandbox_level": "strict",
+    "dangerous_patterns": []
+  },
+  "mcp_compatible": true,
+  "required_mcp_capabilities": ["http"]
+}

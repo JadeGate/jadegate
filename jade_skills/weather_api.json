@@ -1,0 +1,179 @@
+{
+  "jade_version": "1.0.0",
+  "skill_id": "weather_api_query",
+  "metadata": {
+    "name": "Weather API Query SOP",
+    "version": "1.0.0",
+    "description": "Query current weather data from free public APIs (wttr.in, Open-Meteo). Zero API key required. Deterministic, error-free weather retrieval with automatic fallback between providers.",
+    "author": "jade-core-team",
+    "tags": ["weather", "api", "free", "public", "query"],
+    "license": "MIT",
+    "created_at": "2026-02-21T00:00:00Z",
+    "updated_at": "2026-02-21T00:00:00Z"
+  },
+  "trigger": {
+    "type": "task_intent",
+    "conditions": [
+      {
+        "field": "task.type",
+        "operator": "in",
+        "value": ["get_weather", "query_weather", "check_weather"]
+      }
+    ]
+  },
+  "input_schema": {
+    "required_params": [
+      {
+        "name": "location",
+        "type": "string",
+        "description": "City name or coordinates (lat,lon)"
+      }
+    ],
+    "optional_params": [
+      {
+        "name": "units",
+        "type": "string",
+        "description": "Temperature units: metric or imperial",
+        "default": "metric"
+      },
+      {
+        "name": "language",
+        "type": "string",
+        "description": "Response language code, e.g. en, zh, ja",
+        "default": "en"
+      }
+    ]
+  },
+  "output_schema": {
+    "fields": [
+      { "name": "temperature", "type": "number", "description": "Current temperature" },
+      { "name": "unit", "type": "string", "description": "Temperature unit (C or F)" },
+      { "name": "condition", "type": "string", "description": "Weather condition description" },
+      { "name": "humidity", "type": "number", "description": "Humidity percentage" },
+      { "name": "wind_speed", "type": "number", "description": "Wind speed in km/h or mph" },
+      { "name": "provider", "type": "string", "description": "Which API provider returned the data" }
+    ]
+  },
+  "execution_dag": {
+    "nodes": [
+      {
+        "id": "try_wttr",
+        "action": "http_get",
+        "params": {
+          "url": "https://wttr.in/{{input.location}}?format=j1&lang={{input.language | default:'en'}}",
+          "headers": { "User-Agent": "JadeBot/1.0" },
+          "timeout_ms": 8000
+        }
+      },
+      {
+        "id": "check_wttr_ok",
+        "action": "condition_check",
+        "params": {
+          "field": "{{try_wttr.output.status_code}}",
+          "operator": "equals",
+          "value": 200
+        }
+      },
+      {
+        "id": "parse_wttr",
+        "action": "json_parse",
+        "params": {
+          "input": "{{try_wttr.output.body}}"
+        }
+      },
+      {
+        "id": "extract_wttr_data",
+        "action": "json_extract",
+        "params": {
+          "data": "{{parse_wttr.output.data}}",
+          "path": "$.current_condition[0]"
+        }
+      },
+      {
+        "id": "return_wttr",
+        "action": "return_result",
+        "params": {
+          "temperature": "{{extract_wttr_data.output.value.temp_C}}",
+          "unit": "C",
+          "condition": "{{extract_wttr_data.output.value.weatherDesc[0].value}}",
+          "humidity": "{{extract_wttr_data.output.value.humidity}}",
+          "wind_speed": "{{extract_wttr_data.output.value.windspeedKmph}}",
+          "provider": "wttr.in"
+        }
+      },
+      {
+        "id": "try_openmeteo",
+        "action": "http_get",
+        "params": {
+          "url": "https://api.open-meteo.com/v1/forecast?latitude={{input.location | lat}}&longitude={{input.location | lon}}&current_weather=true",
+          "timeout_ms": 8000
+        }
+      },
+      {
+        "id": "check_openmeteo_ok",
+        "action": "condition_check",
+        "params": {
+          "field": "{{try_openmeteo.output.status_code}}",
+          "operator": "equals",
+          "value": 200
+        }
+      },
+      {
+        "id": "parse_openmeteo",
+        "action": "json_parse",
+        "params": {
+          "input": "{{try_openmeteo.output.body}}"
+        }
+      },
+      {
+        "id": "return_openmeteo",
+        "action": "return_result",
+        "params": {
+          "temperature": "{{parse_openmeteo.output.data.current_weather.temperature}}",
+          "unit": "C",
+          "condition": "WMO code {{parse_openmeteo.output.data.current_weather.weathercode}}",
+          "humidity": -1,
+          "wind_speed": "{{parse_openmeteo.output.data.current_weather.windspeed}}",
+          "provider": "open-meteo.com"
+        }
+      },
+      {
+        "id": "abort_all_failed",
+        "action": "return_error",
+        "params": {
+          "error_code": "ALL_PROVIDERS_FAILED",
+          "message": "Both wttr.in and Open-Meteo failed to respond. Check network connectivity."
+        }
+      }
+    ],
+    "edges": [
+      { "from": "try_wttr", "to": "check_wttr_ok" },
+      { "from": "check_wttr_ok", "to": "parse_wttr", "condition": "success" },
+      { "from": "check_wttr_ok", "to": "try_openmeteo", "condition": "failure" },
+      { "from": "parse_wttr", "to": "extract_wttr_data" },
+      { "from": "extract_wttr_data", "to": "return_wttr" },
+      { "from": "try_openmeteo", "to": "check_openmeteo_ok" },
+      { "from": "check_openmeteo_ok", "to": "parse_openmeteo", "condition": "success" },
+      { "from": "check_openmeteo_ok", "to": "abort_all_failed", "condition": "failure" },
+      { "from": "parse_openmeteo", "to": "return_openmeteo" }
+    ],
+    "entry_node": "try_wttr",
+    "exit_node": ["return_wttr", "return_openmeteo", "abort_all_failed"]
+  },
+  "security": {
+    "network_whitelist": [
+      "wttr.in",
+      "api.open-meteo.com"
+    ],
+    "file_permissions": {
+      "read": [],
+      "write": []
+    },
+    "max_execution_time_ms": 20000,
+    "max_retries": 1,
+    "sandbox_level": "strict",
+    "dangerous_patterns": []
+  },
+  "mcp_compatible": true,
+  "required_mcp_capabilities": ["http"]
+}

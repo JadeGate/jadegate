@@ -1,0 +1,198 @@
+{
+  "jade_version": "1.0.0",
+  "skill_id": "file_batch_rename",
+  "metadata": {
+    "name": "File Batch Rename SOP",
+    "version": "1.0.0",
+    "description": "Safely batch rename files in a directory using regex patterns. Includes dry-run preview, collision detection, and automatic rollback on failure. Zero network access required.",
+    "author": "jade-core-team",
+    "tags": ["file", "batch", "rename", "regex", "local"],
+    "license": "MIT",
+    "created_at": "2026-02-21T00:00:00Z",
+    "updated_at": "2026-02-21T00:00:00Z"
+  },
+  "trigger": {
+    "type": "task_intent",
+    "conditions": [
+      {
+        "field": "task.type",
+        "operator": "in",
+        "value": ["batch_rename", "rename_files", "file_rename"]
+      }
+    ]
+  },
+  "input_schema": {
+    "required_params": [
+      {
+        "name": "directory",
+        "type": "string",
+        "description": "Target directory containing files to rename"
+      },
+      {
+        "name": "pattern",
+        "type": "string",
+        "description": "Regex pattern to match filenames"
+      },
+      {
+        "name": "replacement",
+        "type": "string",
+        "description": "Replacement string (supports regex groups like $1, $2)"
+      }
+    ],
+    "optional_params": [
+      {
+        "name": "dry_run",
+        "type": "boolean",
+        "description": "If true, only preview changes without executing",
+        "default": true
+      },
+      {
+        "name": "file_filter",
+        "type": "string",
+        "description": "Glob pattern to filter files, e.g. '*.jpg'",
+        "default": "*"
+      },
+      {
+        "name": "recursive",
+        "type": "boolean",
+        "description": "Whether to process subdirectories",
+        "default": false
+      }
+    ]
+  },
+  "output_schema": {
+    "fields": [
+      { "name": "renamed_count", "type": "number", "description": "Number of files renamed" },
+      { "name": "skipped_count", "type": "number", "description": "Number of files skipped (no match)" },
+      { "name": "preview", "type": "array", "description": "Array of {old_name, new_name} pairs" },
+      { "name": "dry_run", "type": "boolean", "description": "Whether this was a dry run" }
+    ]
+  },
+  "execution_dag": {
+    "nodes": [
+      {
+        "id": "list_files",
+        "action": "file_list",
+        "params": {
+          "path": "{{input.directory}}",
+          "pattern": "{{input.file_filter | default:'*'}}"
+        }
+      },
+      {
+        "id": "check_files_exist",
+        "action": "condition_check",
+        "params": {
+          "field": "{{list_files.output.files | length}}",
+          "operator": "greater_than",
+          "value": 0
+        }
+      },
+      {
+        "id": "match_pattern",
+        "action": "regex_match_batch",
+        "params": {
+          "inputs": "{{list_files.output.files}}",
+          "pattern": "{{input.pattern}}",
+          "replacement": "{{input.replacement}}"
+        }
+      },
+      {
+        "id": "detect_collisions",
+        "action": "collection_unique_check",
+        "params": {
+          "items": "{{match_pattern.output.new_names}}",
+          "field": "new_name"
+        }
+      },
+      {
+        "id": "check_no_collisions",
+        "action": "condition_check",
+        "params": {
+          "field": "{{detect_collisions.output.has_duplicates}}",
+          "operator": "equals",
+          "value": false
+        }
+      },
+      {
+        "id": "check_dry_run",
+        "action": "condition_check",
+        "params": {
+          "field": "{{input.dry_run | default:true}}",
+          "operator": "equals",
+          "value": true
+        }
+      },
+      {
+        "id": "execute_renames",
+        "action": "file_move_batch",
+        "params": {
+          "operations": "{{match_pattern.output.rename_pairs}}",
+          "rollback_on_error": true
+        }
+      },
+      {
+        "id": "return_preview",
+        "action": "return_result",
+        "params": {
+          "renamed_count": 0,
+          "skipped_count": "{{match_pattern.output.skipped_count}}",
+          "preview": "{{match_pattern.output.rename_pairs}}",
+          "dry_run": true
+        }
+      },
+      {
+        "id": "return_executed",
+        "action": "return_result",
+        "params": {
+          "renamed_count": "{{execute_renames.output.success_count}}",
+          "skipped_count": "{{match_pattern.output.skipped_count}}",
+          "preview": "{{match_pattern.output.rename_pairs}}",
+          "dry_run": false
+        }
+      },
+      {
+        "id": "abort_no_files",
+        "action": "return_error",
+        "params": {
+          "error_code": "NO_FILES_FOUND",
+          "message": "No files found in the specified directory matching the filter"
+        }
+      },
+      {
+        "id": "abort_collision",
+        "action": "return_error",
+        "params": {
+          "error_code": "NAME_COLLISION",
+          "message": "Rename operation would cause filename collisions. Aborting for safety."
+        }
+      }
+    ],
+    "edges": [
+      { "from": "list_files", "to": "check_files_exist" },
+      { "from": "check_files_exist", "to": "match_pattern", "condition": "success" },
+      { "from": "check_files_exist", "to": "abort_no_files", "condition": "failure" },
+      { "from": "match_pattern", "to": "detect_collisions" },
+      { "from": "detect_collisions", "to": "check_no_collisions" },
+      { "from": "check_no_collisions", "to": "check_dry_run", "condition": "success" },
+      { "from": "check_no_collisions", "to": "abort_collision", "condition": "failure" },
+      { "from": "check_dry_run", "to": "return_preview", "condition": "success" },
+      { "from": "check_dry_run", "to": "execute_renames", "condition": "failure" },
+      { "from": "execute_renames", "to": "return_executed" }
+    ],
+    "entry_node": "list_files",
+    "exit_node": ["return_preview", "return_executed", "abort_no_files", "abort_collision"]
+  },
+  "security": {
+    "network_whitelist": [],
+    "file_permissions": {
+      "read": ["{{input.directory}}/**"],
+      "write": ["{{input.directory}}/**"]
+    },
+    "max_execution_time_ms": 60000,
+    "max_retries": 0,
+    "sandbox_level": "strict",
+    "dangerous_patterns": []
+  },
+  "mcp_compatible": true,
+  "required_mcp_capabilities": ["filesystem"]
+}

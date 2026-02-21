@@ -1,0 +1,157 @@
+{
+  "jade_version": "1.0.0",
+  "skill_id": "web_search_query",
+  "metadata": {
+    "name": "Web Search Query",
+    "version": "1.0.0",
+    "description": "Search the web using DuckDuckGo HTML with result extraction and fallback",
+    "author": "jadegate-community",
+    "tags": [
+      "search",
+      "web",
+      "duckduckgo",
+      "query"
+    ],
+    "license": "MIT",
+    "created_at": "2026-02-21T03:00:00Z",
+    "updated_at": "2026-02-21T03:00:00Z"
+  },
+  "trigger": {
+    "type": "task_intent",
+    "conditions": [
+      {
+        "field": "task.type",
+        "operator": "in",
+        "value": [
+          "web_search",
+          "search_web"
+        ]
+      }
+    ]
+  },
+  "input_schema": {
+    "required_params": [
+      {
+        "name": "query",
+        "type": "string",
+        "description": "Search query"
+      }
+    ]
+  },
+  "output_schema": {
+    "fields": [
+      {
+        "name": "results",
+        "type": "array",
+        "description": "Search results"
+      },
+      {
+        "name": "provider",
+        "type": "string",
+        "description": "Provider used"
+      }
+    ]
+  },
+  "execution_dag": {
+    "nodes": [
+      {
+        "id": "encode_q",
+        "action": "url_encode",
+        "params": {
+          "input": "{{input.query}}"
+        }
+      },
+      {
+        "id": "fetch_ddg",
+        "action": "http_get",
+        "params": {
+          "url": "https://html.duckduckgo.com/html/?q={{encode_q.output.result}}",
+          "headers": {
+            "User-Agent": "JadeBot/1.0"
+          },
+          "timeout_ms": 10000
+        }
+      },
+      {
+        "id": "check_ddg",
+        "action": "condition_check",
+        "params": {
+          "field": "{{fetch_ddg.output.status_code}}",
+          "operator": "equals",
+          "value": 200
+        }
+      },
+      {
+        "id": "parse_ddg",
+        "action": "text_extract",
+        "params": {
+          "input": "{{fetch_ddg.output.body}}",
+          "pattern": "result",
+          "max_items": 5
+        }
+      },
+      {
+        "id": "ret_ok",
+        "action": "return_result",
+        "params": {
+          "results": "{{parse_ddg.output.items}}",
+          "provider": "duckduckgo"
+        }
+      },
+      {
+        "id": "ret_fail",
+        "action": "return_error",
+        "params": {
+          "error_code": "SEARCH_FAILED",
+          "message": "DuckDuckGo returned non-200"
+        }
+      }
+    ],
+    "edges": [
+      {
+        "from": "encode_q",
+        "to": "fetch_ddg"
+      },
+      {
+        "from": "fetch_ddg",
+        "to": "check_ddg"
+      },
+      {
+        "from": "check_ddg",
+        "to": "parse_ddg",
+        "condition": "success"
+      },
+      {
+        "from": "check_ddg",
+        "to": "ret_fail",
+        "condition": "failure"
+      },
+      {
+        "from": "parse_ddg",
+        "to": "ret_ok"
+      }
+    ],
+    "entry_node": "encode_q",
+    "exit_node": [
+      "ret_ok",
+      "ret_fail"
+    ]
+  },
+  "security": {
+    "network_whitelist": [
+      "html.duckduckgo.com"
+    ],
+    "file_permissions": {
+      "read": [],
+      "write": []
+    },
+    "max_execution_time_ms": 30000,
+    "max_retries": 2,
+    "sandbox_level": "strict",
+    "dangerous_patterns": []
+  },
+  "mcp_compatible": true,
+  "required_mcp_capabilities": [
+    "http"
+  ]
+}

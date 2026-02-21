@@ -1,0 +1,175 @@
+{
+  "jade_version": "1.0.0",
+  "skill_id": "log_error_analyzer",
+  "metadata": {
+    "name": "Log Error Analyzer",
+    "version": "1.0.0",
+    "description": "Analyze log files to extract errors, warnings and generate summary",
+    "author": "jadegate-community",
+    "tags": [
+      "log",
+      "error",
+      "analysis",
+      "debug"
+    ],
+    "license": "MIT",
+    "created_at": "2026-02-21T03:00:00Z",
+    "updated_at": "2026-02-21T03:00:00Z"
+  },
+  "trigger": {
+    "type": "task_intent",
+    "conditions": [
+      {
+        "field": "task.type",
+        "operator": "in",
+        "value": [
+          "analyze_logs",
+          "log_analysis"
+        ]
+      }
+    ]
+  },
+  "input_schema": {
+    "required_params": [
+      {
+        "name": "log_path",
+        "type": "string",
+        "description": "Path to log file"
+      }
+    ]
+  },
+  "output_schema": {
+    "fields": [
+      {
+        "name": "errors",
+        "type": "array",
+        "description": "Extracted error lines"
+      },
+      {
+        "name": "warnings",
+        "type": "array",
+        "description": "Extracted warning lines"
+      },
+      {
+        "name": "summary",
+        "type": "string",
+        "description": "LLM summary of issues"
+      }
+    ]
+  },
+  "execution_dag": {
+    "nodes": [
+      {
+        "id": "read_log",
+        "action": "file_read",
+        "params": {
+          "path": "{{input.log_path}}",
+          "encoding": "utf-8"
+        }
+      },
+      {
+        "id": "check",
+        "action": "condition_check",
+        "params": {
+          "field": "{{read_log.output.size_bytes}}",
+          "operator": "greater_than",
+          "value": 0
+        }
+      },
+      {
+        "id": "find_errors",
+        "action": "regex_match_batch",
+        "params": {
+          "input": "{{read_log.output.content}}",
+          "pattern": "(?i)(error|exception|fatal|traceback).*",
+          "max_matches": 50
+        }
+      },
+      {
+        "id": "find_warns",
+        "action": "regex_match_batch",
+        "params": {
+          "input": "{{read_log.output.content}}",
+          "pattern": "(?i)(warn|warning).*",
+          "max_matches": 50
+        }
+      },
+      {
+        "id": "summarize",
+        "action": "llm_summarize",
+        "params": {
+          "input": "{{find_errors.output.matches}}",
+          "max_length": 300
+        }
+      },
+      {
+        "id": "ret_ok",
+        "action": "return_result",
+        "params": {
+          "errors": "{{find_errors.output.matches}}",
+          "warnings": "{{find_warns.output.matches}}",
+          "summary": "{{summarize.output.summary}}"
+        }
+      },
+      {
+        "id": "ret_fail",
+        "action": "return_error",
+        "params": {
+          "error_code": "LOG_READ_FAILED",
+          "message": "Cannot read log file"
+        }
+      }
+    ],
+    "edges": [
+      {
+        "from": "read_log",
+        "to": "check"
+      },
+      {
+        "from": "check",
+        "to": "find_errors",
+        "condition": "success"
+      },
+      {
+        "from": "check",
+        "to": "ret_fail",
+        "condition": "failure"
+      },
+      {
+        "from": "find_errors",
+        "to": "find_warns"
+      },
+      {
+        "from": "find_warns",
+        "to": "summarize"
+      },
+      {
+        "from": "summarize",
+        "to": "ret_ok"
+      }
+    ],
+    "entry_node": "read_log",
+    "exit_node": [
+      "ret_ok",
+      "ret_fail"
+    ]
+  },
+  "security": {
+    "network_whitelist": [],
+    "file_permissions": {
+      "read": [
+        "{{input.log_path}}"
+      ],
+      "write": []
+    },
+    "max_execution_time_ms": 30000,
+    "max_retries": 2,
+    "sandbox_level": "strict",
+    "dangerous_patterns": []
+  },
+  "mcp_compatible": true,
+  "required_mcp_capabilities": [
+    "file",
+    "llm"
+  ]
+}

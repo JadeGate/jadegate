@@ -1,0 +1,1300 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "JADE Allowed Atomic Actions v1",
+  "description": "The complete list of atomic actions permitted in JADE skills. Any action not on this list is ILLEGAL and will be rejected by the validator. This is the 'periodic table' of agent operations.",
+  "version": "1.0.0",
+  "categories": {
+    "network": {
+      "description": "Network operations - all subject to network_whitelist enforcement",
+      "actions": {
+        "http_get": {
+          "description": "Perform an HTTP GET request to a whitelisted URL",
+          "params": {
+            "url": {
+              "type": "string",
+              "required": true,
+              "description": "Target URL, must match network_whitelist"
+            },
+            "headers": {
+              "type": "object",
+              "required": false,
+              "description": "HTTP headers as key-value pairs"
+            },
+            "timeout_ms": {
+              "type": "number",
+              "required": false,
+              "default": 10000,
+              "description": "Request timeout in milliseconds"
+            }
+          },
+          "returns": {
+            "status_code": "number",
+            "body": "string",
+            "headers": "object"
+          },
+          "risk_level": "medium"
+        },
+        "http_post": {
+          "description": "Perform an HTTP POST request to a whitelisted URL",
+          "params": {
+            "url": {
+              "type": "string",
+              "required": true
+            },
+            "headers": {
+              "type": "object",
+              "required": false
+            },
+            "body": {
+              "type": "object",
+              "required": false
+            },
+            "timeout_ms": {
+              "type": "number",
+              "required": false,
+              "default": 10000
+            }
+          },
+          "returns": {
+            "status_code": "number",
+            "body": "string",
+            "headers": "object"
+          },
+          "risk_level": "medium"
+        },
+        "dns_resolve": {
+          "description": "Resolve a domain name to IP address",
+          "params": {
+            "domain": {
+              "type": "string",
+              "required": true
+            }
+          },
+          "returns": {
+            "ip_addresses": "array"
+          },
+          "risk_level": "low"
+        }
+      }
+    },
+    "file": {
+      "description": "File system operations - all subject to file_permissions enforcement",
+      "actions": {
+        "file_read": {
+          "description": "Read content from a file within allowed paths",
+          "params": {
+            "path": {
+              "type": "string",
+              "required": true,
+              "description": "File path, must match file_permissions read paths"
+            },
+            "encoding": {
+              "type": "string",
+              "required": false,
+              "default": "utf-8"
+            }
+          },
+          "returns": {
+            "content": "string",
+            "size_bytes": "number"
+          },
+          "risk_level": "low"
+        },
+        "file_write": {
+          "description": "Write content to a file within allowed paths",
+          "params": {
+            "path": {
+              "type": "string",
+              "required": true,
+              "description": "File path, must match file_permissions write paths"
+            },
+            "content": {
+              "type": "string",
+              "required": true
+            },
+            "encoding": {
+              "type": "string",
+              "required": false,
+              "default": "utf-8"
+            },
+            "mode": {
+              "type": "string",
+              "required": false,
+              "enum": [
+                "overwrite",
+                "append"
+              ],
+              "default": "overwrite"
+            }
+          },
+          "returns": {
+            "bytes_written": "number"
+          },
+          "risk_level": "high"
+        },
+        "file_list": {
+          "description": "List files in a directory within allowed paths",
+          "params": {
+            "path": {
+              "type": "string",
+              "required": true
+            },
+            "pattern": {
+              "type": "string",
+              "required": false,
+              "default": "*"
+            }
+          },
+          "returns": {
+            "files": "array"
+          },
+          "risk_level": "low"
+        },
+        "file_delete": {
+          "description": "Delete a file within allowed paths",
+          "params": {
+            "path": {
+              "type": "string",
+              "required": true
+            }
+          },
+          "returns": {
+            "success": "boolean"
+          },
+          "risk_level": "high"
+        },
+        "file_copy": {
+          "description": "Copy a file within allowed paths",
+          "params": {
+            "source": {
+              "type": "string",
+              "required": true
+            },
+            "destination": {
+              "type": "string",
+              "required": true
+            }
+          },
+          "returns": {
+            "success": "boolean"
+          },
+          "risk_level": "medium"
+        },
+        "file_move": {
+          "description": "Move/rename a file within allowed paths",
+          "params": {
+            "source": {
+              "type": "string",
+              "required": true
+            },
+            "destination": {
+              "type": "string",
+              "required": true
+            }
+          },
+          "returns": {
+            "success": "boolean"
+          },
+          "risk_level": "medium"
+        },
+        "file_move_batch": {
+          "description": "Move/rename multiple files in a batch with rollback support",
+          "params": {
+            "operations": {
+              "type": "array",
+              "required": true,
+              "description": "Array of {source, destination} pairs"
+            },
+            "rollback_on_error": {
+              "type": "boolean",
+              "required": false,
+              "default": true
+            }
+          },
+          "returns": {
+            "success_count": "number",
+            "failed_count": "number"
+          },
+          "risk_level": "high"
+        }
+      }
+    },
+    "data": {
+      "description": "Data transformation operations - pure functions, no side effects",
+      "actions": {
+        "json_parse": {
+          "description": "Parse a JSON string into structured data",
+          "params": {
+            "input": {
+              "type": "string",
+              "required": true
+            }
+          },
+          "returns": {
+            "data": "object"
+          },
+          "risk_level": "none"
+        },
+        "json_extract": {
+          "description": "Extract a value from structured data using JSONPath",
+          "params": {
+            "data": {
+              "type": "object",
+              "required": true
+            },
+            "path": {
+              "type": "string",
+              "required": true,
+              "description": "JSONPath expression"
+            }
+          },
+          "returns": {
+            "value": "any"
+          },
+          "risk_level": "none"
+        },
+        "regex_match": {
+          "description": "Match a regex pattern against input text",
+          "params": {
+            "input": {
+              "type": "string",
+              "required": true
+            },
+            "pattern": {
+              "type": "string",
+              "required": true
+            },
+            "flags": {
+              "type": "string",
+              "required": false,
+              "default": ""
+            }
+          },
+          "returns": {
+            "matches": "array",
+            "matched": "boolean"
+          },
+          "risk_level": "none"
+        },
+        "text_template": {
+          "description": "Render a template string with variable substitution",
+          "params": {
+            "template": {
+              "type": "string",
+              "required": true
+            },
+            "variables": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "result": "string"
+          },
+          "risk_level": "none"
+        },
+        "hash_compute": {
+          "description": "Compute a cryptographic hash of input data",
+          "params": {
+            "input": {
+              "type": "string",
+              "required": true
+            },
+            "algorithm": {
+              "type": "string",
+              "required": false,
+              "enum": [
+                "sha256",
+                "sha512",
+                "blake2b"
+              ],
+              "default": "sha256"
+            }
+          },
+          "returns": {
+            "hash": "string"
+          },
+          "risk_level": "none"
+        },
+        "base64_encode": {
+          "description": "Encode data to base64",
+          "params": {
+            "input": {
+              "type": "string",
+              "required": true
+            }
+          },
+          "returns": {
+            "result": "string"
+          },
+          "risk_level": "none"
+        },
+        "base64_decode": {
+          "description": "Decode base64 data",
+          "params": {
+            "input": {
+              "type": "string",
+              "required": true
+            }
+          },
+          "returns": {
+            "result": "string"
+          },
+          "risk_level": "none"
+        },
+        "text_sanitize": {
+          "description": "Sanitize text by applying security rules (strip HTML, mask sensitive data)",
+          "params": {
+            "input": {
+              "type": "string",
+              "required": true
+            },
+            "rules": {
+              "type": "array",
+              "required": true,
+              "description": "List of sanitization rules to apply"
+            }
+          },
+          "returns": {
+            "result": "string",
+            "sanitized_fields": "array"
+          },
+          "risk_level": "none"
+        },
+        "data_transform": {
+          "description": "Transform data from one format to another",
+          "params": {
+            "input_data": {
+              "required": true,
+              "description": "Input data to transform"
+            },
+            "format": {
+              "type": "string",
+              "required": true,
+              "description": "Target format (json, csv, markdown, email_mime)"
+            }
+          },
+          "returns": {
+            "result": "any"
+          },
+          "risk_level": "none"
+        },
+        "regex_match_batch": {
+          "description": "Apply regex match and replacement to a batch of strings",
+          "params": {
+            "inputs": {
+              "type": "array",
+              "required": true
+            },
+            "pattern": {
+              "type": "string",
+              "required": true
+            },
+            "replacement": {
+              "type": "string",
+              "required": true
+            }
+          },
+          "returns": {
+            "new_names": "array",
+            "rename_pairs": "array",
+            "skipped_count": "number"
+          },
+          "risk_level": "none"
+        },
+        "collection_unique_check": {
+          "description": "Check if all items in a collection are unique by a given field",
+          "params": {
+            "items": {
+              "type": "array",
+              "required": true
+            },
+            "field": {
+              "type": "string",
+              "required": true
+            }
+          },
+          "returns": {
+            "has_duplicates": "boolean",
+            "duplicates": "array"
+          },
+          "risk_level": "none"
+        }
+      }
+    },
+    "browser": {
+      "description": "Browser automation operations - for web interaction tasks",
+      "actions": {
+        "page_navigate": {
+          "description": "Navigate browser to a whitelisted URL",
+          "params": {
+            "url": {
+              "type": "string",
+              "required": true
+            },
+            "wait_for": {
+              "type": "string",
+              "required": false,
+              "enum": [
+                "load",
+                "domcontentloaded",
+                "networkidle"
+              ],
+              "default": "load"
+            }
+          },
+          "returns": {
+            "status_code": "number",
+            "title": "string"
+          },
+          "risk_level": "medium"
+        },
+        "page_click": {
+          "description": "Click an element on the page by CSS selector",
+          "params": {
+            "selector": {
+              "type": "string",
+              "required": true
+            },
+            "wait_ms": {
+              "type": "number",
+              "required": false,
+              "default": 1000
+            }
+          },
+          "returns": {
+            "success": "boolean"
+          },
+          "risk_level": "low"
+        },
+        "page_type": {
+          "description": "Type text into an input element",
+          "params": {
+            "selector": {
+              "type": "string",
+              "required": true
+            },
+            "text": {
+              "type": "string",
+              "required": true
+            },
+            "clear_first": {
+              "type": "boolean",
+              "required": false,
+              "default": true
+            }
+          },
+          "returns": {
+            "success": "boolean"
+          },
+          "risk_level": "low"
+        },
+        "page_extract": {
+          "description": "Extract text or attribute from page elements",
+          "params": {
+            "selector": {
+              "type": "string",
+              "required": true
+            },
+            "attribute": {
+              "type": "string",
+              "required": false,
+              "default": "textContent"
+            }
+          },
+          "returns": {
+            "values": "array"
+          },
+          "risk_level": "low"
+        },
+        "page_wait": {
+          "description": "Wait for an element to appear on the page",
+          "params": {
+            "selector": {
+              "type": "string",
+              "required": true
+            },
+            "timeout_ms": {
+              "type": "number",
+              "required": false,
+              "default": 5000
+            }
+          },
+          "returns": {
+            "found": "boolean"
+          },
+          "risk_level": "none"
+        },
+        "page_screenshot": {
+          "description": "Take a screenshot of the current page",
+          "params": {
+            "full_page": {
+              "type": "boolean",
+              "required": false,
+              "default": false
+            }
+          },
+          "returns": {
+            "image_base64": "string"
+          },
+          "risk_level": "low"
+        }
+      }
+    },
+    "control": {
+      "description": "Control flow operations - for branching and looping within DAG",
+      "actions": {
+        "condition_check": {
+          "description": "Evaluate a condition and route to different branches",
+          "params": {
+            "field": {
+              "type": "string",
+              "required": true
+            },
+            "operator": {
+              "type": "string",
+              "required": true,
+              "enum": [
+                "equals",
+                "not_equals",
+                "contains",
+                "greater_than",
+                "less_than",
+                "exists",
+                "is_empty"
+              ]
+            },
+            "value": {
+              "required": false
+            }
+          },
+          "returns": {
+            "result": "boolean"
+          },
+          "risk_level": "none"
+        },
+        "loop_iterate": {
+          "description": "Iterate over an array, executing a sub-DAG for each item",
+          "params": {
+            "items": {
+              "type": "string",
+              "required": true,
+              "description": "Reference to an array variable"
+            },
+            "max_iterations": {
+              "type": "number",
+              "required": false,
+              "default": 100
+            }
+          },
+          "returns": {
+            "results": "array",
+            "count": "number"
+          },
+          "risk_level": "none"
+        },
+        "delay": {
+          "description": "Wait for a specified duration",
+          "params": {
+            "ms": {
+              "type": "number",
+              "required": true,
+              "description": "Delay in milliseconds, max 30000"
+            }
+          },
+          "returns": {},
+          "risk_level": "none"
+        },
+        "error_handle": {
+          "description": "Catch and handle errors from previous nodes",
+          "params": {
+            "error_types": {
+              "type": "array",
+              "required": false,
+              "description": "List of error types to catch, empty means catch all"
+            },
+            "fallback_value": {
+              "required": false
+            }
+          },
+          "returns": {
+            "error": "object",
+            "handled": "boolean"
+          },
+          "risk_level": "none"
+        },
+        "return_result": {
+          "description": "Return a successful result from the skill execution",
+          "params": {},
+          "returns": {},
+          "risk_level": "none"
+        },
+        "return_error": {
+          "description": "Return an error result from the skill execution",
+          "params": {
+            "error_code": {
+              "type": "string",
+              "required": true
+            },
+            "message": {
+              "type": "string",
+              "required": true
+            }
+          },
+          "returns": {},
+          "risk_level": "none"
+        },
+        "wait": {
+          "description": "Wait for a specified duration in milliseconds",
+          "params": {
+            "duration_ms": {
+              "type": "number",
+              "required": true,
+              "description": "Duration to wait in milliseconds, max 60000"
+            }
+          },
+          "returns": {},
+          "risk_level": "none"
+        }
+      }
+    },
+    "llm": {
+      "description": "LLM interaction operations - for when deterministic logic is insufficient",
+      "actions": {
+        "llm_classify": {
+          "description": "Use LLM to classify input into predefined categories",
+          "params": {
+            "input": {
+              "type": "string",
+              "required": true
+            },
+            "categories": {
+              "type": "array",
+              "required": true,
+              "description": "List of valid category labels"
+            },
+            "context": {
+              "type": "string",
+              "required": false
+            }
+          },
+          "returns": {
+            "category": "string",
+            "confidence": "number"
+          },
+          "risk_level": "low"
+        },
+        "llm_extract": {
+          "description": "Use LLM to extract structured data from unstructured text",
+          "params": {
+            "input": {
+              "type": "string",
+              "required": true
+            },
+            "fields": {
+              "type": "array",
+              "required": true,
+              "description": "List of field names to extract"
+            },
+            "context": {
+              "type": "string",
+              "required": false
+            }
+          },
+          "returns": {
+            "extracted": "object"
+          },
+          "risk_level": "low"
+        },
+        "llm_summarize": {
+          "description": "Use LLM to summarize text",
+          "params": {
+            "input": {
+              "type": "string",
+              "required": true
+            },
+            "max_length": {
+              "type": "number",
+              "required": false,
+              "default": 200
+            }
+          },
+          "returns": {
+            "summary": "string"
+          },
+          "risk_level": "low"
+        }
+      }
+    },
+    "pdf": {
+      "description": "PDF processing operations - for reading and extracting data from PDF files",
+      "actions": {
+        "pdf_extract_pages": {
+          "description": "Extract page content from a PDF file",
+          "params": {
+            "path": {
+              "type": "string",
+              "required": true,
+              "description": "Path to the PDF file"
+            },
+            "pages": {
+              "type": "string",
+              "required": false,
+              "default": "all",
+              "description": "Page range, e.g. '1-3' or 'all'"
+            }
+          },
+          "returns": {
+            "pages": "array",
+            "page_count": "number"
+          },
+          "risk_level": "low"
+        },
+        "pdf_detect_tables": {
+          "description": "Detect and extract tables from PDF page data",
+          "params": {
+            "pages_data": {
+              "type": "array",
+              "required": true
+            },
+            "merge_cells": {
+              "type": "boolean",
+              "required": false,
+              "default": true
+            }
+          },
+          "returns": {
+            "tables": "array",
+            "table_count": "number"
+          },
+          "risk_level": "none"
+        }
+      }
+    },
+    "communication": {
+      "description": "Communication operations - for sending messages and interacting with humans",
+      "actions": {
+        "smtp_send": {
+          "description": "Send an email via SMTP with TLS encryption",
+          "params": {
+            "host": {
+              "type": "string",
+              "required": true
+            },
+            "port": {
+              "type": "number",
+              "required": false,
+              "default": 587
+            },
+            "username": {
+              "type": "string",
+              "required": true
+            },
+            "password": {
+              "type": "string",
+              "required": true
+            },
+            "message": {
+              "type": "object",
+              "required": true
+            },
+            "use_tls": {
+              "type": "boolean",
+              "required": false,
+              "default": true
+            }
+          },
+          "returns": {
+            "message_id": "string",
+            "sent": "boolean"
+          },
+          "risk_level": "high"
+        },
+        "human_confirm": {
+          "description": "Request human confirmation before proceeding with a critical action",
+          "params": {
+            "message": {
+              "type": "string",
+              "required": true,
+              "description": "Confirmation message to display"
+            },
+            "timeout_ms": {
+              "type": "number",
+              "required": false,
+              "default": 60000
+            }
+          },
+          "returns": {
+            "confirmed": "boolean"
+          },
+          "risk_level": "none"
+        }
+      }
+    },
+    "system": {
+      "description": "System-level operations - sandboxed shell execution and process management",
+      "actions": {
+        "shell_exec": {
+          "description": "Execute a sandboxed shell command with timeout. Command must not match dangerous_patterns.",
+          "params": {
+            "command": {
+              "type": "string",
+              "required": true,
+              "description": "Shell command to execute"
+            },
+            "timeout_ms": {
+              "type": "number",
+              "required": false,
+              "default": 30000
+            },
+            "working_dir": {
+              "type": "string",
+              "required": false
+            }
+          },
+          "returns": {
+            "exit_code": "number",
+            "stdout": "string",
+            "stderr": "string"
+          },
+          "risk_level": "high"
+        },
+        "env_read": {
+          "description": "Read a non-sensitive environment variable",
+          "params": {
+            "name": {
+              "type": "string",
+              "required": true
+            }
+          },
+          "returns": {
+            "value": "string"
+          },
+          "risk_level": "low"
+        }
+      }
+    },
+    "text": {
+      "description": "Text processing operations",
+      "actions": {
+        "text_extract": {
+          "description": "Extract structured data from text/HTML using patterns",
+          "params": {
+            "input": {
+              "type": "string",
+              "required": true
+            },
+            "pattern": {
+              "type": "string",
+              "required": true
+            },
+            "max_items": {
+              "type": "number",
+              "required": false,
+              "default": 10
+            }
+          },
+          "returns": {
+            "items": "array",
+            "count": "number"
+          },
+          "risk_level": "low"
+        },
+        "text_split": {
+          "description": "Split text by delimiter",
+          "params": {
+            "input": {
+              "type": "string",
+              "required": true
+            },
+            "delimiter": {
+              "type": "string",
+              "required": true
+            }
+          },
+          "returns": {
+            "parts": "array",
+            "count": "number"
+          },
+          "risk_level": "low"
+        },
+        "text_join": {
+          "description": "Join array of strings with delimiter",
+          "params": {
+            "parts": {
+              "type": "array",
+              "required": true
+            },
+            "delimiter": {
+              "type": "string",
+              "required": false,
+              "default": ""
+            }
+          },
+          "returns": {
+            "result": "string"
+          },
+          "risk_level": "low"
+        },
+        "text_replace": {
+          "description": "Replace occurrences in text",
+          "params": {
+            "input": {
+              "type": "string",
+              "required": true
+            },
+            "find": {
+              "type": "string",
+              "required": true
+            },
+            "replace": {
+              "type": "string",
+              "required": true
+            }
+          },
+          "returns": {
+            "result": "string",
+            "count": "number"
+          },
+          "risk_level": "low"
+        }
+      }
+    },
+    "datetime": {
+      "description": "Date and time operations",
+      "actions": {
+        "time_now": {
+          "description": "Get current time in specified timezone",
+          "params": {
+            "timezone": {
+              "type": "string",
+              "required": false,
+              "default": "UTC"
+            }
+          },
+          "returns": {
+            "iso": "string",
+            "unix": "number",
+            "timezone": "string"
+          },
+          "risk_level": "low"
+        },
+        "time_convert": {
+          "description": "Convert time between timezones",
+          "params": {
+            "time": {
+              "type": "string",
+              "required": true
+            },
+            "from_tz": {
+              "type": "string",
+              "required": true
+            },
+            "to_tz": {
+              "type": "string",
+              "required": true
+            }
+          },
+          "returns": {
+            "iso": "string",
+            "formatted": "string"
+          },
+          "risk_level": "low"
+        },
+        "time_diff": {
+          "description": "Calculate difference between two timestamps",
+          "params": {
+            "start": {
+              "type": "string",
+              "required": true
+            },
+            "end": {
+              "type": "string",
+              "required": true
+            }
+          },
+          "returns": {
+            "seconds": "number",
+            "human_readable": "string"
+          },
+          "risk_level": "low"
+        }
+      }
+    },
+    "messaging": {
+      "description": "Messaging platform operations",
+      "actions": {
+        "msg_send": {
+          "description": "Send a message to a channel or user on a messaging platform",
+          "params": {
+            "platform": {
+              "type": "string",
+              "required": true,
+              "description": "Platform: slack, discord, telegram, etc"
+            },
+            "channel": {
+              "type": "string",
+              "required": true
+            },
+            "text": {
+              "type": "string",
+              "required": true
+            }
+          },
+          "returns": {
+            "message_id": "string",
+            "sent": "boolean"
+          },
+          "risk_level": "medium"
+        },
+        "msg_read": {
+          "description": "Read recent messages from a channel",
+          "params": {
+            "platform": {
+              "type": "string",
+              "required": true
+            },
+            "channel": {
+              "type": "string",
+              "required": true
+            },
+            "limit": {
+              "type": "number",
+              "required": false,
+              "default": 10
+            }
+          },
+          "returns": {
+            "messages": "array",
+            "count": "number"
+          },
+          "risk_level": "low"
+        }
+      }
+    },
+    "encoding": {
+      "description": "Encoding and format conversion operations",
+      "actions": {
+        "url_encode": {
+          "description": "URL-encode a string",
+          "params": {
+            "input": {
+              "type": "string",
+              "required": true
+            }
+          },
+          "returns": {
+            "result": "string"
+          },
+          "risk_level": "low"
+        },
+        "url_decode": {
+          "description": "URL-decode a string",
+          "params": {
+            "input": {
+              "type": "string",
+              "required": true
+            }
+          },
+          "returns": {
+            "result": "string"
+          },
+          "risk_level": "low"
+        },
+        "json_stringify": {
+          "description": "Convert object to JSON string",
+          "params": {
+            "data": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "result": "string"
+          },
+          "risk_level": "low"
+        },
+        "csv_parse": {
+          "description": "Parse CSV text into structured data",
+          "params": {
+            "input": {
+              "type": "string",
+              "required": true
+            },
+            "delimiter": {
+              "type": "string",
+              "required": false,
+              "default": ","
+            },
+            "has_header": {
+              "type": "boolean",
+              "required": false,
+              "default": true
+            }
+          },
+          "returns": {
+            "rows": "array",
+            "headers": "array",
+            "row_count": "number"
+          },
+          "risk_level": "low"
+        },
+        "qr_generate": {
+          "description": "Generate QR code image from text",
+          "params": {
+            "text": {
+              "type": "string",
+              "required": true
+            },
+            "size": {
+              "type": "number",
+              "required": false,
+              "default": 256
+            }
+          },
+          "returns": {
+            "image_base64": "string",
+            "format": "string"
+          },
+          "risk_level": "low"
+        }
+      }
+    },
+    "database": {
+      "description": "Database query operations - read-only by default",
+      "actions": {
+        "db_query": {
+          "description": "Execute a read-only SQL query against a database",
+          "params": {
+            "connection": {
+              "type": "string",
+              "required": true,
+              "description": "Database connection string or alias"
+            },
+            "query": {
+              "type": "string",
+              "required": true
+            },
+            "params": {
+              "type": "array",
+              "required": false
+            }
+          },
+          "returns": {
+            "rows": "array",
+            "columns": "array",
+            "row_count": "number"
+          },
+          "risk_level": "medium"
+        }
+      }
+    },
+    "image": {
+      "description": "Image processing operations",
+      "actions": {
+        "image_resize": {
+          "description": "Resize an image to specified dimensions",
+          "params": {
+            "input_path": {
+              "type": "string",
+              "required": true
+            },
+            "output_path": {
+              "type": "string",
+              "required": true
+            },
+            "width": {
+              "type": "number",
+              "required": false
+            },
+            "height": {
+              "type": "number",
+              "required": false
+            }
+          },
+          "returns": {
+            "success": "boolean",
+            "output_path": "string"
+          },
+          "risk_level": "low"
+        },
+        "image_convert": {
+          "description": "Convert image format (png, jpg, webp, etc)",
+          "params": {
+            "input_path": {
+              "type": "string",
+              "required": true
+            },
+            "output_path": {
+              "type": "string",
+              "required": true
+            },
+            "format": {
+              "type": "string",
+              "required": true
+            }
+          },
+          "returns": {
+            "success": "boolean",
+            "output_path": "string"
+          },
+          "risk_level": "low"
+        },
+        "qr_generate": {
+          "description": "Generate a QR code image from text",
+          "params": {
+            "data": {
+              "type": "string",
+              "required": true
+            },
+            "output_path": {
+              "type": "string",
+              "required": true
+            },
+            "size": {
+              "type": "number",
+              "required": false,
+              "default": 256
+            }
+          },
+          "returns": {
+            "success": "boolean",
+            "output_path": "string"
+          },
+          "risk_level": "low"
+        }
+      }
+    }
+  },
+  "dangerous_patterns": {
+    "description": "Patterns that are ALWAYS rejected regardless of context",
+    "forbidden_strings": [
+      "rm -rf",
+      "mkfs",
+      "dd if=",
+      ":(){ :|:& };:",
+      "chmod 777",
+      "eval(",
+      "exec(",
+      "subprocess",
+      "os.system",
+      "__import__",
+      "shell=True",
+      "curl | bash",
+      "wget | sh",
+      "> /dev/sda",
+      "format c:",
+      "del /f /s /q"
+    ],
+    "forbidden_network_patterns": [
+      "^10\\.",
+      "^192\\.168\\.",
+      "^172\\.(1[6-9]|2[0-9]|3[01])\\.",
+      "^127\\.",
+      "^0\\.",
+      "localhost",
+      "metadata.google",
+      "169.254.169.254"
+    ]
+  }
+}

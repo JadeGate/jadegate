@@ -1,0 +1,158 @@
+{
+  "jade_version": "1.0.0",
+  "skill_id": "qr_code_generate",
+  "metadata": {
+    "name": "QR Code Generator",
+    "version": "1.0.0",
+    "description": "Generate QR code image from text using public API",
+    "author": "jadegate-community",
+    "tags": [
+      "qrcode",
+      "generate",
+      "image",
+      "barcode"
+    ],
+    "license": "MIT",
+    "created_at": "2026-02-21T03:00:00Z",
+    "updated_at": "2026-02-21T03:00:00Z"
+  },
+  "trigger": {
+    "type": "task_intent",
+    "conditions": [
+      {
+        "field": "task.type",
+        "operator": "in",
+        "value": [
+          "generate_qr",
+          "qr_code",
+          "make_qr"
+        ]
+      }
+    ]
+  },
+  "input_schema": {
+    "required_params": [
+      {
+        "name": "text",
+        "type": "string",
+        "description": "Text to encode in QR code"
+      },
+      {
+        "name": "size",
+        "type": "number",
+        "description": "Image size in pixels"
+      }
+    ]
+  },
+  "output_schema": {
+    "fields": [
+      {
+        "name": "image_url",
+        "type": "string",
+        "description": "URL of generated QR image"
+      },
+      {
+        "name": "text",
+        "type": "string",
+        "description": "Encoded text"
+      }
+    ]
+  },
+  "execution_dag": {
+    "nodes": [
+      {
+        "id": "encode",
+        "action": "url_encode",
+        "params": {
+          "input": "{{input.text}}"
+        }
+      },
+      {
+        "id": "build_url",
+        "action": "text_template",
+        "params": {
+          "template": "https://api.qrserver.com/v1/create-qr-code/?size={{input.size}}x{{input.size}}&data={{encode.output.result}}"
+        }
+      },
+      {
+        "id": "fetch",
+        "action": "http_get",
+        "params": {
+          "url": "{{build_url.output.result}}",
+          "timeout_ms": 10000
+        }
+      },
+      {
+        "id": "check",
+        "action": "condition_check",
+        "params": {
+          "field": "{{fetch.output.status_code}}",
+          "operator": "equals",
+          "value": 200
+        }
+      },
+      {
+        "id": "ret_ok",
+        "action": "return_result",
+        "params": {
+          "image_url": "{{build_url.output.result}}",
+          "text": "{{input.text}}"
+        }
+      },
+      {
+        "id": "ret_fail",
+        "action": "return_error",
+        "params": {
+          "error_code": "QR_FAILED",
+          "message": "QR generation failed"
+        }
+      }
+    ],
+    "edges": [
+      {
+        "from": "encode",
+        "to": "build_url"
+      },
+      {
+        "from": "build_url",
+        "to": "fetch"
+      },
+      {
+        "from": "fetch",
+        "to": "check"
+      },
+      {
+        "from": "check",
+        "to": "ret_ok",
+        "condition": "success"
+      },
+      {
+        "from": "check",
+        "to": "ret_fail",
+        "condition": "failure"
+      }
+    ],
+    "entry_node": "encode",
+    "exit_node": [
+      "ret_ok",
+      "ret_fail"
+    ]
+  },
+  "security": {
+    "network_whitelist": [
+      "api.qrserver.com"
+    ],
+    "file_permissions": {
+      "read": [],
+      "write": []
+    },
+    "max_execution_time_ms": 30000,
+    "max_retries": 2,
+    "sandbox_level": "strict",
+    "dangerous_patterns": []
+  },
+  "mcp_compatible": true,
+  "required_mcp_capabilities": [
+    "http"
+  ]
+}

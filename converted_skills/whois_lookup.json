@@ -1,0 +1,168 @@
+{
+  "jade_version": "1.0.0",
+  "skill_id": "whois_lookup",
+  "metadata": {
+    "name": "WHOIS Domain Lookup",
+    "version": "1.0.0",
+    "description": "Query WHOIS information for a domain via public API",
+    "author": "jadegate-community",
+    "tags": [
+      "whois",
+      "domain",
+      "lookup",
+      "registrar"
+    ],
+    "license": "MIT",
+    "created_at": "2026-02-21T03:00:00Z",
+    "updated_at": "2026-02-21T03:00:00Z"
+  },
+  "trigger": {
+    "type": "task_intent",
+    "conditions": [
+      {
+        "field": "task.type",
+        "operator": "in",
+        "value": [
+          "whois_lookup",
+          "domain_whois"
+        ]
+      }
+    ]
+  },
+  "input_schema": {
+    "required_params": [
+      {
+        "name": "domain",
+        "type": "string",
+        "description": "Domain to query"
+      }
+    ]
+  },
+  "output_schema": {
+    "fields": [
+      {
+        "name": "registrar",
+        "type": "string",
+        "description": "Domain registrar"
+      },
+      {
+        "name": "created",
+        "type": "string",
+        "description": "Creation date"
+      },
+      {
+        "name": "expires",
+        "type": "string",
+        "description": "Expiry date"
+      },
+      {
+        "name": "raw",
+        "type": "string",
+        "description": "Raw WHOIS data"
+      }
+    ]
+  },
+  "execution_dag": {
+    "nodes": [
+      {
+        "id": "fetch",
+        "action": "http_get",
+        "params": {
+          "url": "https://whois.freeaitools.xyz/api/{{input.domain}}",
+          "headers": {
+            "User-Agent": "JadeBot/1.0"
+          },
+          "timeout_ms": 10000
+        }
+      },
+      {
+        "id": "check",
+        "action": "condition_check",
+        "params": {
+          "field": "{{fetch.output.status_code}}",
+          "operator": "equals",
+          "value": 200
+        }
+      },
+      {
+        "id": "parse",
+        "action": "json_parse",
+        "params": {
+          "input": "{{fetch.output.body}}"
+        }
+      },
+      {
+        "id": "extract",
+        "action": "json_extract",
+        "params": {
+          "data": "{{parse.output.data}}",
+          "path": "$.whois"
+        }
+      },
+      {
+        "id": "ret_ok",
+        "action": "return_result",
+        "params": {
+          "registrar": "{{extract.output.value.registrar}}",
+          "created": "{{extract.output.value.creation_date}}",
+          "expires": "{{extract.output.value.expiration_date}}",
+          "raw": "{{extract.output.value.raw}}"
+        }
+      },
+      {
+        "id": "ret_fail",
+        "action": "return_error",
+        "params": {
+          "error_code": "WHOIS_FAILED",
+          "message": "WHOIS query failed"
+        }
+      }
+    ],
+    "edges": [
+      {
+        "from": "fetch",
+        "to": "check"
+      },
+      {
+        "from": "check",
+        "to": "parse",
+        "condition": "success"
+      },
+      {
+        "from": "check",
+        "to": "ret_fail",
+        "condition": "failure"
+      },
+      {
+        "from": "parse",
+        "to": "extract"
+      },
+      {
+        "from": "extract",
+        "to": "ret_ok"
+      }
+    ],
+    "entry_node": "fetch",
+    "exit_node": [
+      "ret_ok",
+      "ret_fail"
+    ]
+  },
+  "security": {
+    "network_whitelist": [
+      "whois.freeaitools.xyz"
+    ],
+    "file_permissions": {
+      "read": [],
+      "write": []
+    },
+    "max_execution_time_ms": 30000,
+    "max_retries": 2,
+    "sandbox_level": "strict",
+    "dangerous_patterns": []
+  },
+  "mcp_compatible": true,
+  "required_mcp_capabilities": [
+    "http"
+  ]
+}

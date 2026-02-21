@@ -1,0 +1,134 @@
+{
+  "jade_version": "1.0.0",
+  "skill_id": "timezone_query",
+  "metadata": {
+    "name": "Time Zone Query",
+    "version": "1.0.0",
+    "description": "Get current time in any timezone and convert between timezones",
+    "author": "jadegate-community",
+    "tags": [
+      "time",
+      "timezone",
+      "clock",
+      "convert"
+    ],
+    "license": "MIT",
+    "created_at": "2026-02-21T03:00:00Z",
+    "updated_at": "2026-02-21T03:00:00Z"
+  },
+  "trigger": {
+    "type": "task_intent",
+    "conditions": [
+      {
+        "field": "task.type",
+        "operator": "in",
+        "value": [
+          "get_time",
+          "timezone_convert",
+          "current_time"
+        ]
+      }
+    ]
+  },
+  "input_schema": {
+    "required_params": [
+      {
+        "name": "timezone",
+        "type": "string",
+        "description": "IANA timezone like Asia/Shanghai or UTC"
+      }
+    ]
+  },
+  "output_schema": {
+    "fields": [
+      {
+        "name": "iso",
+        "type": "string",
+        "description": "ISO 8601 timestamp"
+      },
+      {
+        "name": "unix",
+        "type": "number",
+        "description": "Unix timestamp"
+      },
+      {
+        "name": "timezone",
+        "type": "string",
+        "description": "Timezone used"
+      }
+    ]
+  },
+  "execution_dag": {
+    "nodes": [
+      {
+        "id": "get_time",
+        "action": "time_now",
+        "params": {
+          "timezone": "{{input.timezone}}"
+        }
+      },
+      {
+        "id": "check",
+        "action": "condition_check",
+        "params": {
+          "field": "{{get_time.output.iso}}",
+          "operator": "exists",
+          "value": true
+        }
+      },
+      {
+        "id": "ret_ok",
+        "action": "return_result",
+        "params": {
+          "iso": "{{get_time.output.iso}}",
+          "unix": "{{get_time.output.unix}}",
+          "timezone": "{{get_time.output.timezone}}"
+        }
+      },
+      {
+        "id": "ret_fail",
+        "action": "return_error",
+        "params": {
+          "error_code": "TIME_FAILED",
+          "message": "Invalid timezone"
+        }
+      }
+    ],
+    "edges": [
+      {
+        "from": "get_time",
+        "to": "check"
+      },
+      {
+        "from": "check",
+        "to": "ret_ok",
+        "condition": "success"
+      },
+      {
+        "from": "check",
+        "to": "ret_fail",
+        "condition": "failure"
+      }
+    ],
+    "entry_node": "get_time",
+    "exit_node": [
+      "ret_ok",
+      "ret_fail"
+    ]
+  },
+  "security": {
+    "network_whitelist": [],
+    "file_permissions": {
+      "read": [],
+      "write": []
+    },
+    "max_execution_time_ms": 30000,
+    "max_retries": 2,
+    "sandbox_level": "strict",
+    "dangerous_patterns": []
+  },
+  "mcp_compatible": true,
+  "required_mcp_capabilities": [
+    "time"
+  ]
+}
