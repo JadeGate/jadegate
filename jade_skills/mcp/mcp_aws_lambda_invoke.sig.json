@@ -1,0 +1,15 @@
+{
+  "jade_signature": {
+    "version": "1.0.0",
+    "skill_id": "mcp_aws_lambda_invoke",
+    "content_hash": "sha256:61f7faf439e4f5d6c4003550c579720540901dc43aa389f7b501b79cb5bd7772",
+    "signature": "jade-sig-pikQDfnNmq3ftcmA9kNuh/6Z/zifXCr1oaPebF6ZMbSDixLfeEIHOXH7s24PUBuExlzWnQtvogMPBpQNyurRCg==",
+    "signer": {
+      "public_key": "jade-pk-root-nahtqppiTuY+3eXtr9Hh+LgVlOnSZy+pN5i/r4tVck8=",
+      "fingerprint": "SHA256:2P1URTCynzJwNMCHuWGr9RJb6GK3qbv57Ituc4gZibI=",
+      "role": "root"
+    },
+    "timestamp": "2026-02-21T12:14:50Z",
+    "expires": "2027-02-21T12:14:50Z"
+  }
+}

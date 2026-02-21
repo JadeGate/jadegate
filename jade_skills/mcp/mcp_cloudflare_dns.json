@@ -132,13 +132,13 @@
     "version": "1.0.0",
     "skill_id": "mcp_cloudflare_dns",
     "content_hash": "sha256:4917b0f014f58259e46b4468a6d96fed2dd098b945238bf8b09aec0357c87ef7",
-    "signature": "jade-sig-9zVcb0heeDmDuuI/Tb6g93QaU66TQGkK+Reuj+FtQ5cemxWJ4jXBHUEUCGtCUtc8Dzbr/ZLnDobCu/gMJyrGCw==",
+    "signature": "jade-sig-ud9RMvqsm9gc7KNhLxcloI2LDftNirE+F+gFxmBoQwPRjIExy7V1uD0KJkW1QOU+oDujJydOQ7h62QjIvZ8/Bw==",
     "signer": {
-      "public_key": "jade-pk-root-CSoKNMpd17huyuQvkIW4pfKaixcJ6pUtLT2ljfnzJis=",
-      "fingerprint": "SHA256:qXEdtwUlyBn7LJVPiqftBRnuCrKQx6kYOb43c0Xz2yk=",
+      "public_key": "jade-pk-root-nahtqppiTuY+3eXtr9Hh+LgVlOnSZy+pN5i/r4tVck8=",
+      "fingerprint": "SHA256:2P1URTCynzJwNMCHuWGr9RJb6GK3qbv57Ituc4gZibI=",
       "role": "root"
     },
-    "timestamp": "2026-02-21T08:53:43Z",
-    "expires": "2027-02-21T08:53:43Z"
+    "timestamp": "2026-02-21T12:14:52Z",
+    "expires": "2027-02-21T12:14:52Z"
   }
 }

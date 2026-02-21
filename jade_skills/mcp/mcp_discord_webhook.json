@@ -130,13 +130,13 @@
     "version": "1.0.0",
     "skill_id": "mcp_discord_webhook",
     "content_hash": "sha256:0d0242921fe8e5fff305ebe0805abbd619c49febc06dc83e90a780e4a9b10763",
-    "signature": "jade-sig-e9mnignWuFkPZagCzDwwFLHL7O4v836BeF+uesj61DFn62EOpAkOFoFUbMNl+stm3+EEOkPpG8MK8libWsxGCw==",
+    "signature": "jade-sig-JF2T3scnA0U1XvRXMyV5pEA6u33NnySpxbPkkVTYC+0h1H8PITAP9Oy2H0JWc97GpeROowlhEqs1Z61tlqW4CQ==",
     "signer": {
-      "public_key": "jade-pk-root-CSoKNMpd17huyuQvkIW4pfKaixcJ6pUtLT2ljfnzJis=",
-      "fingerprint": "SHA256:qXEdtwUlyBn7LJVPiqftBRnuCrKQx6kYOb43c0Xz2yk=",
+      "public_key": "jade-pk-root-nahtqppiTuY+3eXtr9Hh+LgVlOnSZy+pN5i/r4tVck8=",
+      "fingerprint": "SHA256:2P1URTCynzJwNMCHuWGr9RJb6GK3qbv57Ituc4gZibI=",
       "role": "root"
     },
-    "timestamp": "2026-02-21T08:53:44Z",
-    "expires": "2027-02-21T08:53:44Z"
+    "timestamp": "2026-02-21T12:14:54Z",
+    "expires": "2027-02-21T12:14:54Z"
   }
 }

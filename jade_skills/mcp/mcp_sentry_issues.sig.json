@@ -3,13 +3,13 @@
     "version": "1.0.0",
     "skill_id": "mcp_sentry_issues",
     "content_hash": "sha256:5b640ff31a44680175d7e12356fe81dea6a9a02b01bf5fd6c105b21281c094d6",
-    "signature": "jade-sig-v2fEM2ZoRlzmfn3FjWgNnYlbT2pT/LNzG2Mt+rOT/vT6pgaXhnwPrNICh2zZswYKmFQUMVAmRsL2J3ec3wbaDg==",
+    "signature": "jade-sig-UU2wdj1WMPaI/czXbal7tkvBJOgcDrKr1c+grjSpvqQpiDT8ErzWEt5ZQSCVs35oV3mENx8mmKJ8I8GV11+gAw==",
     "signer": {
-      "public_key": "jade-pk-root-CSoKNMpd17huyuQvkIW4pfKaixcJ6pUtLT2ljfnzJis=",
-      "fingerprint": "SHA256:qXEdtwUlyBn7LJVPiqftBRnuCrKQx6kYOb43c0Xz2yk=",
+      "public_key": "jade-pk-root-nahtqppiTuY+3eXtr9Hh+LgVlOnSZy+pN5i/r4tVck8=",
+      "fingerprint": "SHA256:2P1URTCynzJwNMCHuWGr9RJb6GK3qbv57Ituc4gZibI=",
       "role": "root"
     },
-    "timestamp": "2026-02-21T08:54:09Z",
-    "expires": "2027-02-21T08:54:09Z"
+    "timestamp": "2026-02-21T12:15:12Z",
+    "expires": "2027-02-21T12:15:12Z"
   }
 }

@@ -82,5 +82,18 @@
   "mcp_compatible": true,
   "required_mcp_capabilities": [
     "airtable"
-  ]
+  ],
+  "jade_signature": {
+    "version": "1.0.0",
+    "skill_id": "mcp_airtable_records",
+    "content_hash": "sha256:c49e029760f678167a675314e40df9f466f384e3cac26ff5f34036c9a4dc163f",
+    "signature": "jade-sig-l7UgwcQqLzg86yVdWq8hj0N8Cm/BtKpZoVCwspkFNUY4DlZMgSZthvz3tEZKeSF10DyeOPUzlslqG6AG0WCQDw==",
+    "signer": {
+      "public_key": "jade-pk-root-nahtqppiTuY+3eXtr9Hh+LgVlOnSZy+pN5i/r4tVck8=",
+      "fingerprint": "SHA256:2P1URTCynzJwNMCHuWGr9RJb6GK3qbv57Ituc4gZibI=",
+      "role": "root"
+    },
+    "timestamp": "2026-02-21T12:14:49Z",
+    "expires": "2027-02-21T12:14:49Z"
+  }
 }

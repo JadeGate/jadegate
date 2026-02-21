@@ -2,14 +2,14 @@
   "jade_signature": {
     "version": "1.0.0",
     "skill_id": "mcp_gdrive_search",
-    "content_hash": "sha256:7821aa52bfb72c5a55d602084c94a1558423cbb429915ec13a2e42fd09d0af06",
-    "signature": "jade-sig-JojrHJg0jS9fd4ORgavSIV6lByckwGrq29gt9q0FoM77v3V4m5MjXyOaj1FRG3r+pWro6izr+bZnby4YRSkiCQ==",
+    "content_hash": "sha256:c4d20256c1f9c4173516d29787036b73cf65cc2af06624594da22de9dff9b4ff",
+    "signature": "jade-sig-YRUPlNGtV8IqD8LIHNHYN0VDmpgKwBnYgovTwWY0G+V4mzU9anXye7y5K2wI5SGz0Zjq76pmzRJPUVctqLEDBg==",
     "signer": {
-      "public_key": "jade-pk-root-CSoKNMpd17huyuQvkIW4pfKaixcJ6pUtLT2ljfnzJis=",
-      "fingerprint": "SHA256:qXEdtwUlyBn7LJVPiqftBRnuCrKQx6kYOb43c0Xz2yk=",
+      "public_key": "jade-pk-root-nahtqppiTuY+3eXtr9Hh+LgVlOnSZy+pN5i/r4tVck8=",
+      "fingerprint": "SHA256:2P1URTCynzJwNMCHuWGr9RJb6GK3qbv57Ituc4gZibI=",
       "role": "root"
     },
-    "timestamp": "2026-02-21T08:53:52Z",
-    "expires": "2027-02-21T08:53:52Z"
+    "timestamp": "2026-02-21T12:14:59Z",
+    "expires": "2027-02-21T12:14:59Z"
   }
 }

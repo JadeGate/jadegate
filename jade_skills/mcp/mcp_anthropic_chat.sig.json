@@ -1,0 +1,15 @@
+{
+  "jade_signature": {
+    "version": "1.0.0",
+    "skill_id": "mcp_anthropic_chat",
+    "content_hash": "sha256:00e942a72c6d52298e2a08c43324275355f7d7eb553831e95e2aae40084c6b58",
+    "signature": "jade-sig-1t8KwManUL31cudTt6tcLaB6BmLtMScvhcWD3bafq/wtjRjKYOpUlJ8BMvHFOamdMs9VK94I0JbhecbvBBVGCg==",
+    "signer": {
+      "public_key": "jade-pk-root-nahtqppiTuY+3eXtr9Hh+LgVlOnSZy+pN5i/r4tVck8=",
+      "fingerprint": "SHA256:2P1URTCynzJwNMCHuWGr9RJb6GK3qbv57Ituc4gZibI=",
+      "role": "root"
+    },
+    "timestamp": "2026-02-21T12:14:50Z",
+    "expires": "2027-02-21T12:14:50Z"
+  }
+}

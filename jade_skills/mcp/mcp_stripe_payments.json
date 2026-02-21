@@ -133,13 +133,13 @@
     "version": "1.0.0",
     "skill_id": "mcp_stripe_payments",
     "content_hash": "sha256:075700155287652a37ada60567a2fba70326fcd70050dfe5b48bb527f0a87d9b",
-    "signature": "jade-sig-P+GMT2DSK5YZpAb09gVgs3U2GVAzd9eDobqM9LZtz84hYGr8pTus7zAJtGVg1QgwkPTzh93644RQnWwGjThEAw==",
+    "signature": "jade-sig-RH8I2z6eYPQB2PfOIoAleuhQAdYnMgT5O4ocIVi/5l/VWTGPmEKJp5VPqgHlGsK4XKL/roRDYegLu35xON7IBA==",
     "signer": {
-      "public_key": "jade-pk-root-CSoKNMpd17huyuQvkIW4pfKaixcJ6pUtLT2ljfnzJis=",
-      "fingerprint": "SHA256:qXEdtwUlyBn7LJVPiqftBRnuCrKQx6kYOb43c0Xz2yk=",
+      "public_key": "jade-pk-root-nahtqppiTuY+3eXtr9Hh+LgVlOnSZy+pN5i/r4tVck8=",
+      "fingerprint": "SHA256:2P1URTCynzJwNMCHuWGr9RJb6GK3qbv57Ituc4gZibI=",
       "role": "root"
     },
-    "timestamp": "2026-02-21T08:54:13Z",
-    "expires": "2027-02-21T08:54:13Z"
+    "timestamp": "2026-02-21T12:15:14Z",
+    "expires": "2027-02-21T12:15:14Z"
   }
 }

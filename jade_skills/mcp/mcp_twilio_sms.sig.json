@@ -1,0 +1,15 @@
+{
+  "jade_signature": {
+    "version": "1.0.0",
+    "skill_id": "mcp_twilio_sms",
+    "content_hash": "sha256:18ecd3aa1faca4657365272c834029ea1ece1e228866b05647f129ebd298c76e",
+    "signature": "jade-sig-49u0a4DbD57vGWpIqrt5mCbNmCliBPx7ZWaG/pc+Ub0OQ8ulRDgHw7bxeh+EJV/VBBw7ONsQ0dGA9gkfmSMCDA==",
+    "signer": {
+      "public_key": "jade-pk-root-nahtqppiTuY+3eXtr9Hh+LgVlOnSZy+pN5i/r4tVck8=",
+      "fingerprint": "SHA256:2P1URTCynzJwNMCHuWGr9RJb6GK3qbv57Ituc4gZibI=",
+      "role": "root"
+    },
+    "timestamp": "2026-02-21T12:15:16Z",
+    "expires": "2027-02-21T12:15:16Z"
+  }
+}

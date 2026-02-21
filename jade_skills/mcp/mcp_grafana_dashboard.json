@@ -78,5 +78,18 @@
   "mcp_compatible": true,
   "required_mcp_capabilities": [
     "grafana"
-  ]
+  ],
+  "jade_signature": {
+    "version": "1.0.0",
+    "skill_id": "mcp_grafana_dashboard",
+    "content_hash": "sha256:0fa811eb6a36ad20644d1d84bff95476311bad6d3f8600c8b239c9458bfdf37f",
+    "signature": "jade-sig-v6OmLeX2zZ6jIDmS9pwvSmtknG/X3LieQk9jRDhh8dlqVNpg5yQ/1AK53Bpr5ur48mgCbvxs9q8PTIgigweSBg==",
+    "signer": {
+      "public_key": "jade-pk-root-nahtqppiTuY+3eXtr9Hh+LgVlOnSZy+pN5i/r4tVck8=",
+      "fingerprint": "SHA256:2P1URTCynzJwNMCHuWGr9RJb6GK3qbv57Ituc4gZibI=",
+      "role": "root"
+    },
+    "timestamp": "2026-02-21T12:15:03Z",
+    "expires": "2027-02-21T12:15:03Z"
+  }
 }

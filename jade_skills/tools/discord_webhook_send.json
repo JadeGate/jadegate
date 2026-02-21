@@ -162,13 +162,13 @@
     "version": "1.0.0",
     "skill_id": "discord_webhook_send",
     "content_hash": "sha256:4928cf69a5041b15795efa120891e2b0fffe7f0ab751c7c9f78ae43a4c38815b",
-    "signature": "jade-sig-APaYsvwd1JYl7R71oDtgwjmoP9+fXezNYJM58B4htGzJsfWqzp52AnKtSCBalEcYSFkMtZoXLyTQX1BTGVN1Bg==",
+    "signature": "jade-sig-XT5a4a2mbcTFDx2F+R9txJq0H3Wg9myIXaRpW3mYc7N0jhQVHydjVk4Jw+Fn5Iato6nV6DEMszZOkUxy/R6hDg==",
     "signer": {
-      "public_key": "jade-pk-root-CSoKNMpd17huyuQvkIW4pfKaixcJ6pUtLT2ljfnzJis=",
-      "fingerprint": "SHA256:qXEdtwUlyBn7LJVPiqftBRnuCrKQx6kYOb43c0Xz2yk=",
+      "public_key": "jade-pk-root-nahtqppiTuY+3eXtr9Hh+LgVlOnSZy+pN5i/r4tVck8=",
+      "fingerprint": "SHA256:2P1URTCynzJwNMCHuWGr9RJb6GK3qbv57Ituc4gZibI=",
       "role": "root"
     },
-    "timestamp": "2026-02-21T08:54:21Z",
-    "expires": "2027-02-21T08:54:21Z"
+    "timestamp": "2026-02-21T12:15:20Z",
+    "expires": "2027-02-21T12:15:20Z"
   }
 }

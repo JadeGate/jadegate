@@ -82,5 +82,18 @@
   "mcp_compatible": true,
   "required_mcp_capabilities": [
     "cloudflare"
-  ]
+  ],
+  "jade_signature": {
+    "version": "1.0.0",
+    "skill_id": "mcp_cloudflare_workers",
+    "content_hash": "sha256:b3476835d987340aa623f33722224ed40a7ac35ad3c87d991ac99ffd7199639b",
+    "signature": "jade-sig-RBnqCqa5TtewEFBWZKCBMnscAnU4Uhag7iJKqeuKSb2HwJQZ8s6EIjAiuUBlwHLWIQawfB+RKmn5qi71JPl7Bg==",
+    "signer": {
+      "public_key": "jade-pk-root-nahtqppiTuY+3eXtr9Hh+LgVlOnSZy+pN5i/r4tVck8=",
+      "fingerprint": "SHA256:2P1URTCynzJwNMCHuWGr9RJb6GK3qbv57Ituc4gZibI=",
+      "role": "root"
+    },
+    "timestamp": "2026-02-21T12:14:53Z",
+    "expires": "2027-02-21T12:14:53Z"
+  }
 }

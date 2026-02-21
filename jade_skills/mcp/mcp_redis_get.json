@@ -100,13 +100,13 @@
     "version": "1.0.0",
     "skill_id": "mcp_redis_get",
     "content_hash": "sha256:5c929005bfaa399aeb78ab3b147a3cabd069b8c485d9ceff5e51b2358be4eec6",
-    "signature": "jade-sig-JDULrGB+Vn6r9TVawny/CysD/ybjRNtX579AZXc5O13slSgEFGv4d/xg4CqpMtM3iWpUnuJlOoHSNPBhvzVpDQ==",
+    "signature": "jade-sig-+QfZz4RVG8kdDvDHAJdI50W6MboXCQogsCxLXqBGclzQg2PHtuo6Yqsqk5zHZeTEaxntEqCJepvPi5ipJu0iCw==",
     "signer": {
-      "public_key": "jade-pk-root-CSoKNMpd17huyuQvkIW4pfKaixcJ6pUtLT2ljfnzJis=",
-      "fingerprint": "SHA256:qXEdtwUlyBn7LJVPiqftBRnuCrKQx6kYOb43c0Xz2yk=",
+      "public_key": "jade-pk-root-nahtqppiTuY+3eXtr9Hh+LgVlOnSZy+pN5i/r4tVck8=",
+      "fingerprint": "SHA256:2P1URTCynzJwNMCHuWGr9RJb6GK3qbv57Ituc4gZibI=",
       "role": "root"
     },
-    "timestamp": "2026-02-21T08:54:04Z",
-    "expires": "2027-02-21T08:54:04Z"
+    "timestamp": "2026-02-21T12:15:10Z",
+    "expires": "2027-02-21T12:15:10Z"
   }
 }

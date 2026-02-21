@@ -179,13 +179,13 @@
     "version": "1.0.0",
     "skill_id": "ip_geolocation",
     "content_hash": "sha256:c60a3b4a096a4379e52c2ac014537c09e64a9ece0f8244dcf9fc46457f57f5b4",
-    "signature": "jade-sig-fxHRDLVRaebHZac3Iun1afcEAMl5lwccQNkbpgO/R3Bn86i0VViUeNK3Ow6ZP17MD2ZiZ/kb3h8tzYoQ5q46BQ==",
+    "signature": "jade-sig-2jRFpFCa00iLMxQK7zEBQH7BATMNhmLNp7+wHX74pniXMtRvR6pXECpGas42F1E21L8mgONztgW67t5w+vKhBQ==",
     "signer": {
-      "public_key": "jade-pk-root-CSoKNMpd17huyuQvkIW4pfKaixcJ6pUtLT2ljfnzJis=",
-      "fingerprint": "SHA256:qXEdtwUlyBn7LJVPiqftBRnuCrKQx6kYOb43c0Xz2yk=",
+      "public_key": "jade-pk-root-nahtqppiTuY+3eXtr9Hh+LgVlOnSZy+pN5i/r4tVck8=",
+      "fingerprint": "SHA256:2P1URTCynzJwNMCHuWGr9RJb6GK3qbv57Ituc4gZibI=",
       "role": "root"
     },
-    "timestamp": "2026-02-21T08:54:33Z",
-    "expires": "2027-02-21T08:54:33Z"
+    "timestamp": "2026-02-21T12:15:25Z",
+    "expires": "2027-02-21T12:15:25Z"
   }
 }

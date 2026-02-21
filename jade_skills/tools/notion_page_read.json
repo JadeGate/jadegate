@@ -184,13 +184,13 @@
     "version": "1.0.0",
     "skill_id": "notion_page_read",
     "content_hash": "sha256:53dbb922e64f9b6f5c32a489e088154ed43188afbb67900df802c985285eb9e2",
-    "signature": "jade-sig-2sr+TpNgVsFoIEKQtC/F5FniaxzFMuLGQzaE4ZKFv/ViagzOrL0hxXQguwACoYCBDgSJPeot4wIgz0C/lzgUCQ==",
+    "signature": "jade-sig-L351mF6THn5mDaflVBeisLcyY2WaN3hBzNCqGPp8tRTmlrMVGbYxTQ8oR0yxZwUgbwzqFcT80g81MJ9lf931Dw==",
     "signer": {
-      "public_key": "jade-pk-root-CSoKNMpd17huyuQvkIW4pfKaixcJ6pUtLT2ljfnzJis=",
-      "fingerprint": "SHA256:qXEdtwUlyBn7LJVPiqftBRnuCrKQx6kYOb43c0Xz2yk=",
+      "public_key": "jade-pk-root-nahtqppiTuY+3eXtr9Hh+LgVlOnSZy+pN5i/r4tVck8=",
+      "fingerprint": "SHA256:2P1URTCynzJwNMCHuWGr9RJb6GK3qbv57Ituc4gZibI=",
       "role": "root"
     },
-    "timestamp": "2026-02-21T08:54:37Z",
-    "expires": "2027-02-21T08:54:37Z"
+    "timestamp": "2026-02-21T12:15:28Z",
+    "expires": "2027-02-21T12:15:28Z"
   }
 }

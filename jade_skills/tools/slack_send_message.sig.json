@@ -3,13 +3,13 @@
     "version": "1.0.0",
     "skill_id": "slack_send_message",
     "content_hash": "sha256:6ec7c5fa1146f7303ec4930d79742b3a6edecabed4fcd297eaee272fb44ac297",
-    "signature": "jade-sig-lrqnFrDsbshPUjZHIFDe1HPr6URDVnDPhm66IhpqimJslszmpi5D8wT5ZANT4VjE+6ouneKCBT3K4HYi4GpbAA==",
+    "signature": "jade-sig-/XvyyQJQ5wtCyEuWY5+6700Ue3S2NUzFE0oAbRMI2fvsjDVz7GFeZnallzsYMYRNembyG+guLcqOO85NOqpnAw==",
     "signer": {
-      "public_key": "jade-pk-root-CSoKNMpd17huyuQvkIW4pfKaixcJ6pUtLT2ljfnzJis=",
-      "fingerprint": "SHA256:qXEdtwUlyBn7LJVPiqftBRnuCrKQx6kYOb43c0Xz2yk=",
+      "public_key": "jade-pk-root-nahtqppiTuY+3eXtr9Hh+LgVlOnSZy+pN5i/r4tVck8=",
+      "fingerprint": "SHA256:2P1URTCynzJwNMCHuWGr9RJb6GK3qbv57Ituc4gZibI=",
       "role": "root"
     },
-    "timestamp": "2026-02-21T08:54:40Z",
-    "expires": "2027-02-21T08:54:40Z"
+    "timestamp": "2026-02-21T12:15:30Z",
+    "expires": "2027-02-21T12:15:30Z"
   }
 }

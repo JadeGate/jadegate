@@ -3,13 +3,13 @@
     "version": "1.0.0",
     "skill_id": "json_data_transform",
     "content_hash": "sha256:0d5a492fe88e048a56f549113175238df12c3aa66d9d2a4161001757b793b829",
-    "signature": "jade-sig-WpDPs+dAqYn76DqEoDhHZPiOozjgNCs0S/YaMYEK25t2MrHxd8SNIKGW2JWdfwP9KZQoTLfOga0qQRZ7VEu5BA==",
+    "signature": "jade-sig-mvaUqHT4FWRO+507j4kT+a+ycJJh3UZ8d0LYoLMFTtAcjiXGfpDJfFhpGYwlAZ9fzE2Nv67Q5aDq36ti7N0zBA==",
     "signer": {
-      "public_key": "jade-pk-root-CSoKNMpd17huyuQvkIW4pfKaixcJ6pUtLT2ljfnzJis=",
-      "fingerprint": "SHA256:qXEdtwUlyBn7LJVPiqftBRnuCrKQx6kYOb43c0Xz2yk=",
+      "public_key": "jade-pk-root-nahtqppiTuY+3eXtr9Hh+LgVlOnSZy+pN5i/r4tVck8=",
+      "fingerprint": "SHA256:2P1URTCynzJwNMCHuWGr9RJb6GK3qbv57Ituc4gZibI=",
       "role": "root"
     },
-    "timestamp": "2026-02-21T08:54:34Z",
-    "expires": "2027-02-21T08:54:34Z"
+    "timestamp": "2026-02-21T12:15:26Z",
+    "expires": "2027-02-21T12:15:26Z"
   }
 }

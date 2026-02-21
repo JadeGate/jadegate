@@ -77,5 +77,18 @@
   "mcp_compatible": true,
   "required_mcp_capabilities": [
     "openai"
-  ]
+  ],
+  "jade_signature": {
+    "version": "1.0.0",
+    "skill_id": "mcp_openai_chat",
+    "content_hash": "sha256:a0d191fc72e089ff0b3cb50f3b021fc73870e115692824033237ccd3f540d3b6",
+    "signature": "jade-sig-HrQeoO0MVy5m5Zy/ijMXO5t5xIc7KcowgFaf14p2qwinR6JLllteTQSGsdf0SujLQcIQPw9NMkGHXpE1DTYrCQ==",
+    "signer": {
+      "public_key": "jade-pk-root-nahtqppiTuY+3eXtr9Hh+LgVlOnSZy+pN5i/r4tVck8=",
+      "fingerprint": "SHA256:2P1URTCynzJwNMCHuWGr9RJb6GK3qbv57Ituc4gZibI=",
+      "role": "root"
+    },
+    "timestamp": "2026-02-21T12:15:07Z",
+    "expires": "2027-02-21T12:15:07Z"
+  }
 }

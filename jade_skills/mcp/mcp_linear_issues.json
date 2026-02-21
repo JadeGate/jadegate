@@ -130,13 +130,13 @@
     "version": "1.0.0",
     "skill_id": "mcp_linear_issues",
     "content_hash": "sha256:ed9a999209cebd4ef8ce417ff31e4c358aad0f0e1f0644f874726c280954f9ad",
-    "signature": "jade-sig-f4RDiuy/JAnARDjeWvkCmd911xAxWCd82wE0tyCG9jcvkM7VrTR/9UsYJK6Ocu+kRdNJJwX5KAQjCURMvWwqAA==",
+    "signature": "jade-sig-WdGQKpm0wgCETa/tgG/FXYkvyAXrOFbvfmhdwaTHM+BBdyI3vL2L5NR+K+PWRDG0kCjSm4H+9FAbMZFskCetCQ==",
     "signer": {
-      "public_key": "jade-pk-root-CSoKNMpd17huyuQvkIW4pfKaixcJ6pUtLT2ljfnzJis=",
-      "fingerprint": "SHA256:qXEdtwUlyBn7LJVPiqftBRnuCrKQx6kYOb43c0Xz2yk=",
+      "public_key": "jade-pk-root-nahtqppiTuY+3eXtr9Hh+LgVlOnSZy+pN5i/r4tVck8=",
+      "fingerprint": "SHA256:2P1URTCynzJwNMCHuWGr9RJb6GK3qbv57Ituc4gZibI=",
       "role": "root"
     },
-    "timestamp": "2026-02-21T08:53:58Z",
-    "expires": "2027-02-21T08:53:58Z"
+    "timestamp": "2026-02-21T12:15:04Z",
+    "expires": "2027-02-21T12:15:04Z"
   }
 }

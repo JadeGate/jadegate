@@ -3,13 +3,13 @@
     "version": "1.0.0",
     "skill_id": "mcp_telegram_send",
     "content_hash": "sha256:c6a2efa70d305f5ad94987e35d9bf80e5c6802a42e467185c3bd213bbb2957e9",
-    "signature": "jade-sig-cwPb3l+NB/mfAekuY3h3GbyPYNy6eFFw4TKwau3NJh9tewLgwx3Bk6lObx8wBDxdtCsmvt88BugpxMCIFPhJBQ==",
+    "signature": "jade-sig-QD0fN7H+daex4cJcs1mNDQZZxagRL3kcqW2H6GdAZqMj3QsLNpImqHxof538LBlJ55ilEu9jCKdfU41kV0l1Cg==",
     "signer": {
-      "public_key": "jade-pk-root-CSoKNMpd17huyuQvkIW4pfKaixcJ6pUtLT2ljfnzJis=",
-      "fingerprint": "SHA256:qXEdtwUlyBn7LJVPiqftBRnuCrKQx6kYOb43c0Xz2yk=",
+      "public_key": "jade-pk-root-nahtqppiTuY+3eXtr9Hh+LgVlOnSZy+pN5i/r4tVck8=",
+      "fingerprint": "SHA256:2P1URTCynzJwNMCHuWGr9RJb6GK3qbv57Ituc4gZibI=",
       "role": "root"
     },
-    "timestamp": "2026-02-21T08:54:16Z",
-    "expires": "2027-02-21T08:54:16Z"
+    "timestamp": "2026-02-21T12:15:15Z",
+    "expires": "2027-02-21T12:15:15Z"
   }
 }

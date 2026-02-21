@@ -77,5 +77,18 @@
   "mcp_compatible": true,
   "required_mcp_capabilities": [
     "firebase"
-  ]
+  ],
+  "jade_signature": {
+    "version": "1.0.0",
+    "skill_id": "mcp_firebase_read",
+    "content_hash": "sha256:8206b3e900420153f200e038d7d2b64e9ad46466b4326c3b022984e035e35eb8",
+    "signature": "jade-sig-FVPLzJ14haQY77A5ney0/gFcPaQwkszQVaAByRlQa+zTwv9WwVvvtcMGS3R0lGzVkdxdoMRYSa+Y/tjtbww6Dg==",
+    "signer": {
+      "public_key": "jade-pk-root-nahtqppiTuY+3eXtr9Hh+LgVlOnSZy+pN5i/r4tVck8=",
+      "fingerprint": "SHA256:2P1URTCynzJwNMCHuWGr9RJb6GK3qbv57Ituc4gZibI=",
+      "role": "root"
+    },
+    "timestamp": "2026-02-21T12:14:58Z",
+    "expires": "2027-02-21T12:14:58Z"
+  }
 }

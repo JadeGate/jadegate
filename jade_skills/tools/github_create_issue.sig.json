@@ -3,13 +3,13 @@
     "version": "1.0.0",
     "skill_id": "github_create_issue",
     "content_hash": "sha256:d94e0d58e5ae0b312955f26fce6f5740c5fba0f68a21df95aced2258b2f6aced",
-    "signature": "jade-sig-ue+e0ERtJexvOeeFB/WxrT7j8gNs5yPBxtxHY/XsAwa1d36syJUbB7DnrRwGkUkhImexvSbPG6n2k+7OEWiGBA==",
+    "signature": "jade-sig-w/EAZintYMRCwLAxnVmbR41g5eSxusPdBnEKB8+6il5gNNPcXxrmjIP6jZbJWtyP3Tdl1uJiJSb4BwkewtIXBA==",
     "signer": {
-      "public_key": "jade-pk-root-CSoKNMpd17huyuQvkIW4pfKaixcJ6pUtLT2ljfnzJis=",
-      "fingerprint": "SHA256:qXEdtwUlyBn7LJVPiqftBRnuCrKQx6kYOb43c0Xz2yk=",
+      "public_key": "jade-pk-root-nahtqppiTuY+3eXtr9Hh+LgVlOnSZy+pN5i/r4tVck8=",
+      "fingerprint": "SHA256:2P1URTCynzJwNMCHuWGr9RJb6GK3qbv57Ituc4gZibI=",
       "role": "root"
     },
-    "timestamp": "2026-02-21T08:54:29Z",
-    "expires": "2027-02-21T08:54:29Z"
+    "timestamp": "2026-02-21T12:15:23Z",
+    "expires": "2027-02-21T12:15:23Z"
   }
 }

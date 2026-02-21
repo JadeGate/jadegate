@@ -118,13 +118,13 @@
     "version": "1.0.0",
     "skill_id": "mcp_memory_store",
     "content_hash": "sha256:2419e7f1af1c6cc625491d5e123846a8ad356cf4ee0072b19bcf20ccb6903b51",
-    "signature": "jade-sig-ZYWZNITyEoEjsTCB4ezWBbt75oCpIZuy0MZScqJZdGRm6gOpOVa251aeL8SjTMwwfqC19niGrEN85Kx17SB4DA==",
+    "signature": "jade-sig-ileIL4SfI45542y7S9X3A9roejatT7rfytx9eyBT/NeUZJ11yPmxSz/DTAzULgza0zPEoiCpwsEOTi9i7Ds3Cg==",
     "signer": {
-      "public_key": "jade-pk-root-CSoKNMpd17huyuQvkIW4pfKaixcJ6pUtLT2ljfnzJis=",
-      "fingerprint": "SHA256:qXEdtwUlyBn7LJVPiqftBRnuCrKQx6kYOb43c0Xz2yk=",
+      "public_key": "jade-pk-root-nahtqppiTuY+3eXtr9Hh+LgVlOnSZy+pN5i/r4tVck8=",
+      "fingerprint": "SHA256:2P1URTCynzJwNMCHuWGr9RJb6GK3qbv57Ituc4gZibI=",
       "role": "root"
     },
-    "timestamp": "2026-02-21T08:53:59Z",
-    "expires": "2027-02-21T08:53:59Z"
+    "timestamp": "2026-02-21T12:15:05Z",
+    "expires": "2027-02-21T12:15:05Z"
   }
 }

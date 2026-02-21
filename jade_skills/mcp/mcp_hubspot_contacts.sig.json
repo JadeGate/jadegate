@@ -1,0 +1,15 @@
+{
+  "jade_signature": {
+    "version": "1.0.0",
+    "skill_id": "mcp_hubspot_contacts",
+    "content_hash": "sha256:783af8d092be950dbed0770a25088a94256d027d231b1ee60801bda6a362d9be",
+    "signature": "jade-sig-QOGZMmTvyCm90Mx5+JFayvLh9PKNumSY9IjAASMrMmoFEzRtydorWZsMnHGgbSDSOXSSNZR3WkPmoVzH1XJJDA==",
+    "signer": {
+      "public_key": "jade-pk-root-nahtqppiTuY+3eXtr9Hh+LgVlOnSZy+pN5i/r4tVck8=",
+      "fingerprint": "SHA256:2P1URTCynzJwNMCHuWGr9RJb6GK3qbv57Ituc4gZibI=",
+      "role": "root"
+    },
+    "timestamp": "2026-02-21T12:15:03Z",
+    "expires": "2027-02-21T12:15:03Z"
+  }
+}

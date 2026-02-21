@@ -77,5 +77,18 @@
   "mcp_compatible": true,
   "required_mcp_capabilities": [
     "vercel"
-  ]
+  ],
+  "jade_signature": {
+    "version": "1.0.0",
+    "skill_id": "mcp_vercel_deploy",
+    "content_hash": "sha256:12351ac4bb348f9703a3e69fe26452f49e31fd8c80764534b4675e5e3a864774",
+    "signature": "jade-sig-P3PizsIUweRk5Fqo8RBhrBEF2YWdnUUw/grKOt+Zu2PCeNOtn9I9z5SiCfMa0gUJywRXgkcOQ2WNjlmL3GqEAA==",
+    "signer": {
+      "public_key": "jade-pk-root-nahtqppiTuY+3eXtr9Hh+LgVlOnSZy+pN5i/r4tVck8=",
+      "fingerprint": "SHA256:2P1URTCynzJwNMCHuWGr9RJb6GK3qbv57Ituc4gZibI=",
+      "role": "root"
+    },
+    "timestamp": "2026-02-21T12:15:17Z",
+    "expires": "2027-02-21T12:15:17Z"
+  }
 }

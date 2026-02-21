@@ -77,5 +77,18 @@
   "mcp_compatible": true,
   "required_mcp_capabilities": [
     "shopify"
-  ]
+  ],
+  "jade_signature": {
+    "version": "1.0.0",
+    "skill_id": "mcp_shopify_products",
+    "content_hash": "sha256:298c15260d0c6aa75c52c13622fb964921f29beacc119f66336775d879d9a214",
+    "signature": "jade-sig-9DitWwPOb3UVuEBtnU7mfnVciMSMBIuN9luf1N5fBm0LUc76kC0gkUOgoUOui7vf0/aQMYYryQ7UKdFBzV8DDQ==",
+    "signer": {
+      "public_key": "jade-pk-root-nahtqppiTuY+3eXtr9Hh+LgVlOnSZy+pN5i/r4tVck8=",
+      "fingerprint": "SHA256:2P1URTCynzJwNMCHuWGr9RJb6GK3qbv57Ituc4gZibI=",
+      "role": "root"
+    },
+    "timestamp": "2026-02-21T12:15:13Z",
+    "expires": "2027-02-21T12:15:13Z"
+  }
 }

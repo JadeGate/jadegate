@@ -1,0 +1,15 @@
+{
+  "jade_signature": {
+    "version": "1.0.0",
+    "skill_id": "mcp_azure_openai",
+    "content_hash": "sha256:b791c5f24a61cfc0064ef0be906f2c4956310bd3be71987d1b11aed37f68764b",
+    "signature": "jade-sig-OGEW/zA+1q9gpdgN7H7BMTKoM9/lhpLcK1SeiTv4v98BgpTjz6fx9pxFY3eFVjKFOg0u7RtAFunjijbzpsWZAQ==",
+    "signer": {
+      "public_key": "jade-pk-root-nahtqppiTuY+3eXtr9Hh+LgVlOnSZy+pN5i/r4tVck8=",
+      "fingerprint": "SHA256:2P1URTCynzJwNMCHuWGr9RJb6GK3qbv57Ituc4gZibI=",
+      "role": "root"
+    },
+    "timestamp": "2026-02-21T12:14:51Z",
+    "expires": "2027-02-21T12:14:51Z"
+  }
+}

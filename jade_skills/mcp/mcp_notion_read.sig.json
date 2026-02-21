@@ -3,13 +3,13 @@
     "version": "1.0.0",
     "skill_id": "mcp_notion_read",
     "content_hash": "sha256:d50ba94bb7d38ccb2b9c1030337135446502891a4f5ca1372deb67eddabfa2b5",
-    "signature": "jade-sig-vkxDNycYOZESE1v4Q2sHTUWrX2AlbZU487N/x4gW1QQJNOxcfSTCN60StRRKtizrCOXhhxMW58pkhCkJZi4aBQ==",
+    "signature": "jade-sig-ubo2uPAf63UgyLrp6lnCBoXTIlzQ5ROAUWigHu3+y8cn6w5JTtak6eFixsD+HVT5T7H9ypsVEhwAnNIlaMd6DA==",
     "signer": {
-      "public_key": "jade-pk-root-CSoKNMpd17huyuQvkIW4pfKaixcJ6pUtLT2ljfnzJis=",
-      "fingerprint": "SHA256:qXEdtwUlyBn7LJVPiqftBRnuCrKQx6kYOb43c0Xz2yk=",
+      "public_key": "jade-pk-root-nahtqppiTuY+3eXtr9Hh+LgVlOnSZy+pN5i/r4tVck8=",
+      "fingerprint": "SHA256:2P1URTCynzJwNMCHuWGr9RJb6GK3qbv57Ituc4gZibI=",
       "role": "root"
     },
-    "timestamp": "2026-02-21T08:54:00Z",
-    "expires": "2027-02-21T08:54:00Z"
+    "timestamp": "2026-02-21T12:15:06Z",
+    "expires": "2027-02-21T12:15:06Z"
   }
 }

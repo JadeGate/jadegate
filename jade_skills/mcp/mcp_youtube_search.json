@@ -131,5 +131,18 @@
   "mcp_compatible": true,
   "required_mcp_capabilities": [
     "youtube"
-  ]
+  ],
+  "jade_signature": {
+    "version": "1.0.0",
+    "skill_id": "mcp_youtube_search",
+    "content_hash": "sha256:c3d586dcb7185f7aee22f4c0a8d6d4e8ff22968f43b0a1a9ae97623bb8cbaed6",
+    "signature": "jade-sig-PfYt6ahID9ih2bJkD6ef8XVdZ/+MrYb+j5vWI5yF7qj95faz4YRdd9daV+UQPsgOeeZBs1GXLn9d0zzhUMV4DA==",
+    "signer": {
+      "public_key": "jade-pk-root-nahtqppiTuY+3eXtr9Hh+LgVlOnSZy+pN5i/r4tVck8=",
+      "fingerprint": "SHA256:2P1URTCynzJwNMCHuWGr9RJb6GK3qbv57Ituc4gZibI=",
+      "role": "root"
+    },
+    "timestamp": "2026-02-21T12:15:18Z",
+    "expires": "2027-02-21T12:15:18Z"
+  }
 }

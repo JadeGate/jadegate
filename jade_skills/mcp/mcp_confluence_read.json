@@ -77,5 +77,18 @@
   "mcp_compatible": true,
   "required_mcp_capabilities": [
     "confluence"
-  ]
+  ],
+  "jade_signature": {
+    "version": "1.0.0",
+    "skill_id": "mcp_confluence_read",
+    "content_hash": "sha256:c743a39cd5d71a6d91c4f8a45e2e062dc3eae8c076edfa10675efa7461dc5cad",
+    "signature": "jade-sig-g77eimP4lT3pZGSpX8suGOqRuXIDhJAv8mBOugO+2qHL2okd252V5mwepWOzSo241viV9nL93eujnE6HOgHoAg==",
+    "signer": {
+      "public_key": "jade-pk-root-nahtqppiTuY+3eXtr9Hh+LgVlOnSZy+pN5i/r4tVck8=",
+      "fingerprint": "SHA256:2P1URTCynzJwNMCHuWGr9RJb6GK3qbv57Ituc4gZibI=",
+      "role": "root"
+    },
+    "timestamp": "2026-02-21T12:14:53Z",
+    "expires": "2027-02-21T12:14:53Z"
+  }
 }

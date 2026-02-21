@@ -77,5 +77,18 @@
   "mcp_compatible": true,
   "required_mcp_capabilities": [
     "pypi"
-  ]
+  ],
+  "jade_signature": {
+    "version": "1.0.0",
+    "skill_id": "mcp_pypi_search",
+    "content_hash": "sha256:be4a15554d276457122d6d4ae6632abb8db3312821b253ce4efc18ff92410f18",
+    "signature": "jade-sig-ShQHsSf0L3+dY+g0JnObS6vPLNEI4uEql62gCnOrBD+2JsPIi86uRQR3+Oq5qq64KS5wjcK7h3ZLMNbZ46j3CA==",
+    "signer": {
+      "public_key": "jade-pk-root-nahtqppiTuY+3eXtr9Hh+LgVlOnSZy+pN5i/r4tVck8=",
+      "fingerprint": "SHA256:2P1URTCynzJwNMCHuWGr9RJb6GK3qbv57Ituc4gZibI=",
+      "role": "root"
+    },
+    "timestamp": "2026-02-21T12:15:09Z",
+    "expires": "2027-02-21T12:15:09Z"
+  }
 }
