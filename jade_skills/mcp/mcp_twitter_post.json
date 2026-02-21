@@ -131,5 +131,18 @@
   "mcp_compatible": true,
   "required_mcp_capabilities": [
     "twitter"
-  ]
+  ],
+  "jade_signature": {
+    "version": "1.0.0",
+    "skill_id": "mcp_twitter_post",
+    "content_hash": "sha256:7a292d0fe328c59470c67666a6cd38031a2c3d86ad27a0e5257f6c5aa23806e0",
+    "signature": "jade-sig-MU/rr8fYrCLcva74GsT71jXUOX592/XY1oy0gCU4VW7qD4I0mms7gGdXVkpJTTARdZcEQeRQ0NTLqwzLhss6CQ==",
+    "signer": {
+      "public_key": "jade-pk-root-CSoKNMpd17huyuQvkIW4pfKaixcJ6pUtLT2ljfnzJis=",
+      "fingerprint": "SHA256:qXEdtwUlyBn7LJVPiqftBRnuCrKQx6kYOb43c0Xz2yk=",
+      "role": "root"
+    },
+    "timestamp": "2026-02-21T08:54:17Z",
+    "expires": "2027-02-21T08:54:17Z"
+  }
 }

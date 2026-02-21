@@ -145,5 +145,18 @@
   "mcp_compatible": true,
   "required_mcp_capabilities": [
     "github"
-  ]
+  ],
+  "jade_signature": {
+    "version": "1.0.0",
+    "skill_id": "mcp_github_search_repos",
+    "content_hash": "sha256:596db7f7af66878c853aace917adcaa32dd274b1cb09bfe1aca7e7db7c7de8c1",
+    "signature": "jade-sig-pbgpzxNG1hE/qvn/Wx1SS4QzQ1d0MBC6OCeFoMl2ZSCcasrRByW4j4o4ehsO1RMAECgNjmTHtTFPPWe2zB7MCQ==",
+    "signer": {
+      "public_key": "jade-pk-root-CSoKNMpd17huyuQvkIW4pfKaixcJ6pUtLT2ljfnzJis=",
+      "fingerprint": "SHA256:qXEdtwUlyBn7LJVPiqftBRnuCrKQx6kYOb43c0Xz2yk=",
+      "role": "root"
+    },
+    "timestamp": "2026-02-21T08:53:56Z",
+    "expires": "2027-02-21T08:53:56Z"
+  }
 }

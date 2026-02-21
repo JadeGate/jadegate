@@ -123,5 +123,18 @@
   "mcp_compatible": true,
   "required_mcp_capabilities": [
     "google-maps"
-  ]
+  ],
+  "jade_signature": {
+    "version": "1.0.0",
+    "skill_id": "mcp_google_maps_geocode",
+    "content_hash": "sha256:4edba0b506a60abee61a26de6658cb0687501642d1b951b0839a1545768edf38",
+    "signature": "jade-sig-yV0x9n1LuXO56Kwf2mMw3NHEx2+Cji8NZygSOyuYqwwH7ZQ9yGGHEfWPZqwzrkcVWX0WXzxhDbRbmu3IS/bIAw==",
+    "signer": {
+      "public_key": "jade-pk-root-CSoKNMpd17huyuQvkIW4pfKaixcJ6pUtLT2ljfnzJis=",
+      "fingerprint": "SHA256:qXEdtwUlyBn7LJVPiqftBRnuCrKQx6kYOb43c0Xz2yk=",
+      "role": "root"
+    },
+    "timestamp": "2026-02-21T08:53:57Z",
+    "expires": "2027-02-21T08:53:57Z"
+  }
 }

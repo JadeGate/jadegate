@@ -123,5 +123,18 @@
   "mcp_compatible": true,
   "required_mcp_capabilities": [
     "dns"
-  ]
+  ],
+  "jade_signature": {
+    "version": "1.0.0",
+    "skill_id": "dns_lookup",
+    "content_hash": "sha256:d5f5c108a1de22514edcf29008c91941833e05c35a7c45f8bc651859983cfbaf",
+    "signature": "jade-sig-2nzzQgqf9b/dYm/DRNvWFIQBWNOAZbQ72wUhE96ogNlpwjcs4S3zQ1H6at19h4PcfLOkXjZfaLCLhZkibvVWBg==",
+    "signer": {
+      "public_key": "jade-pk-root-CSoKNMpd17huyuQvkIW4pfKaixcJ6pUtLT2ljfnzJis=",
+      "fingerprint": "SHA256:qXEdtwUlyBn7LJVPiqftBRnuCrKQx6kYOb43c0Xz2yk=",
+      "role": "root"
+    },
+    "timestamp": "2026-02-21T08:54:23Z",
+    "expires": "2027-02-21T08:54:23Z"
+  }
 }

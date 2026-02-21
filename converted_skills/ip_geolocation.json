@@ -174,5 +174,18 @@
   "mcp_compatible": true,
   "required_mcp_capabilities": [
     "http"
-  ]
+  ],
+  "jade_signature": {
+    "version": "1.0.0",
+    "skill_id": "ip_geolocation",
+    "content_hash": "sha256:c60a3b4a096a4379e52c2ac014537c09e64a9ece0f8244dcf9fc46457f57f5b4",
+    "signature": "jade-sig-fxHRDLVRaebHZac3Iun1afcEAMl5lwccQNkbpgO/R3Bn86i0VViUeNK3Ow6ZP17MD2ZiZ/kb3h8tzYoQ5q46BQ==",
+    "signer": {
+      "public_key": "jade-pk-root-CSoKNMpd17huyuQvkIW4pfKaixcJ6pUtLT2ljfnzJis=",
+      "fingerprint": "SHA256:qXEdtwUlyBn7LJVPiqftBRnuCrKQx6kYOb43c0Xz2yk=",
+      "role": "root"
+    },
+    "timestamp": "2026-02-21T08:54:33Z",
+    "expires": "2027-02-21T08:54:33Z"
+  }
 }

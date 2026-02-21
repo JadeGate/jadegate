@@ -146,5 +146,18 @@
   "mcp_compatible": true,
   "required_mcp_capabilities": [
     "http"
-  ]
+  ],
+  "jade_signature": {
+    "version": "1.0.0",
+    "skill_id": "slack_send_message",
+    "content_hash": "sha256:6ec7c5fa1146f7303ec4930d79742b3a6edecabed4fcd297eaee272fb44ac297",
+    "signature": "jade-sig-lrqnFrDsbshPUjZHIFDe1HPr6URDVnDPhm66IhpqimJslszmpi5D8wT5ZANT4VjE+6ouneKCBT3K4HYi4GpbAA==",
+    "signer": {
+      "public_key": "jade-pk-root-CSoKNMpd17huyuQvkIW4pfKaixcJ6pUtLT2ljfnzJis=",
+      "fingerprint": "SHA256:qXEdtwUlyBn7LJVPiqftBRnuCrKQx6kYOb43c0Xz2yk=",
+      "role": "root"
+    },
+    "timestamp": "2026-02-21T08:54:40Z",
+    "expires": "2027-02-21T08:54:40Z"
+  }
 }

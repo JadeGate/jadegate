@@ -125,5 +125,18 @@
   "mcp_compatible": true,
   "required_mcp_capabilities": [
     "gdrive"
-  ]
+  ],
+  "jade_signature": {
+    "version": "1.0.0",
+    "skill_id": "mcp_gdrive_search",
+    "content_hash": "sha256:7821aa52bfb72c5a55d602084c94a1558423cbb429915ec13a2e42fd09d0af06",
+    "signature": "jade-sig-JojrHJg0jS9fd4ORgavSIV6lByckwGrq29gt9q0FoM77v3V4m5MjXyOaj1FRG3r+pWro6izr+bZnby4YRSkiCQ==",
+    "signer": {
+      "public_key": "jade-pk-root-CSoKNMpd17huyuQvkIW4pfKaixcJ6pUtLT2ljfnzJis=",
+      "fingerprint": "SHA256:qXEdtwUlyBn7LJVPiqftBRnuCrKQx6kYOb43c0Xz2yk=",
+      "role": "root"
+    },
+    "timestamp": "2026-02-21T08:53:52Z",
+    "expires": "2027-02-21T08:53:52Z"
+  }
 }

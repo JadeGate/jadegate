@@ -1,0 +1,15 @@
+{
+  "jade_signature": {
+    "version": "1.0.0",
+    "skill_id": "mcp_filesystem_write",
+    "content_hash": "sha256:0c7aad0d14f5e13c55814dc8c243280f2d29941f468593687778cf3cce861153",
+    "signature": "jade-sig-cbb9nzzreD85CL0AcvVTbc2EuztCA7v2HMcJC68EDYdT0YyzZgI6/WbmxruWg+OeAo7DIA1SoT1eOwy5To0/AA==",
+    "signer": {
+      "public_key": "jade-pk-root-CSoKNMpd17huyuQvkIW4pfKaixcJ6pUtLT2ljfnzJis=",
+      "fingerprint": "SHA256:qXEdtwUlyBn7LJVPiqftBRnuCrKQx6kYOb43c0Xz2yk=",
+      "role": "root"
+    },
+    "timestamp": "2026-02-21T08:53:51Z",
+    "expires": "2027-02-21T08:53:51Z"
+  }
+}

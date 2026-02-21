@@ -1,0 +1,15 @@
+{
+  "jade_signature": {
+    "version": "1.0.0",
+    "skill_id": "mcp_discord_webhook",
+    "content_hash": "sha256:0d0242921fe8e5fff305ebe0805abbd619c49febc06dc83e90a780e4a9b10763",
+    "signature": "jade-sig-e9mnignWuFkPZagCzDwwFLHL7O4v836BeF+uesj61DFn62EOpAkOFoFUbMNl+stm3+EEOkPpG8MK8libWsxGCw==",
+    "signer": {
+      "public_key": "jade-pk-root-CSoKNMpd17huyuQvkIW4pfKaixcJ6pUtLT2ljfnzJis=",
+      "fingerprint": "SHA256:qXEdtwUlyBn7LJVPiqftBRnuCrKQx6kYOb43c0Xz2yk=",
+      "role": "root"
+    },
+    "timestamp": "2026-02-21T08:53:44Z",
+    "expires": "2027-02-21T08:53:44Z"
+  }
+}

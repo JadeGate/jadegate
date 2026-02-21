@@ -179,5 +179,18 @@
   "mcp_compatible": true,
   "required_mcp_capabilities": [
     "shell"
-  ]
+  ],
+  "jade_signature": {
+    "version": "1.0.0",
+    "skill_id": "ssh_remote_exec",
+    "content_hash": "sha256:0ee211ddf6903a140d5a8788cf7deb3155b3d60ef746454d97b98dcf173a412b",
+    "signature": "jade-sig-AFJ53m5ESmZl8hDa9GMdw1/2YUBnlXHr7+ZvKKAyWsJ3SZBTtpWVRMmsyXasRKY0J5a7TIWuQB0IfsJ494RhAA==",
+    "signer": {
+      "public_key": "jade-pk-root-CSoKNMpd17huyuQvkIW4pfKaixcJ6pUtLT2ljfnzJis=",
+      "fingerprint": "SHA256:qXEdtwUlyBn7LJVPiqftBRnuCrKQx6kYOb43c0Xz2yk=",
+      "role": "root"
+    },
+    "timestamp": "2026-02-21T08:54:43Z",
+    "expires": "2027-02-21T08:54:43Z"
+  }
 }

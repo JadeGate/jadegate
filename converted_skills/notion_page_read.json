@@ -179,5 +179,18 @@
   "mcp_compatible": true,
   "required_mcp_capabilities": [
     "http"
-  ]
+  ],
+  "jade_signature": {
+    "version": "1.0.0",
+    "skill_id": "notion_page_read",
+    "content_hash": "sha256:53dbb922e64f9b6f5c32a489e088154ed43188afbb67900df802c985285eb9e2",
+    "signature": "jade-sig-2sr+TpNgVsFoIEKQtC/F5FniaxzFMuLGQzaE4ZKFv/ViagzOrL0hxXQguwACoYCBDgSJPeot4wIgz0C/lzgUCQ==",
+    "signer": {
+      "public_key": "jade-pk-root-CSoKNMpd17huyuQvkIW4pfKaixcJ6pUtLT2ljfnzJis=",
+      "fingerprint": "SHA256:qXEdtwUlyBn7LJVPiqftBRnuCrKQx6kYOb43c0Xz2yk=",
+      "role": "root"
+    },
+    "timestamp": "2026-02-21T08:54:37Z",
+    "expires": "2027-02-21T08:54:37Z"
+  }
 }

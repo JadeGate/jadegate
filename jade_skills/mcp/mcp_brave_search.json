@@ -139,5 +139,18 @@
   "mcp_compatible": true,
   "required_mcp_capabilities": [
     "brave-search"
-  ]
+  ],
+  "jade_signature": {
+    "version": "1.0.0",
+    "skill_id": "mcp_brave_search",
+    "content_hash": "sha256:f3732bb823426fd20d3e20479a3d6250e29462dfb924e40f68c226298b6ed762",
+    "signature": "jade-sig-AIwby6Fz9/NoEKxEC6VdJP+vHbQNddZCXcSKOjKz+XGosZtGeC2xWvIW7w2pF2FojSfQEmugV0cgPrEFSo82DA==",
+    "signer": {
+      "public_key": "jade-pk-root-CSoKNMpd17huyuQvkIW4pfKaixcJ6pUtLT2ljfnzJis=",
+      "fingerprint": "SHA256:qXEdtwUlyBn7LJVPiqftBRnuCrKQx6kYOb43c0Xz2yk=",
+      "role": "root"
+    },
+    "timestamp": "2026-02-21T08:53:41Z",
+    "expires": "2027-02-21T08:53:41Z"
+  }
 }

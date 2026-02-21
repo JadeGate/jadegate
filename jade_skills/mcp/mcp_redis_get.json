@@ -95,5 +95,18 @@
   "mcp_compatible": true,
   "required_mcp_capabilities": [
     "redis"
-  ]
+  ],
+  "jade_signature": {
+    "version": "1.0.0",
+    "skill_id": "mcp_redis_get",
+    "content_hash": "sha256:5c929005bfaa399aeb78ab3b147a3cabd069b8c485d9ceff5e51b2358be4eec6",
+    "signature": "jade-sig-JDULrGB+Vn6r9TVawny/CysD/ybjRNtX579AZXc5O13slSgEFGv4d/xg4CqpMtM3iWpUnuJlOoHSNPBhvzVpDQ==",
+    "signer": {
+      "public_key": "jade-pk-root-CSoKNMpd17huyuQvkIW4pfKaixcJ6pUtLT2ljfnzJis=",
+      "fingerprint": "SHA256:qXEdtwUlyBn7LJVPiqftBRnuCrKQx6kYOb43c0Xz2yk=",
+      "role": "root"
+    },
+    "timestamp": "2026-02-21T08:54:04Z",
+    "expires": "2027-02-21T08:54:04Z"
+  }
 }
