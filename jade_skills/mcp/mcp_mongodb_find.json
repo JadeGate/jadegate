@@ -1,0 +1,86 @@
+{
+  "jade_version": "1.0.0",
+  "metadata": {
+    "version": "1.0.0",
+    "author": "jadegate-official",
+    "name": "MongoDB Atlas Data API Find",
+    "description": "Query documents via MongoDB Atlas Data API",
+    "tags": [
+      "mongodb",
+      "database",
+      "nosql"
+    ]
+  },
+  "trigger": {
+    "type": "task_intent",
+    "conditions": [
+      {
+        "field": "task.type",
+        "operator": "in",
+        "value": [
+          "mcp_mongodb_find"
+        ]
+      }
+    ]
+  },
+  "security": {
+    "sandbox_level": "standard",
+    "max_execution_time_ms": 15000,
+    "max_retries": 3,
+    "file_permissions": {
+      "read": [],
+      "write": []
+    },
+    "network_whitelist": [
+      "data.mongodb-api.com"
+    ]
+  },
+  "skill_id": "mcp_mongodb_find",
+  "input_schema": {
+    "required_params": [
+      {
+        "name": "collection",
+        "type": "string",
+        "description": "Collection name"
+      },
+      {
+        "name": "filter",
+        "type": "object",
+        "description": "Query filter"
+      }
+    ],
+    "optional_params": []
+  },
+  "output_schema": {
+    "fields": [
+      {
+        "name": "documents",
+        "type": "array",
+        "description": "Matching documents"
+      }
+    ]
+  },
+  "execution_dag": {
+    "nodes": [
+      {
+        "id": "mongodb_find",
+        "type": "mcp_call",
+        "action": "mongodb_find",
+        "params": {
+          "url": "https://data.mongodb-api.com/app/{{input.app_id}}/endpoint/data/v1/action/find",
+          "method": "POST",
+          "headers": {
+            "Content-Type": "application/json"
+          }
+        }
+      }
+    ],
+    "edges": [],
+    "entry_node": "mongodb_find",
+    "exit_node": "mongodb_find"
+  },
+  "mcp_compatible": true,
+  "required_mcp_capabilities": [
+    "mongodb"
+  ]
+}

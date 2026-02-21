@@ -1,0 +1,81 @@
+{
+  "jade_version": "1.0.0",
+  "metadata": {
+    "version": "1.0.0",
+    "author": "jadegate-official",
+    "name": "Firebase Realtime DB Read",
+    "description": "Read data from Firebase Realtime Database",
+    "tags": [
+      "firebase",
+      "database",
+      "google"
+    ]
+  },
+  "trigger": {
+    "type": "task_intent",
+    "conditions": [
+      {
+        "field": "task.type",
+        "operator": "in",
+        "value": [
+          "mcp_firebase_read"
+        ]
+      }
+    ]
+  },
+  "security": {
+    "sandbox_level": "standard",
+    "max_execution_time_ms": 15000,
+    "max_retries": 3,
+    "file_permissions": {
+      "read": [],
+      "write": []
+    },
+    "network_whitelist": [
+      "*.firebaseio.com"
+    ]
+  },
+  "skill_id": "mcp_firebase_read",
+  "input_schema": {
+    "required_params": [
+      {
+        "name": "path",
+        "type": "string",
+        "description": "Database path"
+      }
+    ],
+    "optional_params": []
+  },
+  "output_schema": {
+    "fields": [
+      {
+        "name": "data",
+        "type": "object",
+        "description": "Data at path"
+      }
+    ]
+  },
+  "execution_dag": {
+    "nodes": [
+      {
+        "id": "firebase_read",
+        "type": "mcp_call",
+        "action": "firebase_read",
+        "params": {
+          "url": "https://{{input.project}}.firebaseio.com/{{input.path}}.json",
+          "method": "POST",
+          "headers": {
+            "Content-Type": "application/json"
+          }
+        }
+      }
+    ],
+    "edges": [],
+    "entry_node": "firebase_read",
+    "exit_node": "firebase_read"
+  },
+  "mcp_compatible": true,
+  "required_mcp_capabilities": [
+    "firebase"
+  ]
+}

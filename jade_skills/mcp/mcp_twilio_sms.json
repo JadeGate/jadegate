@@ -1,0 +1,90 @@
+{
+  "jade_version": "1.0.0",
+  "metadata": {
+    "version": "1.0.0",
+    "author": "jadegate-official",
+    "name": "Twilio Send SMS",
+    "description": "Send an SMS via Twilio API",
+    "tags": [
+      "twilio",
+      "sms",
+      "messaging"
+    ]
+  },
+  "trigger": {
+    "type": "task_intent",
+    "conditions": [
+      {
+        "field": "task.type",
+        "operator": "in",
+        "value": [
+          "mcp_twilio_sms"
+        ]
+      }
+    ]
+  },
+  "security": {
+    "sandbox_level": "standard",
+    "max_execution_time_ms": 15000,
+    "max_retries": 3,
+    "file_permissions": {
+      "read": [],
+      "write": []
+    },
+    "network_whitelist": [
+      "api.twilio.com"
+    ],
+    "env_whitelist": [
+      "TWILIO_SID",
+      "TWILIO_AUTH_TOKEN"
+    ]
+  },
+  "skill_id": "mcp_twilio_sms",
+  "input_schema": {
+    "required_params": [
+      {
+        "name": "to",
+        "type": "string",
+        "description": "Recipient phone number"
+      },
+      {
+        "name": "body",
+        "type": "string",
+        "description": "Message body"
+      }
+    ],
+    "optional_params": []
+  },
+  "output_schema": {
+    "fields": [
+      {
+        "name": "sid",
+        "type": "string",
+        "description": "Message SID"
+      }
+    ]
+  },
+  "execution_dag": {
+    "nodes": [
+      {
+        "id": "twilio_sms",
+        "type": "mcp_call",
+        "action": "twilio_sms",
+        "params": {
+          "url": "https://api.twilio.com/2010-04-01/Accounts/{{env.TWILIO_SID}}/Messages.json",
+          "method": "POST",
+          "headers": {
+            "Content-Type": "application/json"
+          }
+        }
+      }
+    ],
+    "edges": [],
+    "entry_node": "twilio_sms",
+    "exit_node": "twilio_sms"
+  },
+  "mcp_compatible": true,
+  "required_mcp_capabilities": [
+    "twilio"
+  ]
+}

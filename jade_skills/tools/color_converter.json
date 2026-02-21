@@ -1,0 +1,80 @@
+{
+  "jade_version": "1.0.0",
+  "metadata": {
+    "version": "1.0.0",
+    "author": "jadegate-official",
+    "name": "Color Format Converter",
+    "description": "Convert between HEX, RGB, HSL color formats",
+    "tags": [
+      "color",
+      "converter",
+      "design"
+    ]
+  },
+  "trigger": {
+    "type": "task_intent",
+    "conditions": [
+      {
+        "field": "task.type",
+        "operator": "in",
+        "value": [
+          "color_converter"
+        ]
+      }
+    ]
+  },
+  "security": {
+    "sandbox_level": "standard",
+    "max_execution_time_ms": 15000,
+    "max_retries": 3,
+    "file_permissions": {
+      "read": [],
+      "write": []
+    },
+    "network_whitelist": []
+  },
+  "skill_id": "color_converter",
+  "input_schema": {
+    "required_params": [
+      {
+        "name": "color",
+        "type": "string",
+        "description": "Color value (hex, rgb, or hsl)"
+      }
+    ],
+    "optional_params": []
+  },
+  "output_schema": {
+    "fields": [
+      {
+        "name": "hex",
+        "type": "string",
+        "description": "HEX value"
+      },
+      {
+        "name": "rgb",
+        "type": "string",
+        "description": "RGB value"
+      },
+      {
+        "name": "hsl",
+        "type": "string",
+        "description": "HSL value"
+      }
+    ]
+  },
+  "execution_dag": {
+    "nodes": [
+      {
+        "id": "main",
+        "type": "transform",
+        "action": "color_converter",
+        "params": {}
+      }
+    ],
+    "edges": [],
+    "entry_node": "main",
+    "exit_node": "main"
+  },
+  "mcp_compatible": false
+}

@@ -1,0 +1,82 @@
+{
+  "jade_version": "1.0.0",
+  "metadata": {
+    "version": "1.0.0",
+    "author": "jadegate-official",
+    "name": "Grafana Get Dashboard",
+    "description": "Retrieve a Grafana dashboard by UID",
+    "tags": [
+      "grafana",
+      "monitoring",
+      "dashboard"
+    ]
+  },
+  "trigger": {
+    "type": "task_intent",
+    "conditions": [
+      {
+        "field": "task.type",
+        "operator": "in",
+        "value": [
+          "mcp_grafana_dashboard"
+        ]
+      }
+    ]
+  },
+  "security": {
+    "sandbox_level": "standard",
+    "max_execution_time_ms": 15000,
+    "max_retries": 3,
+    "file_permissions": {
+      "read": [],
+      "write": []
+    },
+    "network_whitelist": [
+      "*.grafana.net",
+      "*.grafana.com"
+    ]
+  },
+  "skill_id": "mcp_grafana_dashboard",
+  "input_schema": {
+    "required_params": [
+      {
+        "name": "uid",
+        "type": "string",
+        "description": "Dashboard UID"
+      }
+    ],
+    "optional_params": []
+  },
+  "output_schema": {
+    "fields": [
+      {
+        "name": "dashboard",
+        "type": "object",
+        "description": "Dashboard JSON"
+      }
+    ]
+  },
+  "execution_dag": {
+    "nodes": [
+      {
+        "id": "grafana_dashboard",
+        "type": "mcp_call",
+        "action": "grafana_dashboard",
+        "params": {
+          "url": "https://{{input.host}}/api/dashboards/uid/{{input.uid}}",
+          "method": "POST",
+          "headers": {
+            "Content-Type": "application/json"
+          }
+        }
+      }
+    ],
+    "edges": [],
+    "entry_node": "grafana_dashboard",
+    "exit_node": "grafana_dashboard"
+  },
+  "mcp_compatible": true,
+  "required_mcp_capabilities": [
+    "grafana"
+  ]
+}

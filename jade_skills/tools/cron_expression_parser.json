@@ -1,0 +1,80 @@
+{
+  "jade_version": "1.0.0",
+  "metadata": {
+    "version": "1.0.0",
+    "author": "jadegate-official",
+    "name": "Cron Expression Parser",
+    "description": "Parse and explain a cron expression, show next N run times",
+    "tags": [
+      "cron",
+      "scheduling",
+      "parser"
+    ]
+  },
+  "trigger": {
+    "type": "task_intent",
+    "conditions": [
+      {
+        "field": "task.type",
+        "operator": "in",
+        "value": [
+          "cron_expression_parser"
+        ]
+      }
+    ]
+  },
+  "security": {
+    "sandbox_level": "standard",
+    "max_execution_time_ms": 15000,
+    "max_retries": 3,
+    "file_permissions": {
+      "read": [],
+      "write": []
+    },
+    "network_whitelist": []
+  },
+  "skill_id": "cron_expression_parser",
+  "input_schema": {
+    "required_params": [
+      {
+        "name": "expression",
+        "type": "string",
+        "description": "Cron expression"
+      },
+      {
+        "name": "count",
+        "type": "number",
+        "description": "Number of next runs to show"
+      }
+    ],
+    "optional_params": []
+  },
+  "output_schema": {
+    "fields": [
+      {
+        "name": "explanation",
+        "type": "string",
+        "description": "Human-readable explanation"
+      },
+      {
+        "name": "next_runs",
+        "type": "array",
+        "description": "Next scheduled times"
+      }
+    ]
+  },
+  "execution_dag": {
+    "nodes": [
+      {
+        "id": "main",
+        "type": "transform",
+        "action": "cron_expression_parser",
+        "params": {}
+      }
+    ],
+    "edges": [],
+    "entry_node": "main",
+    "exit_node": "main"
+  },
+  "mcp_compatible": false
+}

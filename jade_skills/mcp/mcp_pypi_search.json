@@ -1,0 +1,81 @@
+{
+  "jade_version": "1.0.0",
+  "metadata": {
+    "version": "1.0.0",
+    "author": "jadegate-official",
+    "name": "PyPI Package Info",
+    "description": "Get Python package info from PyPI",
+    "tags": [
+      "pypi",
+      "packages",
+      "python"
+    ]
+  },
+  "trigger": {
+    "type": "task_intent",
+    "conditions": [
+      {
+        "field": "task.type",
+        "operator": "in",
+        "value": [
+          "mcp_pypi_search"
+        ]
+      }
+    ]
+  },
+  "security": {
+    "sandbox_level": "standard",
+    "max_execution_time_ms": 15000,
+    "max_retries": 3,
+    "file_permissions": {
+      "read": [],
+      "write": []
+    },
+    "network_whitelist": [
+      "pypi.org"
+    ]
+  },
+  "skill_id": "mcp_pypi_search",
+  "input_schema": {
+    "required_params": [
+      {
+        "name": "package",
+        "type": "string",
+        "description": "Package name"
+      }
+    ],
+    "optional_params": []
+  },
+  "output_schema": {
+    "fields": [
+      {
+        "name": "info",
+        "type": "object",
+        "description": "Package metadata"
+      }
+    ]
+  },
+  "execution_dag": {
+    "nodes": [
+      {
+        "id": "pypi_search",
+        "type": "mcp_call",
+        "action": "pypi_search",
+        "params": {
+          "url": "https://pypi.org/pypi/{{input.package}}/json",
+          "method": "POST",
+          "headers": {
+            "Content-Type": "application/json"
+          }
+        }
+      }
+    ],
+    "edges": [],
+    "entry_node": "pypi_search",
+    "exit_node": "pypi_search"
+  },
+  "mcp_compatible": true,
+  "required_mcp_capabilities": [
+    "pypi"
+  ]
+}

@@ -1,0 +1,81 @@
+{
+  "jade_version": "1.0.0",
+  "metadata": {
+    "version": "1.0.0",
+    "author": "jadegate-official",
+    "name": "Confluence Read Page",
+    "description": "Read a Confluence wiki page",
+    "tags": [
+      "confluence",
+      "wiki",
+      "docs"
+    ]
+  },
+  "trigger": {
+    "type": "task_intent",
+    "conditions": [
+      {
+        "field": "task.type",
+        "operator": "in",
+        "value": [
+          "mcp_confluence_read"
+        ]
+      }
+    ]
+  },
+  "security": {
+    "sandbox_level": "standard",
+    "max_execution_time_ms": 15000,
+    "max_retries": 3,
+    "file_permissions": {
+      "read": [],
+      "write": []
+    },
+    "network_whitelist": [
+      "*.atlassian.net"
+    ]
+  },
+  "skill_id": "mcp_confluence_read",
+  "input_schema": {
+    "required_params": [
+      {
+        "name": "page_id",
+        "type": "string",
+        "description": "Page ID"
+      }
+    ],
+    "optional_params": []
+  },
+  "output_schema": {
+    "fields": [
+      {
+        "name": "content",
+        "type": "string",
+        "description": "Page content"
+      }
+    ]
+  },
+  "execution_dag": {
+    "nodes": [
+      {
+        "id": "confluence_read",
+        "type": "mcp_call",
+        "action": "confluence_read",
+        "params": {
+          "url": "https://{{input.domain}}.atlassian.net/wiki/rest/api/content/{{input.page_id}}",
+          "method": "POST",
+          "headers": {
+            "Content-Type": "application/json"
+          }
+        }
+      }
+    ],
+    "edges": [],
+    "entry_node": "confluence_read",
+    "exit_node": "confluence_read"
+  },
+  "mcp_compatible": true,
+  "required_mcp_capabilities": [
+    "confluence"
+  ]
+}

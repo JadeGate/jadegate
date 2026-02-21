@@ -1,0 +1,81 @@
+{
+  "jade_version": "1.0.0",
+  "metadata": {
+    "version": "1.0.0",
+    "author": "jadegate-official",
+    "name": "Shopify List Products",
+    "description": "List products from a Shopify store",
+    "tags": [
+      "shopify",
+      "ecommerce",
+      "products"
+    ]
+  },
+  "trigger": {
+    "type": "task_intent",
+    "conditions": [
+      {
+        "field": "task.type",
+        "operator": "in",
+        "value": [
+          "mcp_shopify_products"
+        ]
+      }
+    ]
+  },
+  "security": {
+    "sandbox_level": "standard",
+    "max_execution_time_ms": 15000,
+    "max_retries": 3,
+    "file_permissions": {
+      "read": [],
+      "write": []
+    },
+    "network_whitelist": [
+      "*.myshopify.com"
+    ]
+  },
+  "skill_id": "mcp_shopify_products",
+  "input_schema": {
+    "required_params": [
+      {
+        "name": "shop",
+        "type": "string",
+        "description": "Shop domain"
+      }
+    ],
+    "optional_params": []
+  },
+  "output_schema": {
+    "fields": [
+      {
+        "name": "products",
+        "type": "array",
+        "description": "Product list"
+      }
+    ]
+  },
+  "execution_dag": {
+    "nodes": [
+      {
+        "id": "shopify_products",
+        "type": "mcp_call",
+        "action": "shopify_products",
+        "params": {
+          "url": "https://{{input.shop}}.myshopify.com/admin/api/2024-01/products.json",
+          "method": "POST",
+          "headers": {
+            "Content-Type": "application/json"
+          }
+        }
+      }
+    ],
+    "edges": [],
+    "entry_node": "shopify_products",
+    "exit_node": "shopify_products"
+  },
+  "mcp_compatible": true,
+  "required_mcp_capabilities": [
+    "shopify"
+  ]
+}

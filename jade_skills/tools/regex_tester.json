@@ -1,0 +1,75 @@
+{
+  "jade_version": "1.0.0",
+  "metadata": {
+    "version": "1.0.0",
+    "author": "jadegate-official",
+    "name": "Regex Pattern Tester",
+    "description": "Test a regex pattern against input text",
+    "tags": [
+      "regex",
+      "text",
+      "testing"
+    ]
+  },
+  "trigger": {
+    "type": "task_intent",
+    "conditions": [
+      {
+        "field": "task.type",
+        "operator": "in",
+        "value": [
+          "regex_tester"
+        ]
+      }
+    ]
+  },
+  "security": {
+    "sandbox_level": "standard",
+    "max_execution_time_ms": 15000,
+    "max_retries": 3,
+    "file_permissions": {
+      "read": [],
+      "write": []
+    },
+    "network_whitelist": []
+  },
+  "skill_id": "regex_tester",
+  "input_schema": {
+    "required_params": [
+      {
+        "name": "pattern",
+        "type": "string",
+        "description": "Regex pattern"
+      },
+      {
+        "name": "text",
+        "type": "string",
+        "description": "Test text"
+      }
+    ],
+    "optional_params": []
+  },
+  "output_schema": {
+    "fields": [
+      {
+        "name": "matches",
+        "type": "array",
+        "description": "All matches"
+      }
+    ]
+  },
+  "execution_dag": {
+    "nodes": [
+      {
+        "id": "main",
+        "type": "transform",
+        "action": "regex_tester",
+        "params": {}
+      }
+    ],
+    "edges": [],
+    "entry_node": "main",
+    "exit_node": "main"
+  },
+  "mcp_compatible": false
+}

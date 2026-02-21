@@ -1,0 +1,86 @@
+{
+  "jade_version": "1.0.0",
+  "metadata": {
+    "version": "1.0.0",
+    "author": "jadegate-official",
+    "name": "Pinecone Vector Query",
+    "description": "Query vectors in Pinecone",
+    "tags": [
+      "pinecone",
+      "vector",
+      "embeddings"
+    ]
+  },
+  "trigger": {
+    "type": "task_intent",
+    "conditions": [
+      {
+        "field": "task.type",
+        "operator": "in",
+        "value": [
+          "mcp_pinecone_query"
+        ]
+      }
+    ]
+  },
+  "security": {
+    "sandbox_level": "standard",
+    "max_execution_time_ms": 15000,
+    "max_retries": 3,
+    "file_permissions": {
+      "read": [],
+      "write": []
+    },
+    "network_whitelist": [
+      "*.pinecone.io"
+    ]
+  },
+  "skill_id": "mcp_pinecone_query",
+  "input_schema": {
+    "required_params": [
+      {
+        "name": "vector",
+        "type": "array",
+        "description": "Query vector"
+      },
+      {
+        "name": "top_k",
+        "type": "number",
+        "description": "Number of results"
+      }
+    ],
+    "optional_params": []
+  },
+  "output_schema": {
+    "fields": [
+      {
+        "name": "matches",
+        "type": "array",
+        "description": "Matching vectors"
+      }
+    ]
+  },
+  "execution_dag": {
+    "nodes": [
+      {
+        "id": "pinecone_query",
+        "type": "mcp_call",
+        "action": "pinecone_query",
+        "params": {
+          "url": "https://{{input.index}}.svc.{{input.environment}}.pinecone.io/query",
+          "method": "POST",
+          "headers": {
+            "Content-Type": "application/json"
+          }
+        }
+      }
+    ],
+    "edges": [],
+    "entry_node": "pinecone_query",
+    "exit_node": "pinecone_query"
+  },
+  "mcp_compatible": true,
+  "required_mcp_capabilities": [
+    "pinecone"
+  ]
+}

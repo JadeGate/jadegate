@@ -1,0 +1,75 @@
+{
+  "jade_version": "1.0.0",
+  "metadata": {
+    "version": "1.0.0",
+    "author": "jadegate-official",
+    "name": "JWT Token Decoder",
+    "description": "Decode a JWT token (header + payload, no verification)",
+    "tags": [
+      "jwt",
+      "auth",
+      "decode"
+    ]
+  },
+  "trigger": {
+    "type": "task_intent",
+    "conditions": [
+      {
+        "field": "task.type",
+        "operator": "in",
+        "value": [
+          "jwt_decode"
+        ]
+      }
+    ]
+  },
+  "security": {
+    "sandbox_level": "standard",
+    "max_execution_time_ms": 15000,
+    "max_retries": 3,
+    "file_permissions": {
+      "read": [],
+      "write": []
+    },
+    "network_whitelist": []
+  },
+  "skill_id": "jwt_decode",
+  "input_schema": {
+    "required_params": [
+      {
+        "name": "token",
+        "type": "string",
+        "description": "JWT token string"
+      }
+    ],
+    "optional_params": []
+  },
+  "output_schema": {
+    "fields": [
+      {
+        "name": "header",
+        "type": "object",
+        "description": "JWT header"
+      },
+      {
+        "name": "payload",
+        "type": "object",
+        "description": "JWT payload"
+      }
+    ]
+  },
+  "execution_dag": {
+    "nodes": [
+      {
+        "id": "main",
+        "type": "transform",
+        "action": "jwt_decode",
+        "params": {}
+      }
+    ],
+    "edges": [],
+    "entry_node": "main",
+    "exit_node": "main"
+  },
+  "mcp_compatible": false
+}

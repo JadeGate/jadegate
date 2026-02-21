@@ -20,6 +20,11 @@ class TriggerType(str, Enum):
     TASK_INTENT = "task_intent"
     ENVIRONMENT_STATE = "environment_state"
     MANUAL = "manual"
+    MCP_CALL = "mcp_call"
+    DIRECT_CALL = "direct_call"
+    HTTP_REQUEST = "http_request"
+    SCHEDULED = "scheduled"
+    EVENT = "event"
 
 
 class ConditionOperator(str, Enum):

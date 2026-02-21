@@ -1,0 +1,81 @@
+{
+  "jade_version": "1.0.0",
+  "metadata": {
+    "version": "1.0.0",
+    "author": "jadegate-official",
+    "name": "Azure OpenAI Chat",
+    "description": "Chat completion via Azure OpenAI Service",
+    "tags": [
+      "azure",
+      "openai",
+      "llm"
+    ]
+  },
+  "trigger": {
+    "type": "task_intent",
+    "conditions": [
+      {
+        "field": "task.type",
+        "operator": "in",
+        "value": [
+          "mcp_azure_openai"
+        ]
+      }
+    ]
+  },
+  "security": {
+    "sandbox_level": "standard",
+    "max_execution_time_ms": 15000,
+    "max_retries": 3,
+    "file_permissions": {
+      "read": [],
+      "write": []
+    },
+    "network_whitelist": [
+      "*.openai.azure.com"
+    ]
+  },
+  "skill_id": "mcp_azure_openai",
+  "input_schema": {
+    "required_params": [
+      {
+        "name": "prompt",
+        "type": "string",
+        "description": "User prompt"
+      }
+    ],
+    "optional_params": []
+  },
+  "output_schema": {
+    "fields": [
+      {
+        "name": "response",
+        "type": "string",
+        "description": "Model response"
+      }
+    ]
+  },
+  "execution_dag": {
+    "nodes": [
+      {
+        "id": "azure_openai",
+        "type": "mcp_call",
+        "action": "azure_openai",
+        "params": {
+          "url": "https://{{input.resource}}.openai.azure.com/openai/deployments/{{input.deployment}}/chat/completions",
+          "method": "POST",
+          "headers": {
+            "Content-Type": "application/json"
+          }
+        }
+      }
+    ],
+    "edges": [],
+    "entry_node": "azure_openai",
+    "exit_node": "azure_openai"
+  },
+  "mcp_compatible": true,
+  "required_mcp_capabilities": [
+    "azure-openai"
+  ]
+}

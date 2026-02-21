@@ -1,0 +1,86 @@
+{
+  "jade_version": "1.0.0",
+  "metadata": {
+    "version": "1.0.0",
+    "author": "jadegate-official",
+    "name": "Cloudflare Workers Deploy",
+    "description": "Deploy a Cloudflare Worker script",
+    "tags": [
+      "cloudflare",
+      "serverless",
+      "deploy"
+    ]
+  },
+  "trigger": {
+    "type": "task_intent",
+    "conditions": [
+      {
+        "field": "task.type",
+        "operator": "in",
+        "value": [
+          "mcp_cloudflare_workers"
+        ]
+      }
+    ]
+  },
+  "security": {
+    "sandbox_level": "standard",
+    "max_execution_time_ms": 15000,
+    "max_retries": 3,
+    "file_permissions": {
+      "read": [],
+      "write": []
+    },
+    "network_whitelist": [
+      "api.cloudflare.com"
+    ]
+  },
+  "skill_id": "mcp_cloudflare_workers",
+  "input_schema": {
+    "required_params": [
+      {
+        "name": "script_name",
+        "type": "string",
+        "description": "Worker script name"
+      },
+      {
+        "name": "content",
+        "type": "string",
+        "description": "Script content"
+      }
+    ],
+    "optional_params": []
+  },
+  "output_schema": {
+    "fields": [
+      {
+        "name": "id",
+        "type": "string",
+        "description": "Worker ID"
+      }
+    ]
+  },
+  "execution_dag": {
+    "nodes": [
+      {
+        "id": "cloudflare_workers",
+        "type": "mcp_call",
+        "action": "cloudflare_workers",
+        "params": {
+          "url": "https://api.cloudflare.com/client/v4/accounts/{{input.account_id}}/workers/scripts/{{input.script_name}}",
+          "method": "POST",
+          "headers": {
+            "Content-Type": "application/json"
+          }
+        }
+      }
+    ],
+    "edges": [],
+    "entry_node": "cloudflare_workers",
+    "exit_node": "cloudflare_workers"
+  },
+  "mcp_compatible": true,
+  "required_mcp_capabilities": [
+    "cloudflare"
+  ]
+}

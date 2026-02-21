@@ -1,0 +1,80 @@
+{
+  "jade_version": "1.0.0",
+  "metadata": {
+    "version": "1.0.0",
+    "author": "jadegate-official",
+    "name": "Unix Epoch Converter",
+    "description": "Convert between Unix timestamps and human-readable dates",
+    "tags": [
+      "time",
+      "epoch",
+      "converter"
+    ]
+  },
+  "trigger": {
+    "type": "task_intent",
+    "conditions": [
+      {
+        "field": "task.type",
+        "operator": "in",
+        "value": [
+          "epoch_converter"
+        ]
+      }
+    ]
+  },
+  "security": {
+    "sandbox_level": "standard",
+    "max_execution_time_ms": 15000,
+    "max_retries": 3,
+    "file_permissions": {
+      "read": [],
+      "write": []
+    },
+    "network_whitelist": []
+  },
+  "skill_id": "epoch_converter",
+  "input_schema": {
+    "required_params": [
+      {
+        "name": "value",
+        "type": "string",
+        "description": "Unix timestamp or date string"
+      }
+    ],
+    "optional_params": []
+  },
+  "output_schema": {
+    "fields": [
+      {
+        "name": "unix",
+        "type": "number",
+        "description": "Unix timestamp"
+      },
+      {
+        "name": "iso",
+        "type": "string",
+        "description": "ISO 8601 date"
+      },
+      {
+        "name": "human",
+        "type": "string",
+        "description": "Human-readable date"
+      }
+    ]
+  },
+  "execution_dag": {
+    "nodes": [
+      {
+        "id": "main",
+        "type": "transform",
+        "action": "epoch_converter",
+        "params": {}
+      }
+    ],
+    "edges": [],
+    "entry_node": "main",
+    "exit_node": "main"
+  },
+  "mcp_compatible": false
+}

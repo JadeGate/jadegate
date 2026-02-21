@@ -1,0 +1,86 @@
+{
+  "jade_version": "1.0.0",
+  "metadata": {
+    "version": "1.0.0",
+    "author": "jadegate-official",
+    "name": "AWS Lambda Invoke",
+    "description": "Invoke an AWS Lambda function",
+    "tags": [
+      "aws",
+      "lambda",
+      "serverless"
+    ]
+  },
+  "trigger": {
+    "type": "task_intent",
+    "conditions": [
+      {
+        "field": "task.type",
+        "operator": "in",
+        "value": [
+          "mcp_aws_lambda_invoke"
+        ]
+      }
+    ]
+  },
+  "security": {
+    "sandbox_level": "standard",
+    "max_execution_time_ms": 15000,
+    "max_retries": 3,
+    "file_permissions": {
+      "read": [],
+      "write": []
+    },
+    "network_whitelist": [
+      "*.amazonaws.com"
+    ]
+  },
+  "skill_id": "mcp_aws_lambda_invoke",
+  "input_schema": {
+    "required_params": [
+      {
+        "name": "function_name",
+        "type": "string",
+        "description": "Lambda function name"
+      },
+      {
+        "name": "payload",
+        "type": "object",
+        "description": "Invocation payload"
+      }
+    ],
+    "optional_params": []
+  },
+  "output_schema": {
+    "fields": [
+      {
+        "name": "response",
+        "type": "object",
+        "description": "Lambda response"
+      }
+    ]
+  },
+  "execution_dag": {
+    "nodes": [
+      {
+        "id": "aws_lambda_invoke",
+        "type": "mcp_call",
+        "action": "aws_lambda_invoke",
+        "params": {
+          "url": "https://lambda.{{input.region}}.amazonaws.com/2015-03-31/functions/{{input.function_name}}/invocations",
+          "method": "POST",
+          "headers": {
+            "Content-Type": "application/json"
+          }
+        }
+      }
+    ],
+    "edges": [],
+    "entry_node": "aws_lambda_invoke",
+    "exit_node": "aws_lambda_invoke"
+  },
+  "mcp_compatible": true,
+  "required_mcp_capabilities": [
+    "aws-lambda"
+  ]
+}

@@ -1,0 +1,86 @@
+{
+  "jade_version": "1.0.0",
+  "metadata": {
+    "version": "1.0.0",
+    "author": "jadegate-official",
+    "name": "PagerDuty Create Incident",
+    "description": "Create an incident in PagerDuty",
+    "tags": [
+      "pagerduty",
+      "incident",
+      "oncall"
+    ]
+  },
+  "trigger": {
+    "type": "task_intent",
+    "conditions": [
+      {
+        "field": "task.type",
+        "operator": "in",
+        "value": [
+          "mcp_pagerduty_incident"
+        ]
+      }
+    ]
+  },
+  "security": {
+    "sandbox_level": "standard",
+    "max_execution_time_ms": 15000,
+    "max_retries": 3,
+    "file_permissions": {
+      "read": [],
+      "write": []
+    },
+    "network_whitelist": [
+      "api.pagerduty.com"
+    ]
+  },
+  "skill_id": "mcp_pagerduty_incident",
+  "input_schema": {
+    "required_params": [
+      {
+        "name": "title",
+        "type": "string",
+        "description": "Incident title"
+      },
+      {
+        "name": "service_id",
+        "type": "string",
+        "description": "Service ID"
+      }
+    ],
+    "optional_params": []
+  },
+  "output_schema": {
+    "fields": [
+      {
+        "name": "incident_id",
+        "type": "string",
+        "description": "Incident ID"
+      }
+    ]
+  },
+  "execution_dag": {
+    "nodes": [
+      {
+        "id": "pagerduty_incident",
+        "type": "mcp_call",
+        "action": "pagerduty_incident",
+        "params": {
+          "url": "https://api.pagerduty.com/incidents",
+          "method": "POST",
+          "headers": {
+            "Content-Type": "application/json"
+          }
+        }
+      }
+    ],
+    "edges": [],
+    "entry_node": "pagerduty_incident",
+    "exit_node": "pagerduty_incident"
+  },
+  "mcp_compatible": true,
+  "required_mcp_capabilities": [
+    "pagerduty"
+  ]
+}

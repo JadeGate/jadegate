@@ -1,0 +1,81 @@
+{
+  "jade_version": "1.0.0",
+  "metadata": {
+    "version": "1.0.0",
+    "author": "jadegate-official",
+    "name": "Docker Hub Search Images",
+    "description": "Search for Docker images on Docker Hub",
+    "tags": [
+      "docker",
+      "containers",
+      "registry"
+    ]
+  },
+  "trigger": {
+    "type": "task_intent",
+    "conditions": [
+      {
+        "field": "task.type",
+        "operator": "in",
+        "value": [
+          "mcp_docker_hub_search"
+        ]
+      }
+    ]
+  },
+  "security": {
+    "sandbox_level": "standard",
+    "max_execution_time_ms": 15000,
+    "max_retries": 3,
+    "file_permissions": {
+      "read": [],
+      "write": []
+    },
+    "network_whitelist": [
+      "hub.docker.com"
+    ]
+  },
+  "skill_id": "mcp_docker_hub_search",
+  "input_schema": {
+    "required_params": [
+      {
+        "name": "query",
+        "type": "string",
+        "description": "Search query"
+      }
+    ],
+    "optional_params": []
+  },
+  "output_schema": {
+    "fields": [
+      {
+        "name": "results",
+        "type": "array",
+        "description": "Image results"
+      }
+    ]
+  },
+  "execution_dag": {
+    "nodes": [
+      {
+        "id": "docker_hub_search",
+        "type": "mcp_call",
+        "action": "docker_hub_search",
+        "params": {
+          "url": "https://hub.docker.com/v2/search/repositories/?query={{input.query}}",
+          "method": "POST",
+          "headers": {
+            "Content-Type": "application/json"
+          }
+        }
+      }
+    ],
+    "edges": [],
+    "entry_node": "docker_hub_search",
+    "exit_node": "docker_hub_search"
+  },
+  "mcp_compatible": true,
+  "required_mcp_capabilities": [
+    "docker-hub"
+  ]
+}

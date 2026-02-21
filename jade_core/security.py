@@ -420,7 +420,12 @@ class SecurityEngine:
             try:
                 clean = re.sub(r'\{\{[^}]+\}\}', 'PLACEHOLDER', url)
                 parsed = urlparse(clean)
-                return parsed.hostname or ""
+                hostname = parsed.hostname or ""
+                # If the entire domain is a template variable (resolved to PLACEHOLDER),
+                # skip domain check — it's user-provided at runtime
+                if hostname == "placeholder" or hostname.endswith(".placeholder") or hostname.startswith("placeholder."):
+                    return ""
+                return hostname
             except Exception:
                 return ""
         try:

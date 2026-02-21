@@ -1,0 +1,81 @@
+{
+  "jade_version": "1.0.0",
+  "metadata": {
+    "version": "1.0.0",
+    "author": "jadegate-official",
+    "name": "Datadog Query Metrics",
+    "description": "Query metrics from Datadog",
+    "tags": [
+      "datadog",
+      "monitoring",
+      "metrics"
+    ]
+  },
+  "trigger": {
+    "type": "task_intent",
+    "conditions": [
+      {
+        "field": "task.type",
+        "operator": "in",
+        "value": [
+          "mcp_datadog_metrics"
+        ]
+      }
+    ]
+  },
+  "security": {
+    "sandbox_level": "standard",
+    "max_execution_time_ms": 15000,
+    "max_retries": 3,
+    "file_permissions": {
+      "read": [],
+      "write": []
+    },
+    "network_whitelist": [
+      "api.datadoghq.com"
+    ]
+  },
+  "skill_id": "mcp_datadog_metrics",
+  "input_schema": {
+    "required_params": [
+      {
+        "name": "query",
+        "type": "string",
+        "description": "Metrics query"
+      }
+    ],
+    "optional_params": []
+  },
+  "output_schema": {
+    "fields": [
+      {
+        "name": "series",
+        "type": "array",
+        "description": "Time series data"
+      }
+    ]
+  },
+  "execution_dag": {
+    "nodes": [
+      {
+        "id": "datadog_metrics",
+        "type": "mcp_call",
+        "action": "datadog_metrics",
+        "params": {
+          "url": "https://api.datadoghq.com/api/v1/query",
+          "method": "POST",
+          "headers": {
+            "Content-Type": "application/json"
+          }
+        }
+      }
+    ],
+    "edges": [],
+    "entry_node": "datadog_metrics",
+    "exit_node": "datadog_metrics"
+  },
+  "mcp_compatible": true,
+  "required_mcp_capabilities": [
+    "datadog"
+  ]
+}

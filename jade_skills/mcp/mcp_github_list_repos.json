@@ -1,0 +1,81 @@
+{
+  "jade_version": "1.0.0",
+  "metadata": {
+    "version": "1.0.0",
+    "author": "jadegate-official",
+    "name": "GitHub List Repositories",
+    "description": "List repositories for a user or organization",
+    "tags": [
+      "github",
+      "repos",
+      "git"
+    ]
+  },
+  "trigger": {
+    "type": "task_intent",
+    "conditions": [
+      {
+        "field": "task.type",
+        "operator": "in",
+        "value": [
+          "mcp_github_list_repos"
+        ]
+      }
+    ]
+  },
+  "security": {
+    "sandbox_level": "standard",
+    "max_execution_time_ms": 15000,
+    "max_retries": 3,
+    "file_permissions": {
+      "read": [],
+      "write": []
+    },
+    "network_whitelist": [
+      "api.github.com"
+    ]
+  },
+  "skill_id": "mcp_github_list_repos",
+  "input_schema": {
+    "required_params": [
+      {
+        "name": "username",
+        "type": "string",
+        "description": "GitHub username"
+      }
+    ],
+    "optional_params": []
+  },
+  "output_schema": {
+    "fields": [
+      {
+        "name": "repos",
+        "type": "array",
+        "description": "Repository list"
+      }
+    ]
+  },
+  "execution_dag": {
+    "nodes": [
+      {
+        "id": "github_list_repos",
+        "type": "mcp_call",
+        "action": "github_list_repos",
+        "params": {
+          "url": "https://api.github.com/users/{{input.username}}/repos",
+          "method": "POST",
+          "headers": {
+            "Content-Type": "application/json"
+          }
+        }
+      }
+    ],
+    "edges": [],
+    "entry_node": "github_list_repos",
+    "exit_node": "github_list_repos"
+  },
+  "mcp_compatible": true,
+  "required_mcp_capabilities": [
+    "github"
+  ]
+}

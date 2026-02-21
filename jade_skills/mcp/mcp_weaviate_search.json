@@ -1,0 +1,87 @@
+{
+  "jade_version": "1.0.0",
+  "metadata": {
+    "version": "1.0.0",
+    "author": "jadegate-official",
+    "name": "Weaviate Semantic Search",
+    "description": "Semantic search via Weaviate vector database",
+    "tags": [
+      "weaviate",
+      "vector",
+      "search"
+    ]
+  },
+  "trigger": {
+    "type": "task_intent",
+    "conditions": [
+      {
+        "field": "task.type",
+        "operator": "in",
+        "value": [
+          "mcp_weaviate_search"
+        ]
+      }
+    ]
+  },
+  "security": {
+    "sandbox_level": "standard",
+    "max_execution_time_ms": 15000,
+    "max_retries": 3,
+    "file_permissions": {
+      "read": [],
+      "write": []
+    },
+    "network_whitelist": [
+      "*.weaviate.network",
+      "*.semi.technology"
+    ]
+  },
+  "skill_id": "mcp_weaviate_search",
+  "input_schema": {
+    "required_params": [
+      {
+        "name": "query",
+        "type": "string",
+        "description": "Search query"
+      },
+      {
+        "name": "class_name",
+        "type": "string",
+        "description": "Weaviate class"
+      }
+    ],
+    "optional_params": []
+  },
+  "output_schema": {
+    "fields": [
+      {
+        "name": "results",
+        "type": "array",
+        "description": "Search results"
+      }
+    ]
+  },
+  "execution_dag": {
+    "nodes": [
+      {
+        "id": "weaviate_search",
+        "type": "mcp_call",
+        "action": "weaviate_search",
+        "params": {
+          "url": "https://{{input.host}}/v1/graphql",
+          "method": "POST",
+          "headers": {
+            "Content-Type": "application/json"
+          }
+        }
+      }
+    ],
+    "edges": [],
+    "entry_node": "weaviate_search",
+    "exit_node": "weaviate_search"
+  },
+  "mcp_compatible": true,
+  "required_mcp_capabilities": [
+    "weaviate"
+  ]
+}

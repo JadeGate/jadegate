@@ -1,0 +1,96 @@
+{
+  "jade_version": "1.0.0",
+  "metadata": {
+    "version": "1.0.0",
+    "author": "jadegate-official",
+    "name": "GitHub Create Pull Request",
+    "description": "Create a pull request on GitHub",
+    "tags": [
+      "github",
+      "pr",
+      "git"
+    ]
+  },
+  "trigger": {
+    "type": "task_intent",
+    "conditions": [
+      {
+        "field": "task.type",
+        "operator": "in",
+        "value": [
+          "mcp_github_pr_create"
+        ]
+      }
+    ]
+  },
+  "security": {
+    "sandbox_level": "standard",
+    "max_execution_time_ms": 15000,
+    "max_retries": 3,
+    "file_permissions": {
+      "read": [],
+      "write": []
+    },
+    "network_whitelist": [
+      "api.github.com"
+    ]
+  },
+  "skill_id": "mcp_github_pr_create",
+  "input_schema": {
+    "required_params": [
+      {
+        "name": "repo",
+        "type": "string",
+        "description": "Repository (owner/repo)"
+      },
+      {
+        "name": "title",
+        "type": "string",
+        "description": "PR title"
+      },
+      {
+        "name": "head",
+        "type": "string",
+        "description": "Head branch"
+      },
+      {
+        "name": "base",
+        "type": "string",
+        "description": "Base branch"
+      }
+    ],
+    "optional_params": []
+  },
+  "output_schema": {
+    "fields": [
+      {
+        "name": "pr_url",
+        "type": "string",
+        "description": "Pull request URL"
+      }
+    ]
+  },
+  "execution_dag": {
+    "nodes": [
+      {
+        "id": "github_pr_create",
+        "type": "mcp_call",
+        "action": "github_pr_create",
+        "params": {
+          "url": "https://api.github.com/repos/{{input.repo}}/pulls",
+          "method": "POST",
+          "headers": {
+            "Content-Type": "application/json"
+          }
+        }
+      }
+    ],
+    "edges": [],
+    "entry_node": "github_pr_create",
+    "exit_node": "github_pr_create"
+  },
+  "mcp_compatible": true,
+  "required_mcp_capabilities": [
+    "github"
+  ]
+}

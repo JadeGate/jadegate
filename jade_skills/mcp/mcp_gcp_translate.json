@@ -1,0 +1,89 @@
+{
+  "jade_version": "1.0.0",
+  "metadata": {
+    "version": "1.0.0",
+    "author": "jadegate-official",
+    "name": "Google Cloud Translate",
+    "description": "Translate text via Google Cloud Translation API",
+    "tags": [
+      "google",
+      "translate",
+      "nlp"
+    ]
+  },
+  "trigger": {
+    "type": "task_intent",
+    "conditions": [
+      {
+        "field": "task.type",
+        "operator": "in",
+        "value": [
+          "mcp_gcp_translate"
+        ]
+      }
+    ]
+  },
+  "security": {
+    "sandbox_level": "standard",
+    "max_execution_time_ms": 15000,
+    "max_retries": 3,
+    "file_permissions": {
+      "read": [],
+      "write": []
+    },
+    "network_whitelist": [
+      "translation.googleapis.com"
+    ],
+    "env_whitelist": [
+      "GOOGLE_TRANSLATE_KEY"
+    ]
+  },
+  "skill_id": "mcp_gcp_translate",
+  "input_schema": {
+    "required_params": [
+      {
+        "name": "text",
+        "type": "string",
+        "description": "Text to translate"
+      },
+      {
+        "name": "target",
+        "type": "string",
+        "description": "Target language code"
+      }
+    ],
+    "optional_params": []
+  },
+  "output_schema": {
+    "fields": [
+      {
+        "name": "translated",
+        "type": "string",
+        "description": "Translated text"
+      }
+    ]
+  },
+  "execution_dag": {
+    "nodes": [
+      {
+        "id": "gcp_translate",
+        "type": "mcp_call",
+        "action": "gcp_translate",
+        "params": {
+          "url": "https://translation.googleapis.com/language/translate/v2",
+          "method": "POST",
+          "headers": {
+            "Content-Type": "application/json"
+          }
+        }
+      }
+    ],
+    "edges": [],
+    "entry_node": "gcp_translate",
+    "exit_node": "gcp_translate"
+  },
+  "mcp_compatible": true,
+  "required_mcp_capabilities": [
+    "google-translate"
+  ]
+}

@@ -1,0 +1,81 @@
+{
+  "jade_version": "1.0.0",
+  "metadata": {
+    "version": "1.0.0",
+    "author": "jadegate-official",
+    "name": "Anthropic Claude Chat",
+    "description": "Send messages to Anthropic Claude API",
+    "tags": [
+      "llm",
+      "chat",
+      "anthropic"
+    ]
+  },
+  "trigger": {
+    "type": "task_intent",
+    "conditions": [
+      {
+        "field": "task.type",
+        "operator": "in",
+        "value": [
+          "mcp_anthropic_chat"
+        ]
+      }
+    ]
+  },
+  "security": {
+    "sandbox_level": "standard",
+    "max_execution_time_ms": 15000,
+    "max_retries": 3,
+    "file_permissions": {
+      "read": [],
+      "write": []
+    },
+    "network_whitelist": [
+      "api.anthropic.com"
+    ]
+  },
+  "skill_id": "mcp_anthropic_chat",
+  "input_schema": {
+    "required_params": [
+      {
+        "name": "prompt",
+        "type": "string",
+        "description": "User prompt"
+      }
+    ],
+    "optional_params": []
+  },
+  "output_schema": {
+    "fields": [
+      {
+        "name": "response",
+        "type": "string",
+        "description": "Claude response"
+      }
+    ]
+  },
+  "execution_dag": {
+    "nodes": [
+      {
+        "id": "anthropic_chat",
+        "type": "mcp_call",
+        "action": "anthropic_chat",
+        "params": {
+          "url": "https://api.anthropic.com/v1/messages",
+          "method": "POST",
+          "headers": {
+            "Content-Type": "application/json"
+          }
+        }
+      }
+    ],
+    "edges": [],
+    "entry_node": "anthropic_chat",
+    "exit_node": "anthropic_chat"
+  },
+  "mcp_compatible": true,
+  "required_mcp_capabilities": [
+    "anthropic"
+  ]
+}

@@ -1,0 +1,81 @@
+{
+  "jade_version": "1.0.0",
+  "metadata": {
+    "version": "1.0.0",
+    "author": "jadegate-official",
+    "name": "Vercel Deploy",
+    "description": "Trigger a Vercel deployment",
+    "tags": [
+      "vercel",
+      "deploy",
+      "ci"
+    ]
+  },
+  "trigger": {
+    "type": "task_intent",
+    "conditions": [
+      {
+        "field": "task.type",
+        "operator": "in",
+        "value": [
+          "mcp_vercel_deploy"
+        ]
+      }
+    ]
+  },
+  "security": {
+    "sandbox_level": "standard",
+    "max_execution_time_ms": 15000,
+    "max_retries": 3,
+    "file_permissions": {
+      "read": [],
+      "write": []
+    },
+    "network_whitelist": [
+      "api.vercel.com"
+    ]
+  },
+  "skill_id": "mcp_vercel_deploy",
+  "input_schema": {
+    "required_params": [
+      {
+        "name": "project_id",
+        "type": "string",
+        "description": "Vercel project ID"
+      }
+    ],
+    "optional_params": []
+  },
+  "output_schema": {
+    "fields": [
+      {
+        "name": "deployment_url",
+        "type": "string",
+        "description": "Deployment URL"
+      }
+    ]
+  },
+  "execution_dag": {
+    "nodes": [
+      {
+        "id": "vercel_deploy",
+        "type": "mcp_call",
+        "action": "vercel_deploy",
+        "params": {
+          "url": "https://api.vercel.com/v13/deployments",
+          "method": "POST",
+          "headers": {
+            "Content-Type": "application/json"
+          }
+        }
+      }
+    ],
+    "edges": [],
+    "entry_node": "vercel_deploy",
+    "exit_node": "vercel_deploy"
+  },
+  "mcp_compatible": true,
+  "required_mcp_capabilities": [
+    "vercel"
+  ]
+}

@@ -159,6 +159,1072 @@
             "body": "string"
           },
           "risk_level": "high"
+        },
+        "analyze": {
+          "description": "Read and analyze CSV files with column stats, filtering and sorting",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
+        },
+        "aws_lambda_invoke": {
+          "description": "Invoke an AWS Lambda function",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
+        },
+        "check": {
+          "description": "Query WHOIS information for a domain via public API",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
+        },
+        "check_ddg": {
+          "description": "Search the web using DuckDuckGo HTML with result extraction and fallback",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
+        },
+        "check_diff": {
+          "description": "Get git diff and summarize changes using LLM",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
+        },
+        "check_exec": {
+          "description": "Execute a command on a remote server via SSH proxy API",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
+        },
+        "check_libre": {
+          "description": "Translate text between languages using free translation APIs with fallback",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
+        },
+        "check_mm": {
+          "description": "Translate text between languages using free translation APIs with fallback",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
+        },
+        "check_page": {
+          "description": "Read a Notion page content via official API with block parsing",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
+        },
+        "check_safe": {
+          "description": "Execute a command on a remote server via SSH proxy API",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
+        },
+        "check_size": {
+          "description": "Read file contents from local filesystem via MCP filesystem server. Supports text and binary files with size limits.",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
+        },
+        "chromadb_query": {
+          "description": "Query a ChromaDB collection",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
+        },
+        "confluence_read": {
+          "description": "Read a Confluence wiki page",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
+        },
+        "datadog_metrics": {
+          "description": "Query metrics from Datadog",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
+        },
+        "encode": {
+          "description": "Translate text between languages using free translation APIs with fallback",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
+        },
+        "encode_q": {
+          "description": "Search the web using DuckDuckGo HTML with result extraction and fallback",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
+        },
+        "ensure_dir": {
+          "description": "Write content to local filesystem via MCP filesystem server. Creates directories if needed.",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
+        },
+        "exec_clone": {
+          "description": "Clone a git repository with branch selection and shallow clone support",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
+        },
+        "exec_cmd": {
+          "description": "Execute a command on a remote server via SSH proxy API",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
+        },
+        "extract": {
+          "description": "Query WHOIS information for a domain via public API",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
+        },
+        "extract_body": {
+          "description": "Fetch a webpage and extract main content, removing navigation and ads",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
+        },
+        "extract_content": {
+          "description": "Fetch content from a URL via MCP fetch server. Supports HTML to markdown conversion.",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
+        },
+        "extract_title": {
+          "description": "Fetch a webpage and extract main content, removing navigation and ads",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
+        },
+        "fetch": {
+          "description": "Query WHOIS information for a domain via public API",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
+        },
+        "fetch_blocks": {
+          "description": "Read a Notion page content via official API with block parsing",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
+        },
+        "fetch_ddg": {
+          "description": "Search the web using DuckDuckGo HTML with result extraction and fallback",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
+        },
+        "fetch_page": {
+          "description": "Read a Notion page content via official API with block parsing",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
+        },
+        "find_errors": {
+          "description": "Analyze log files to extract errors, warnings and generate summary",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
+        },
+        "find_warns": {
+          "description": "Analyze log files to extract errors, warnings and generate summary",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
+        },
+        "gcp_translate": {
+          "description": "Translate text via Google Cloud Translation API",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
+        },
+        "geocode": {
+          "description": "Geocode address to coordinates via Google Maps API.",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
+        },
+        "get_diff": {
+          "description": "Get git diff and summarize changes using LLM",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
+        },
+        "get_full": {
+          "description": "Get git diff and summarize changes using LLM",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
+        },
+        "get_head": {
+          "description": "Clone a git repository with branch selection and shallow clone support",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
+        },
+        "grafana_dashboard": {
+          "description": "Retrieve a Grafana dashboard by UID",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
+        },
+        "hubspot_contacts": {
+          "description": "List contacts from HubSpot CRM",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
+        },
+        "jira_create_issue": {
+          "description": "Create an issue in Jira",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
+        },
+        "list": {
+          "description": "List objects in S3 bucket.",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
+        },
+        "log": {
+          "description": "Get git commit log for a repository.",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
+        },
+        "nav": {
+          "description": "Take a screenshot of a webpage using headless browser navigation",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
+        },
+        "navigate": {
+          "description": "Take a screenshot of a webpage via MCP puppeteer server.",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
+        },
+        "npm_search": {
+          "description": "Search for packages on NPM registry",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
+        },
+        "pagerduty_incident": {
+          "description": "Create an incident in PagerDuty",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
+        },
+        "parse": {
+          "description": "Query WHOIS information for a domain via public API",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
+        },
+        "parse_blocks": {
+          "description": "Read a Notion page content via official API with block parsing",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
+        },
+        "parse_ddg": {
+          "description": "Search the web using DuckDuckGo HTML with result extraction and fallback",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
+        },
+        "parse_libre": {
+          "description": "Translate text between languages using free translation APIs with fallback",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
+        },
+        "parse_mm": {
+          "description": "Translate text between languages using free translation APIs with fallback",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
+        },
+        "parse_page": {
+          "description": "Read a Notion page content via official API with block parsing",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
+        },
+        "pinecone_query": {
+          "description": "Query vectors in Pinecone",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
+        },
+        "pypi_search": {
+          "description": "Get Python package info from PyPI",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
+        },
+        "read_csv": {
+          "description": "Read and analyze CSV files with column stats, filtering and sorting",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
+        },
+        "read_log": {
+          "description": "Analyze log files to extract errors, warnings and generate summary",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
+        },
+        "resolve": {
+          "description": "Resolve domain name to IP addresses using DNS",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
+        },
+        "ret": {
+          "description": "Search YouTube videos.",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
+        },
+        "ret_down": {
+          "description": "Check if a website is up by sending HTTP GET and measuring response time",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
+        },
+        "ret_fail": {
+          "description": "Query WHOIS information for a domain via public API",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
+        },
+        "ret_libre": {
+          "description": "Translate text between languages using free translation APIs with fallback",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
+        },
+        "ret_mm": {
+          "description": "Translate text between languages using free translation APIs with fallback",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
+        },
+        "ret_ok": {
+          "description": "Query WHOIS information for a domain via public API",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
+        },
+        "ret_unsafe": {
+          "description": "Execute a command on a remote server via SSH proxy API",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
+        },
+        "ret_up": {
+          "description": "Check if a website is up by sending HTTP GET and measuring response time",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
+        },
+        "return_content": {
+          "description": "Read file contents from local filesystem via MCP filesystem server. Supports text and binary files with size limits.",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
+        },
+        "return_img": {
+          "description": "Take a screenshot of a webpage via MCP puppeteer server.",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
+        },
+        "sanitize": {
+          "description": "Fetch a webpage and extract main content, removing navigation and ads",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
+        },
+        "screenshot": {
+          "description": "Take a screenshot of a webpage via MCP puppeteer server.",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
+        },
+        "search": {
+          "description": "Search the web semantically using Exa AI API with neural search",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
+        },
+        "shopify_products": {
+          "description": "List products from a Shopify store",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
+        },
+        "shot": {
+          "description": "Take a screenshot of a webpage using headless browser navigation",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
+        },
+        "store": {
+          "description": "Store a knowledge entity in the MCP memory server knowledge graph.",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
+        },
+        "summarize": {
+          "description": "Analyze log files to extract errors, warnings and generate summary",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
+        },
+        "try_libre": {
+          "description": "Translate text between languages using free translation APIs with fallback",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
+        },
+        "try_mymemory": {
+          "description": "Translate text between languages using free translation APIs with fallback",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
+        },
+        "validate_entity": {
+          "description": "Store a knowledge entity in the MCP memory server knowledge graph.",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
+        },
+        "validate_path": {
+          "description": "Write content to local filesystem via MCP filesystem server. Creates directories if needed.",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
+        },
+        "validate_url": {
+          "description": "Clone a git repository with branch selection and shallow clone support",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
+        },
+        "verify_write": {
+          "description": "Write content to local filesystem via MCP filesystem server. Creates directories if needed.",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
+        },
+        "wait_load": {
+          "description": "Take a screenshot of a webpage using headless browser navigation",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
+        },
+        "wait_render": {
+          "description": "Take a screenshot of a webpage via MCP puppeteer server.",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
+        },
+        "weaviate_search": {
+          "description": "Semantic search via Weaviate vector database",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
+        },
+        "write_file": {
+          "description": "Write content to local filesystem via MCP filesystem server. Creates directories if needed.",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
+        },
+        "url_shortener": {
+          "description": "Shorten URLs via API",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "low"
         }
       }
     },
@@ -986,6 +2052,84 @@
             "summary": "string"
           },
           "risk_level": "low"
+        },
+        "anthropic_chat": {
+          "description": "Send messages to Anthropic Claude API",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
+        },
+        "azure_openai": {
+          "description": "Chat completion via Azure OpenAI Service",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
+        },
+        "build_payload": {
+          "description": "Send messages to Slack channels via webhook or API with formatting support",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
+        },
+        "openai_chat": {
+          "description": "Send messages to OpenAI GPT API",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
+        },
+        "return_ok": {
+          "description": "Send a message to a Slack channel via MCP slack server.",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
+        },
+        "send": {
+          "description": "Send a message via Telegram Bot API",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
         }
       }
     },
@@ -1091,6 +2235,32 @@
             "confirmed": "boolean"
           },
           "risk_level": "none"
+        },
+        "sendgrid_email": {
+          "description": "Send email via SendGrid API",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
+        },
+        "twilio_sms": {
+          "description": "Send an SMS via Twilio API",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
         }
       }
     },
@@ -1186,6 +2356,162 @@
             "logs": "string"
           },
           "risk_level": "low"
+        },
+        "build": {
+          "description": "Create a new issue on a GitHub repository via API",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
+        },
+        "cloudflare_workers": {
+          "description": "Deploy a Cloudflare Worker script",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
+        },
+        "create_issue": {
+          "description": "Create a GitHub issue via MCP GitHub server. Supports labels, assignees, and markdown body.",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
+        },
+        "docker_hub_search": {
+          "description": "Search for Docker images on Docker Hub",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
+        },
+        "github_actions_trigger": {
+          "description": "Trigger a GitHub Actions workflow dispatch",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
+        },
+        "github_list_repos": {
+          "description": "List repositories for a user or organization",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
+        },
+        "github_pr_create": {
+          "description": "Create a pull request on GitHub",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
+        },
+        "post": {
+          "description": "Create a new issue on a GitHub repository via API",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
+        },
+        "return_issue": {
+          "description": "Create a GitHub issue via MCP GitHub server. Supports labels, assignees, and markdown body.",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
+        },
+        "return_results": {
+          "description": "Search GitHub repositories via MCP GitHub server.",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
+        },
+        "validate_repo": {
+          "description": "Create a GitHub issue via MCP GitHub server. Supports labels, assignees, and markdown body.",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
+        },
+        "vercel_deploy": {
+          "description": "Trigger a Vercel deployment",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
         }
       }
     },
@@ -1298,6 +2624,97 @@
             "text": "string"
           },
           "risk_level": "low"
+        },
+        "check_parse": {
+          "description": "Parse, extract, and transform JSON data with JSONPath queries",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
+        },
+        "classify": {
+          "description": "Analyze sentiment of text using LLM classification (positive/negative/neutral)",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
+        },
+        "main": {
+          "description": "Convert between YAML and JSON formats",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
+        },
+        "color_converter": {
+          "description": "Convert between color formats (hex, rgb, hsl)",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "low"
+        },
+        "markdown_to_html": {
+          "description": "Convert Markdown to HTML",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "low"
+        },
+        "regex_tester": {
+          "description": "Test regular expressions against input",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "low"
+        },
+        "yaml_json_converter": {
+          "description": "Convert between YAML and JSON",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "low"
         }
       }
     },
@@ -1357,6 +2774,45 @@
           "returns": {
             "seconds": "number",
             "human_readable": "string"
+          },
+          "risk_level": "low"
+        },
+        "get_time": {
+          "description": "Get current time in any timezone and convert between timezones",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
+        },
+        "cron_expression_parser": {
+          "description": "Parse and explain cron expressions",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "low"
+        },
+        "epoch_converter": {
+          "description": "Convert between epoch timestamps and dates",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
           },
           "risk_level": "low"
         }
@@ -1593,6 +3049,136 @@
             "items": "array"
           },
           "risk_level": "low"
+        },
+        "check_read": {
+          "description": "Compute and verify SHA-256 hash of a file for integrity checking",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
+        },
+        "compare": {
+          "description": "Compute and verify SHA-256 hash of a file for integrity checking",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
+        },
+        "compute": {
+          "description": "Compute and verify SHA-256 hash of a file for integrity checking",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
+        },
+        "read": {
+          "description": "Read a file and encode its content to Base64 string",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
+        },
+        "read_file": {
+          "description": "Compute and verify SHA-256 hash of a file for integrity checking",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
+        },
+        "ret_match": {
+          "description": "Compute and verify SHA-256 hash of a file for integrity checking",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
+        },
+        "ret_nomatch": {
+          "description": "Compute and verify SHA-256 hash of a file for integrity checking",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
+        },
+        "jwt_decode": {
+          "description": "Decode and inspect JWT tokens",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "low"
+        },
+        "password_generator": {
+          "description": "Generate secure random passwords",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "low"
+        },
+        "uuid_generator": {
+          "description": "Generate UUIDs (v4)",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "low"
         }
       }
     },
@@ -1716,6 +3302,214 @@
             "success": "boolean"
           },
           "risk_level": "medium"
+        },
+        "airtable_records": {
+          "description": "List records from an Airtable base",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
+        },
+        "check_ok": {
+          "description": "Execute read-only SQL queries on a local SQLite database file",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
+        },
+        "check_ro": {
+          "description": "Execute read-only SQL queries on a local SQLite database file",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
+        },
+        "elasticsearch_search": {
+          "description": "Search documents in Elasticsearch",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
+        },
+        "exec_sql": {
+          "description": "Execute read-only SQL queries on a local SQLite database file",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
+        },
+        "execute": {
+          "description": "Execute read-only SQL queries against a SQLite database via MCP sqlite server.",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
+        },
+        "firebase_read": {
+          "description": "Read data from Firebase Realtime Database",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
+        },
+        "get": {
+          "description": "Get value from Redis by key.",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
+        },
+        "mongodb_find": {
+          "description": "Query documents via MongoDB Atlas Data API",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
+        },
+        "ret_readonly": {
+          "description": "Execute read-only SQL queries on a local SQLite database file",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
+        },
+        "return_data": {
+          "description": "Execute read-only SQL queries against a SQLite database via MCP sqlite server.",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
+        },
+        "set": {
+          "description": "Set key-value pair in Redis.",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
+        },
+        "supabase_query": {
+          "description": "Query a Supabase PostgreSQL database via REST API",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
+        },
+        "validate": {
+          "description": "Execute read-only SQL query on PostgreSQL.",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
+        },
+        "validate_db": {
+          "description": "Execute read-only SQL queries against a SQLite database via MCP sqlite server.",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
+        },
+        "validate_sql": {
+          "description": "Execute read-only SQL queries against a SQLite database via MCP sqlite server.",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
         }
       }
     },
@@ -1792,6 +3586,71 @@
             "output_path": "string"
           },
           "risk_level": "low"
+        },
+        "build_url": {
+          "description": "Generate QR code image from text using public API",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
+        },
+        "check_input": {
+          "description": "Resize images and convert between formats (PNG, JPG, WebP)",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
+        },
+        "convert": {
+          "description": "Resize images and convert between formats (PNG, JPG, WebP)",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
+        },
+        "resize": {
+          "description": "Resize images and convert between formats (PNG, JPG, WebP)",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
+        },
+        "verify": {
+          "description": "Resize images and convert between formats (PNG, JPG, WebP)",
+          "params": {
+            "input": {
+              "type": "object",
+              "required": true
+            }
+          },
+          "returns": {
+            "output": "object"
+          },
+          "risk_level": "medium"
         }
       }
     }

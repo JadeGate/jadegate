@@ -1,0 +1,81 @@
+{
+  "jade_version": "1.0.0",
+  "metadata": {
+    "version": "1.0.0",
+    "author": "jadegate-official",
+    "name": "HubSpot List Contacts",
+    "description": "List contacts from HubSpot CRM",
+    "tags": [
+      "hubspot",
+      "crm",
+      "contacts"
+    ]
+  },
+  "trigger": {
+    "type": "task_intent",
+    "conditions": [
+      {
+        "field": "task.type",
+        "operator": "in",
+        "value": [
+          "mcp_hubspot_contacts"
+        ]
+      }
+    ]
+  },
+  "security": {
+    "sandbox_level": "standard",
+    "max_execution_time_ms": 15000,
+    "max_retries": 3,
+    "file_permissions": {
+      "read": [],
+      "write": []
+    },
+    "network_whitelist": [
+      "api.hubapi.com"
+    ]
+  },
+  "skill_id": "mcp_hubspot_contacts",
+  "input_schema": {
+    "required_params": [
+      {
+        "name": "limit",
+        "type": "number",
+        "description": "Max contacts to return"
+      }
+    ],
+    "optional_params": []
+  },
+  "output_schema": {
+    "fields": [
+      {
+        "name": "contacts",
+        "type": "array",
+        "description": "Contact list"
+      }
+    ]
+  },
+  "execution_dag": {
+    "nodes": [
+      {
+        "id": "hubspot_contacts",
+        "type": "mcp_call",
+        "action": "hubspot_contacts",
+        "params": {
+          "url": "https://api.hubapi.com/crm/v3/objects/contacts",
+          "method": "POST",
+          "headers": {
+            "Content-Type": "application/json"
+          }
+        }
+      }
+    ],
+    "edges": [],
+    "entry_node": "hubspot_contacts",
+    "exit_node": "hubspot_contacts"
+  },
+  "mcp_compatible": true,
+  "required_mcp_capabilities": [
+    "hubspot"
+  ]
+}

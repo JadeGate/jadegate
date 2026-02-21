@@ -1,0 +1,86 @@
+{
+  "jade_version": "1.0.0",
+  "metadata": {
+    "version": "1.0.0",
+    "author": "jadegate-official",
+    "name": "Supabase Database Query",
+    "description": "Query a Supabase PostgreSQL database via REST API",
+    "tags": [
+      "supabase",
+      "database",
+      "postgres"
+    ]
+  },
+  "trigger": {
+    "type": "task_intent",
+    "conditions": [
+      {
+        "field": "task.type",
+        "operator": "in",
+        "value": [
+          "mcp_supabase_query"
+        ]
+      }
+    ]
+  },
+  "security": {
+    "sandbox_level": "standard",
+    "max_execution_time_ms": 15000,
+    "max_retries": 3,
+    "file_permissions": {
+      "read": [],
+      "write": []
+    },
+    "network_whitelist": [
+      "*.supabase.co"
+    ]
+  },
+  "skill_id": "mcp_supabase_query",
+  "input_schema": {
+    "required_params": [
+      {
+        "name": "table",
+        "type": "string",
+        "description": "Table name"
+      },
+      {
+        "name": "query",
+        "type": "string",
+        "description": "Filter query"
+      }
+    ],
+    "optional_params": []
+  },
+  "output_schema": {
+    "fields": [
+      {
+        "name": "rows",
+        "type": "array",
+        "description": "Query results"
+      }
+    ]
+  },
+  "execution_dag": {
+    "nodes": [
+      {
+        "id": "supabase_query",
+        "type": "mcp_call",
+        "action": "supabase_query",
+        "params": {
+          "url": "https://{{input.project_ref}}.supabase.co/rest/v1/{{input.table}}",
+          "method": "POST",
+          "headers": {
+            "Content-Type": "application/json"
+          }
+        }
+      }
+    ],
+    "edges": [],
+    "entry_node": "supabase_query",
+    "exit_node": "supabase_query"
+  },
+  "mcp_compatible": true,
+  "required_mcp_capabilities": [
+    "supabase"
+  ]
+}

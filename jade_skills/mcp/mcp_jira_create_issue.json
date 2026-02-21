@@ -1,0 +1,86 @@
+{
+  "jade_version": "1.0.0",
+  "metadata": {
+    "version": "1.0.0",
+    "author": "jadegate-official",
+    "name": "Jira Create Issue",
+    "description": "Create an issue in Jira",
+    "tags": [
+      "jira",
+      "project",
+      "issue"
+    ]
+  },
+  "trigger": {
+    "type": "task_intent",
+    "conditions": [
+      {
+        "field": "task.type",
+        "operator": "in",
+        "value": [
+          "mcp_jira_create_issue"
+        ]
+      }
+    ]
+  },
+  "security": {
+    "sandbox_level": "standard",
+    "max_execution_time_ms": 15000,
+    "max_retries": 3,
+    "file_permissions": {
+      "read": [],
+      "write": []
+    },
+    "network_whitelist": [
+      "*.atlassian.net"
+    ]
+  },
+  "skill_id": "mcp_jira_create_issue",
+  "input_schema": {
+    "required_params": [
+      {
+        "name": "project",
+        "type": "string",
+        "description": "Project key"
+      },
+      {
+        "name": "summary",
+        "type": "string",
+        "description": "Issue summary"
+      }
+    ],
+    "optional_params": []
+  },
+  "output_schema": {
+    "fields": [
+      {
+        "name": "issue_key",
+        "type": "string",
+        "description": "Created issue key"
+      }
+    ]
+  },
+  "execution_dag": {
+    "nodes": [
+      {
+        "id": "jira_create_issue",
+        "type": "mcp_call",
+        "action": "jira_create_issue",
+        "params": {
+          "url": "https://{{input.domain}}.atlassian.net/rest/api/3/issue",
+          "method": "POST",
+          "headers": {
+            "Content-Type": "application/json"
+          }
+        }
+      }
+    ],
+    "edges": [],
+    "entry_node": "jira_create_issue",
+    "exit_node": "jira_create_issue"
+  },
+  "mcp_compatible": true,
+  "required_mcp_capabilities": [
+    "jira"
+  ]
+}

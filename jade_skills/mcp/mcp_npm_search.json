@@ -1,0 +1,81 @@
+{
+  "jade_version": "1.0.0",
+  "metadata": {
+    "version": "1.0.0",
+    "author": "jadegate-official",
+    "name": "NPM Package Search",
+    "description": "Search for packages on NPM registry",
+    "tags": [
+      "npm",
+      "packages",
+      "javascript"
+    ]
+  },
+  "trigger": {
+    "type": "task_intent",
+    "conditions": [
+      {
+        "field": "task.type",
+        "operator": "in",
+        "value": [
+          "mcp_npm_search"
+        ]
+      }
+    ]
+  },
+  "security": {
+    "sandbox_level": "standard",
+    "max_execution_time_ms": 15000,
+    "max_retries": 3,
+    "file_permissions": {
+      "read": [],
+      "write": []
+    },
+    "network_whitelist": [
+      "registry.npmjs.org"
+    ]
+  },
+  "skill_id": "mcp_npm_search",
+  "input_schema": {
+    "required_params": [
+      {
+        "name": "query",
+        "type": "string",
+        "description": "Search query"
+      }
+    ],
+    "optional_params": []
+  },
+  "output_schema": {
+    "fields": [
+      {
+        "name": "packages",
+        "type": "array",
+        "description": "Package results"
+      }
+    ]
+  },
+  "execution_dag": {
+    "nodes": [
+      {
+        "id": "npm_search",
+        "type": "mcp_call",
+        "action": "npm_search",
+        "params": {
+          "url": "https://registry.npmjs.org/-/v1/search?text={{input.query}}",
+          "method": "POST",
+          "headers": {
+            "Content-Type": "application/json"
+          }
+        }
+      }
+    ],
+    "edges": [],
+    "entry_node": "npm_search",
+    "exit_node": "npm_search"
+  },
+  "mcp_compatible": true,
+  "required_mcp_capabilities": [
+    "npm"
+  ]
+}

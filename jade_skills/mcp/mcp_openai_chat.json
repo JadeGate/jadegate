@@ -1,0 +1,81 @@
+{
+  "jade_version": "1.0.0",
+  "metadata": {
+    "version": "1.0.0",
+    "author": "jadegate-official",
+    "name": "OpenAI Chat Completion",
+    "description": "Send messages to OpenAI GPT API",
+    "tags": [
+      "llm",
+      "chat",
+      "openai"
+    ]
+  },
+  "trigger": {
+    "type": "task_intent",
+    "conditions": [
+      {
+        "field": "task.type",
+        "operator": "in",
+        "value": [
+          "mcp_openai_chat"
+        ]
+      }
+    ]
+  },
+  "security": {
+    "sandbox_level": "standard",
+    "max_execution_time_ms": 15000,
+    "max_retries": 3,
+    "file_permissions": {
+      "read": [],
+      "write": []
+    },
+    "network_whitelist": [
+      "api.openai.com"
+    ]
+  },
+  "skill_id": "mcp_openai_chat",
+  "input_schema": {
+    "required_params": [
+      {
+        "name": "prompt",
+        "type": "string",
+        "description": "User prompt"
+      }
+    ],
+    "optional_params": []
+  },
+  "output_schema": {
+    "fields": [
+      {
+        "name": "response",
+        "type": "string",
+        "description": "GPT response"
+      }
+    ]
+  },
+  "execution_dag": {
+    "nodes": [
+      {
+        "id": "openai_chat",
+        "type": "mcp_call",
+        "action": "openai_chat",
+        "params": {
+          "url": "https://api.openai.com/v1/chat/completions",
+          "method": "POST",
+          "headers": {
+            "Content-Type": "application/json"
+          }
+        }
+      }
+    ],
+    "edges": [],
+    "entry_node": "openai_chat",
+    "exit_node": "openai_chat"
+  },
+  "mcp_compatible": true,
+  "required_mcp_capabilities": [
+    "openai"
+  ]
+}

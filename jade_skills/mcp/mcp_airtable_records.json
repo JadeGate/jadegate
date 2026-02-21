@@ -1,0 +1,86 @@
+{
+  "jade_version": "1.0.0",
+  "metadata": {
+    "version": "1.0.0",
+    "author": "jadegate-official",
+    "name": "Airtable List Records",
+    "description": "List records from an Airtable base",
+    "tags": [
+      "airtable",
+      "database",
+      "spreadsheet"
+    ]
+  },
+  "trigger": {
+    "type": "task_intent",
+    "conditions": [
+      {
+        "field": "task.type",
+        "operator": "in",
+        "value": [
+          "mcp_airtable_records"
+        ]
+      }
+    ]
+  },
+  "security": {
+    "sandbox_level": "standard",
+    "max_execution_time_ms": 15000,
+    "max_retries": 3,
+    "file_permissions": {
+      "read": [],
+      "write": []
+    },
+    "network_whitelist": [
+      "api.airtable.com"
+    ]
+  },
+  "skill_id": "mcp_airtable_records",
+  "input_schema": {
+    "required_params": [
+      {
+        "name": "base_id",
+        "type": "string",
+        "description": "Base ID"
+      },
+      {
+        "name": "table",
+        "type": "string",
+        "description": "Table name"
+      }
+    ],
+    "optional_params": []
+  },
+  "output_schema": {
+    "fields": [
+      {
+        "name": "records",
+        "type": "array",
+        "description": "Records"
+      }
+    ]
+  },
+  "execution_dag": {
+    "nodes": [
+      {
+        "id": "airtable_records",
+        "type": "mcp_call",
+        "action": "airtable_records",
+        "params": {
+          "url": "https://api.airtable.com/v0/{{input.base_id}}/{{input.table}}",
+          "method": "POST",
+          "headers": {
+            "Content-Type": "application/json"
+          }
+        }
+      }
+    ],
+    "edges": [],
+    "entry_node": "airtable_records",
+    "exit_node": "airtable_records"
+  },
+  "mcp_compatible": true,
+  "required_mcp_capabilities": [
+    "airtable"
+  ]
+}

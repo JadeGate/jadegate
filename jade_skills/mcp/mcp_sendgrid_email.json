@@ -1,0 +1,91 @@
+{
+  "jade_version": "1.0.0",
+  "metadata": {
+    "version": "1.0.0",
+    "author": "jadegate-official",
+    "name": "SendGrid Send Email",
+    "description": "Send email via SendGrid API",
+    "tags": [
+      "sendgrid",
+      "email",
+      "messaging"
+    ]
+  },
+  "trigger": {
+    "type": "task_intent",
+    "conditions": [
+      {
+        "field": "task.type",
+        "operator": "in",
+        "value": [
+          "mcp_sendgrid_email"
+        ]
+      }
+    ]
+  },
+  "security": {
+    "sandbox_level": "standard",
+    "max_execution_time_ms": 15000,
+    "max_retries": 3,
+    "file_permissions": {
+      "read": [],
+      "write": []
+    },
+    "network_whitelist": [
+      "api.sendgrid.com"
+    ]
+  },
+  "skill_id": "mcp_sendgrid_email",
+  "input_schema": {
+    "required_params": [
+      {
+        "name": "to",
+        "type": "string",
+        "description": "Recipient email"
+      },
+      {
+        "name": "subject",
+        "type": "string",
+        "description": "Email subject"
+      },
+      {
+        "name": "body",
+        "type": "string",
+        "description": "Email body"
+      }
+    ],
+    "optional_params": []
+  },
+  "output_schema": {
+    "fields": [
+      {
+        "name": "status",
+        "type": "string",
+        "description": "Send status"
+      }
+    ]
+  },
+  "execution_dag": {
+    "nodes": [
+      {
+        "id": "sendgrid_email",
+        "type": "mcp_call",
+        "action": "sendgrid_email",
+        "params": {
+          "url": "https://api.sendgrid.com/v3/mail/send",
+          "method": "POST",
+          "headers": {
+            "Content-Type": "application/json"
+          }
+        }
+      }
+    ],
+    "edges": [],
+    "entry_node": "sendgrid_email",
+    "exit_node": "sendgrid_email"
+  },
+  "mcp_compatible": true,
+  "required_mcp_capabilities": [
+    "sendgrid"
+  ]
+}

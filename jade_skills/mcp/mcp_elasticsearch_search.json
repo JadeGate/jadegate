@@ -1,0 +1,87 @@
+{
+  "jade_version": "1.0.0",
+  "metadata": {
+    "version": "1.0.0",
+    "author": "jadegate-official",
+    "name": "Elasticsearch Search",
+    "description": "Search documents in Elasticsearch",
+    "tags": [
+      "elasticsearch",
+      "search",
+      "database"
+    ]
+  },
+  "trigger": {
+    "type": "task_intent",
+    "conditions": [
+      {
+        "field": "task.type",
+        "operator": "in",
+        "value": [
+          "mcp_elasticsearch_search"
+        ]
+      }
+    ]
+  },
+  "security": {
+    "sandbox_level": "standard",
+    "max_execution_time_ms": 15000,
+    "max_retries": 3,
+    "file_permissions": {
+      "read": [],
+      "write": []
+    },
+    "network_whitelist": [
+      "*.es.amazonaws.com",
+      "*.elastic-cloud.com"
+    ]
+  },
+  "skill_id": "mcp_elasticsearch_search",
+  "input_schema": {
+    "required_params": [
+      {
+        "name": "index",
+        "type": "string",
+        "description": "Index name"
+      },
+      {
+        "name": "query",
+        "type": "object",
+        "description": "Search query"
+      }
+    ],
+    "optional_params": []
+  },
+  "output_schema": {
+    "fields": [
+      {
+        "name": "hits",
+        "type": "array",
+        "description": "Search hits"
+      }
+    ]
+  },
+  "execution_dag": {
+    "nodes": [
+      {
+        "id": "elasticsearch_search",
+        "type": "mcp_call",
+        "action": "elasticsearch_search",
+        "params": {
+          "url": "https://{{input.host}}/{{input.index}}/_search",
+          "method": "POST",
+          "headers": {
+            "Content-Type": "application/json"
+          }
+        }
+      }
+    ],
+    "edges": [],
+    "entry_node": "elasticsearch_search",
+    "exit_node": "elasticsearch_search"
+  },
+  "mcp_compatible": true,
+  "required_mcp_capabilities": [
+    "elasticsearch"
+  ]
+}

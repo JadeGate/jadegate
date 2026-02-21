@@ -1,0 +1,75 @@
+{
+  "jade_version": "1.0.0",
+  "metadata": {
+    "version": "1.0.0",
+    "author": "jadegate-official",
+    "name": "YAML/JSON Converter",
+    "description": "Convert between YAML and JSON formats",
+    "tags": [
+      "yaml",
+      "json",
+      "converter"
+    ]
+  },
+  "trigger": {
+    "type": "task_intent",
+    "conditions": [
+      {
+        "field": "task.type",
+        "operator": "in",
+        "value": [
+          "yaml_json_converter"
+        ]
+      }
+    ]
+  },
+  "security": {
+    "sandbox_level": "standard",
+    "max_execution_time_ms": 15000,
+    "max_retries": 3,
+    "file_permissions": {
+      "read": [],
+      "write": []
+    },
+    "network_whitelist": []
+  },
+  "skill_id": "yaml_json_converter",
+  "input_schema": {
+    "required_params": [
+      {
+        "name": "input_text",
+        "type": "string",
+        "description": "Input text (YAML or JSON)"
+      },
+      {
+        "name": "target_format",
+        "type": "string",
+        "description": "Target format (yaml/json)"
+      }
+    ],
+    "optional_params": []
+  },
+  "output_schema": {
+    "fields": [
+      {
+        "name": "output",
+        "type": "string",
+        "description": "Converted output"
+      }
+    ]
+  },
+  "execution_dag": {
+    "nodes": [
+      {
+        "id": "main",
+        "type": "transform",
+        "action": "yaml_json_converter",
+        "params": {}
+      }
+    ],
+    "edges": [],
+    "entry_node": "main",
+    "exit_node": "main"
+  },
+  "mcp_compatible": false
+}
