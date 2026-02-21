@@ -56,7 +56,7 @@ def main():
     signer = JadeSkillSigner(kp)
     
     # 扫描所有 skill 目录
-    skill_dirs = ['jade_skills/mcp', 'converted_skills']
+    skill_dirs = ['jade_skills/mcp', 'jade_skills/tools']
     signed = 0
     failed = 0
     
