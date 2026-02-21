@@ -6,17 +6,106 @@
 
 *春风不度玉门关*
 
-[![License: MIT](https://img.shields.io/badge/License-BSL_1.1-blue.svg)](#license)
+[![License: BSL 1.1](https://img.shields.io/badge/License-BSL_1.1-blue.svg)](#license)
 [![PyPI](https://img.shields.io/pypi/v/jadegate.svg)](https://pypi.org/project/jadegate/)
 [![crates.io](https://img.shields.io/crates/v/jadegate.svg)](https://crates.io/crates/jadegate)
 [![Skills](https://img.shields.io/badge/Verified_Skills-35-blue.svg)](#skill-registry)
 [![Schema](https://img.shields.io/badge/Schema-v1.0-purple.svg)](#jade-schema)
 
-**English** | [中文](#中文文档)
+**中文** | [English](#english-docs)
 
 </div>
 
 ---
+
+<div align="center">
+
+# 💠 JadeGate 中文文档
+
+**AI 智能体技能的确定性安全验证**
+
+*春风不度玉门关*
+
+</div>
+
+## JadeGate 是什么？
+
+JadeGate 是 AI 智能体技能的安全验证层。它对智能体使用的技能文件进行验证、认证和管理，确保技能在执行前是安全的。
+
+**不绑定任何框架。** JadeGate 是纯粹的验证层。OpenClaw、Claude Code、OpenCode、Cursor、LangChain、CrewAI，或者任何 MCP 兼容客户端，都能直接用。
+
+```bash
+pip install jadegate
+jade verify your_skill.json
+```
+
+两行命令，搞定 AI 智能体安全。
+
+## 为什么需要 JadeGate？
+
+AI 智能体的技能（工具、插件、MCP 服务器）本质上就是代码——代码可以是恶意的。一个技能文件可能：
+
+- 💉 注入隐藏的可执行代码
+- 📡 把敏感数据偷偷发到未知服务器
+- 🔄 通过循环依赖制造死循环
+- 🎭 把提示词注入伪装成正常操作
+
+JadeGate 通过 5 层确定性安全验证消除这些攻击面。不靠猜测，不靠 AI 检测，纯数学验证。
+
+## 5 层安全验证
+
+| 层级 | 验证内容 | 方法 |
+|------|---------|------|
+| 第 1 层 | 结构完整性 | JSON Schema 严格校验 |
+| 第 2 层 | 代码注入扫描 | 47 种注入模式匹配 |
+| 第 3 层 | 贝叶斯置信度 | 多层证据贝叶斯推断，≥0.95 通过 |
+| 第 4 层 | 网络泄露分析 | 域名白名单 + 协议审查 |
+| 第 5 层 | DAG 完整性 | DFS 环检测 + 可达性证明 + 终止保证 |
+
+## 信任模型
+
+JadeGate 使用非对称加密进行技能认证：
+
+- **所有者** 持有私钥（`jade-sk-...`），绝不公开
+- **公钥** 发布在仓库中（`jadegate.pub.json`）
+- 经所有者签名的技能获得 💠 认证
+- 任何人都能验证签名，但只有所有者能签发
+- 支持密钥轮换，旧签名依然有效
+
+这和 npm、PyPI 等包管理器以及 CA 证书机构使用的信任模型一致。
+
+## CLI 命令
+
+```bash
+jade list              # 列出所有已验证技能
+jade verify skill.json # 验证技能文件（5 层报告）
+jade search "天气"      # 搜索技能
+jade info <skill_id>   # 查看技能详情
+jade key generate      # 生成密钥对
+jade key rotate        # 轮换密钥
+jade key show          # 查看当前密钥
+jade key export        # 导出公钥
+```
+
+## 安装
+
+```bash
+pip install jadegate     # Python
+cargo add jadegate       # Rust
+```
+
+---
+
+<div align="center">
+
+**💠 JadeGate** — *Pass the Gate. Trust the Jade.*
+
+[GitHub](https://github.com/JadeGate/jade-core) · [PyPI](https://pypi.org/project/jadegate/) · [crates.io](https://crates.io/crates/jadegate)
+
+</div>
+
+
+<div id="english-docs"></div>
 
 ## What is JadeGate?
 
@@ -224,7 +313,7 @@ jade verify skill.json --strict
 
 ### Why Fork Won't Help
 
-The code is MIT-licensed — anyone can fork it. But:
+The code is BSL 1.1-licensed — anyone can fork it. But:
 
 1. **They can't forge your signature.** Without the root private key, they cannot issue 💠 certifications that trace back to JadeGate.
 2. **The official registry is yours.** `jadegate.io` is the canonical source of truth for skill trust scores.
@@ -276,94 +365,7 @@ See [CONTRIBUTING.md](./CONTRIBUTING.md) for guidelines.
 
 ## License
 
-[MIT](./LICENSE)
+[BSL 1.1](./LICENSE)
 
 ---
 
-<div id="中文文档"></div>
-
-<div align="center">
-
-# 💠 JadeGate 中文文档
-
-**AI 智能体技能的确定性安全验证**
-
-*春风不度玉门关*
-
-</div>
-
-## JadeGate 是什么？
-
-JadeGate 是 AI 智能体技能的安全验证层。它对智能体使用的技能文件进行验证、认证和管理，确保技能在执行前是安全的。
-
-**不绑定任何框架。** JadeGate 是纯粹的验证层。OpenClaw、Claude Code、OpenCode、Cursor、LangChain、CrewAI，或者任何 MCP 兼容客户端，都能直接用。
-
-```bash
-pip install jadegate
-jade verify your_skill.json
-```
-
-两行命令，搞定 AI 智能体安全。
-
-## 为什么需要 JadeGate？
-
-AI 智能体的技能（工具、插件、MCP 服务器）本质上就是代码——代码可以是恶意的。一个技能文件可能：
-
-- 💉 注入隐藏的可执行代码
-- 📡 把敏感数据偷偷发到未知服务器
-- 🔄 通过循环依赖制造死循环
-- 🎭 把提示词注入伪装成正常操作
-
-JadeGate 通过 5 层确定性安全验证消除这些攻击面。不靠猜测，不靠 AI 检测，纯数学验证。
-
-## 5 层安全验证
-
-| 层级 | 验证内容 | 方法 |
-|------|---------|------|
-| 第 1 层 | 结构完整性 | JSON Schema 严格校验 |
-| 第 2 层 | 代码注入扫描 | 47 种注入模式匹配 |
-| 第 3 层 | 贝叶斯置信度 | 多层证据贝叶斯推断，≥0.95 通过 |
-| 第 4 层 | 网络泄露分析 | 域名白名单 + 协议审查 |
-| 第 5 层 | DAG 完整性 | DFS 环检测 + 可达性证明 + 终止保证 |
-
-## 信任模型
-
-JadeGate 使用非对称加密进行技能认证：
-
-- **所有者** 持有私钥（`jade-sk-...`），绝不公开
-- **公钥** 发布在仓库中（`jadegate.pub.json`）
-- 经所有者签名的技能获得 💠 认证
-- 任何人都能验证签名，但只有所有者能签发
-- 支持密钥轮换，旧签名依然有效
-
-这和 npm、PyPI 等包管理器以及 CA 证书机构使用的信任模型一致。
-
-## CLI 命令
-
-```bash
-jade list              # 列出所有已验证技能
-jade verify skill.json # 验证技能文件（5 层报告）
-jade search "天气"      # 搜索技能
-jade info <skill_id>   # 查看技能详情
-jade key generate      # 生成密钥对
-jade key rotate        # 轮换密钥
-jade key show          # 查看当前密钥
-jade key export        # 导出公钥
-```
-
-## 安装
-
-```bash
-pip install jadegate     # Python
-cargo add jadegate       # Rust
-```
-
----
-
-<div align="center">
-
-**💠 JadeGate** — *Pass the Gate. Trust the Jade.*
-
-[GitHub](https://github.com/JadeGate/jade-core) · [PyPI](https://pypi.org/project/jadegate/) · [crates.io](https://crates.io/crates/jadegate)
-
-</div>
