@@ -16,6 +16,11 @@ Zero trust. Five-layer mathematical verification. Runs locally. No cloud. No LLM
 
 ---
 
+
+<div align="center">
+<img src="assets/mcp_vs_jadegate.png" alt="MCP vs JadeGate" width="900"/>
+</div>
+
 ## Why JadeGate?
 
 AI agents are powerful. They call tools, execute skills, access APIs. But **who verifies those skills are safe?**
@@ -37,6 +42,11 @@ jade verify my_skill.json
 ## The Five Layers
 
 Every skill must pass all 5 layers. No exceptions. No overrides.
+
+<div align="center">
+<img src="assets/pipeline_5layer.png" alt="JadeGate 5-Layer Validation Pipeline" width="900"/>
+</div>
+
 
 | Layer | Name | What it does |
 |-------|------|-------------|
@@ -80,6 +90,11 @@ else:
   "checked_at": 1771669175.92
 }
 ```
+
+
+<div align="center">
+<img src="assets/trust_hierarchy.png" alt="JadeGate Trust Hierarchy" width="800"/>
+</div>
 
 ## Cryptographic Trust Chain
 

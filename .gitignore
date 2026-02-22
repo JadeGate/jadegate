@@ -8,7 +8,11 @@
 !jade_schema/**
 !jade_skills/
 !jade_skills/**
+!assets/
+!assets/**
 !jade_registry/
+!assets/
+!assets/**
 !jade_registry/**
 !tests/
 !tests/**
