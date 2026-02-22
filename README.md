@@ -18,7 +18,20 @@ Zero trust. Five-layer mathematical verification. Runs locally. No cloud. No LLM
 
 
 <div align="center">
-<img src="assets/mcp_vs_jadegate.png" alt="MCP vs JadeGate" width="900"/>
+<img src="assets/mcp_vs_jadegate.png" alt="Agent Skill Ecosystem Comparison" width="900"/>
+</div>
+
+<div align="center">
+
+### One command. That's it.
+
+```bash
+pip install jadegate && jade verify my_skill.json
+# ✅ Passed 5/5 layers | Confidence: 0.97 | 💠 Verified
+```
+
+**Your agent already speaks JSON. JadeGate speaks JSON. No adapter, no SDK, no learning curve.**
+
 </div>
 
 ## Why JadeGate?
@@ -75,6 +88,13 @@ else:
     for issue in result.issues:
         print(f"[{issue.severity}] {issue.code}: {issue.message}")
 ```
+
+
+**Why agents love JadeGate:**
+- Skills are pure JSON — the native language of every LLM
+- Agents discover, validate, and load skills without human intervention
+- No executable code means no sandbox escape, no prompt injection via skills
+- Machine-readable validation output — agents parse results directly, no scraping
 
 **Agent integration patterns:**
 - MCP servers can call JadeGate before loading any skill
@@ -221,6 +241,11 @@ Apache 2.0 — Use it, modify it, ship it. Just keep the attribution.
 
 零信任。五层数学验证。本地运行。无需云端。无需 LLM。零 token 消耗。
 
+
+<div align="center">
+<img src="assets/comparison_zh.png" alt="Agent 技能生态对比" width="900"/>
+</div>
+
 ### 为什么选择 JadeGate？
 
 - 🔒 **完全开源** — 每一行代码都可审计
@@ -229,6 +254,16 @@ Apache 2.0 — Use it, modify it, ship it. Just keep the attribution.
 - 🤖 **Agent 原生** — 为 AI agent 设计的查询接口
 - 💰 **零成本** — 纯 Python，零依赖，不调用任何 LLM
 - 🛡️ **红队测试** — 12 种攻击手法全部拦截
+
+
+### 一行命令，开箱即用
+
+```bash
+pip install jadegate && jade verify my_skill.json
+# ✅ 5/5 层通过 | 置信度: 0.97 | 💠 已验证
+```
+
+**你的 Agent 天生说 JSON，JadeGate 也说 JSON。无需适配器，无需学习成本，天然亲和。**
 
 ### 核心理念
 
