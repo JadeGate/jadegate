@@ -1,0 +1,159 @@
+{
+  "jade_version": "1.0.0",
+  "skill_id": "mcp_gitlab_issues",
+  "metadata": {
+    "name": "MCP GitLab Issues",
+    "version": "1.0.0",
+    "description": "List issues for a GitLab project.",
+    "author": "jade-mcp-bridge",
+    "tags": [
+      "mcp",
+      "gitlab",
+      "issues",
+      "project"
+    ],
+    "license": "BSL-1.1",
+    "created_at": "2026-02-22T17:49:27Z",
+    "updated_at": "2026-02-22T17:49:27Z"
+  },
+  "trigger": {
+    "type": "task_intent",
+    "conditions": [
+      {
+        "field": "task.type",
+        "operator": "in",
+        "value": [
+          "mcp_gitlab_issues"
+        ]
+      }
+    ]
+  },
+  "input_schema": {
+    "required_params": [
+      {
+        "name": "project_id",
+        "type": "string",
+        "description": "GitLab project ID"
+      }
+    ],
+    "optional_params": [
+      {
+        "name": "state",
+        "type": "string",
+        "description": "Issue state: opened/closed/all",
+        "default": "opened"
+      }
+    ]
+  },
+  "output_schema": {
+    "fields": [
+      {
+        "name": "results",
+        "type": "array",
+        "description": "Issues"
+      },
+      {
+        "name": "status",
+        "type": "string",
+        "description": "Status"
+      }
+    ]
+  },
+  "execution_dag": {
+    "nodes": [
+      {
+        "id": "fetch",
+        "action": "http_get",
+        "params": {
+          "url": "https://gitlab.com/api/v4/projects/{{input.project_id}}/issues?state={{input.state}}",
+          "headers": {
+            "PRIVATE-TOKEN": "{{env.GITLAB_TOKEN}}"
+          }
+        }
+      },
+      {
+        "id": "chk",
+        "action": "condition_check",
+        "params": {
+          "field": "{{fetch.output.status_code}}",
+          "operator": "equals",
+          "value": 200
+        }
+      },
+      {
+        "id": "ext",
+        "action": "json_extract",
+        "params": {
+          "data": "{{fetch.output.body}}",
+          "path": "$[*]",
+          "fields": [
+            "iid",
+            "title",
+            "state",
+            "author",
+            "created_at"
+          ]
+        }
+      },
+      {
+        "id": "ret",
+        "action": "return_result",
+        "params": {
+          "results": "{{ext.output.value}}",
+          "status": "ok"
+        }
+      }
+    ],
+    "edges": [
+      {
+        "from": "fetch",
+        "to": "chk"
+      },
+      {
+        "from": "chk",
+        "to": "ext"
+      },
+      {
+        "from": "ext",
+        "to": "ret"
+      }
+    ],
+    "entry_node": "fetch",
+    "exit_node": [
+      "ret"
+    ]
+  },
+  "security": {
+    "network_whitelist": [
+      "gitlab.com"
+    ],
+    "file_permissions": {
+      "read": [],
+      "write": []
+    },
+    "max_execution_time_ms": 15000,
+    "max_retries": 1,
+    "sandbox_level": "standard",
+    "dangerous_patterns": [],
+    "env_whitelist": [
+      "GITLAB_TOKEN"
+    ]
+  },
+  "mcp_compatible": true,
+  "required_mcp_capabilities": [
+    "gitlab"
+  ],
+  "jade_signature": {
+    "version": "1.0.0",
+    "skill_id": "mcp_gitlab_issues",
+    "content_hash": "sha256:aa083a3416ce3b4c1a84404d18919b78c2fcf8866c26893358e19ef1bb0e1401",
+    "signature": "jade-sig-GvINgtpsnuOXtPDgY4ZuXBsZw9u+588kl1UiLUgEOx2axI9/8dc8SJz77ukRMYaCNP83WQ9dRMxT9ILWzPAJAQ==",
+    "signer": {
+      "public_key": "jade-pk-root-o0p0Em+ufryyPQFFdKHEdSbWOPCqiGhUwwC9AjYJb/U=",
+      "fingerprint": "SHA256:HU0Dpg+xFPNxCURZhG9eX6Yx+ynMlbincaJxIRUJt98=",
+      "role": "root"
+    },
+    "timestamp": "2026-02-22T17:49:29Z",
+    "expires": "2027-02-22T17:49:29Z"
+  }
+}

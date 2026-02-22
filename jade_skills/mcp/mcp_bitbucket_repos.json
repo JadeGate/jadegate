@@ -1,0 +1,152 @@
+{
+  "jade_version": "1.0.0",
+  "skill_id": "mcp_bitbucket_repos",
+  "metadata": {
+    "name": "MCP Bitbucket Repositories",
+    "version": "1.0.0",
+    "description": "List repositories in a Bitbucket workspace.",
+    "author": "jade-mcp-bridge",
+    "tags": [
+      "mcp",
+      "bitbucket",
+      "repos",
+      "git"
+    ],
+    "license": "BSL-1.1",
+    "created_at": "2026-02-22T17:49:27Z",
+    "updated_at": "2026-02-22T17:49:27Z"
+  },
+  "trigger": {
+    "type": "task_intent",
+    "conditions": [
+      {
+        "field": "task.type",
+        "operator": "in",
+        "value": [
+          "mcp_bitbucket_repos"
+        ]
+      }
+    ]
+  },
+  "input_schema": {
+    "required_params": [
+      {
+        "name": "workspace",
+        "type": "string",
+        "description": "Bitbucket workspace slug"
+      }
+    ],
+    "optional_params": []
+  },
+  "output_schema": {
+    "fields": [
+      {
+        "name": "results",
+        "type": "array",
+        "description": "Repositories"
+      },
+      {
+        "name": "status",
+        "type": "string",
+        "description": "Status"
+      }
+    ]
+  },
+  "execution_dag": {
+    "nodes": [
+      {
+        "id": "fetch",
+        "action": "http_get",
+        "params": {
+          "url": "https://api.bitbucket.org/2.0/repositories/{{input.workspace}}",
+          "headers": {
+            "Authorization": "Bearer {{env.BITBUCKET_TOKEN}}"
+          }
+        }
+      },
+      {
+        "id": "chk",
+        "action": "condition_check",
+        "params": {
+          "field": "{{fetch.output.status_code}}",
+          "operator": "equals",
+          "value": 200
+        }
+      },
+      {
+        "id": "ext",
+        "action": "json_extract",
+        "params": {
+          "data": "{{fetch.output.body}}",
+          "path": "$.values[*]",
+          "fields": [
+            "slug",
+            "name",
+            "description",
+            "language",
+            "updated_on"
+          ]
+        }
+      },
+      {
+        "id": "ret",
+        "action": "return_result",
+        "params": {
+          "results": "{{ext.output.value}}",
+          "status": "ok"
+        }
+      }
+    ],
+    "edges": [
+      {
+        "from": "fetch",
+        "to": "chk"
+      },
+      {
+        "from": "chk",
+        "to": "ext"
+      },
+      {
+        "from": "ext",
+        "to": "ret"
+      }
+    ],
+    "entry_node": "fetch",
+    "exit_node": [
+      "ret"
+    ]
+  },
+  "security": {
+    "network_whitelist": [
+      "api.bitbucket.org"
+    ],
+    "file_permissions": {
+      "read": [],
+      "write": []
+    },
+    "max_execution_time_ms": 15000,
+    "max_retries": 1,
+    "sandbox_level": "standard",
+    "dangerous_patterns": [],
+    "env_whitelist": [
+      "BITBUCKET_TOKEN"
+    ]
+  },
+  "mcp_compatible": true,
+  "required_mcp_capabilities": [
+    "bitbucket"
+  ],
+  "jade_signature": {
+    "version": "1.0.0",
+    "skill_id": "mcp_bitbucket_repos",
+    "content_hash": "sha256:c0b232ac1745a71b6b2a4f8da3a42ff391286c01fccc0da1afd1fcdf938ff693",
+    "signature": "jade-sig-qA0hZA2iNn6KDJSj+b46w+KYVoEnpvB7vzBjPgcwkuplcJeiJ0npP+sM7VbiJYjkPPIAY4wsh3nRAJlzH/9bCg==",
+    "signer": {
+      "public_key": "jade-pk-root-o0p0Em+ufryyPQFFdKHEdSbWOPCqiGhUwwC9AjYJb/U=",
+      "fingerprint": "SHA256:HU0Dpg+xFPNxCURZhG9eX6Yx+ynMlbincaJxIRUJt98=",
+      "role": "root"
+    },
+    "timestamp": "2026-02-22T17:49:30Z",
+    "expires": "2027-02-22T17:49:30Z"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "jade_signature": {
+    "version": "1.0.0",
+    "skill_id": "mcp_gitlab_mr",
+    "content_hash": "sha256:b91a4e05456baa9b94d8270191690d282db779481bf7ba0c4aa1504c147a4d30",
+    "signature": "jade-sig-q5BSlGQabQw/CpqHZV8pxLiWdOyrUbZaWuiX/Rmm1PBmPk6xyu8fJPdgft8KJZY/+ZWubGSLhKZ1XuCFCr6KAw==",
+    "signer": {
+      "public_key": "jade-pk-root-o0p0Em+ufryyPQFFdKHEdSbWOPCqiGhUwwC9AjYJb/U=",
+      "fingerprint": "SHA256:HU0Dpg+xFPNxCURZhG9eX6Yx+ynMlbincaJxIRUJt98=",
+      "role": "root"
+    },
+    "timestamp": "2026-02-22T17:49:29Z",
+    "expires": "2027-02-22T17:49:29Z"
+  }
+}

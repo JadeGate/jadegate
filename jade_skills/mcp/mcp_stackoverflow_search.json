@@ -1,0 +1,154 @@
+{
+  "jade_version": "1.0.0",
+  "skill_id": "mcp_stackoverflow_search",
+  "metadata": {
+    "name": "MCP StackOverflow Search",
+    "version": "1.0.0",
+    "description": "Search questions on StackOverflow.",
+    "author": "jade-mcp-bridge",
+    "tags": [
+      "mcp",
+      "stackoverflow",
+      "search",
+      "qa"
+    ],
+    "license": "BSL-1.1",
+    "created_at": "2026-02-22T17:49:27Z",
+    "updated_at": "2026-02-22T17:49:27Z"
+  },
+  "trigger": {
+    "type": "task_intent",
+    "conditions": [
+      {
+        "field": "task.type",
+        "operator": "in",
+        "value": [
+          "mcp_stackoverflow_search"
+        ]
+      }
+    ]
+  },
+  "input_schema": {
+    "required_params": [
+      {
+        "name": "query",
+        "type": "string",
+        "description": "Search query"
+      }
+    ],
+    "optional_params": [
+      {
+        "name": "limit",
+        "type": "number",
+        "description": "Max results",
+        "default": 10
+      }
+    ]
+  },
+  "output_schema": {
+    "fields": [
+      {
+        "name": "results",
+        "type": "array",
+        "description": "Questions"
+      },
+      {
+        "name": "status",
+        "type": "string",
+        "description": "Status"
+      }
+    ]
+  },
+  "execution_dag": {
+    "nodes": [
+      {
+        "id": "search",
+        "action": "http_get",
+        "params": {
+          "url": "https://api.stackexchange.com/2.3/search/advanced?order=desc&sort=relevance&q={{input.query}}&site=stackoverflow&pagesize={{input.limit}}"
+        }
+      },
+      {
+        "id": "chk",
+        "action": "condition_check",
+        "params": {
+          "field": "{{search.output.status_code}}",
+          "operator": "equals",
+          "value": 200
+        }
+      },
+      {
+        "id": "ext",
+        "action": "json_extract",
+        "params": {
+          "data": "{{search.output.body}}",
+          "path": "$.items[*]",
+          "fields": [
+            "title",
+            "link",
+            "score",
+            "answer_count",
+            "is_answered",
+            "tags"
+          ]
+        }
+      },
+      {
+        "id": "ret",
+        "action": "return_result",
+        "params": {
+          "results": "{{ext.output.value}}",
+          "status": "ok"
+        }
+      }
+    ],
+    "edges": [
+      {
+        "from": "search",
+        "to": "chk"
+      },
+      {
+        "from": "chk",
+        "to": "ext"
+      },
+      {
+        "from": "ext",
+        "to": "ret"
+      }
+    ],
+    "entry_node": "search",
+    "exit_node": [
+      "ret"
+    ]
+  },
+  "security": {
+    "network_whitelist": [
+      "api.stackexchange.com"
+    ],
+    "file_permissions": {
+      "read": [],
+      "write": []
+    },
+    "max_execution_time_ms": 15000,
+    "max_retries": 1,
+    "sandbox_level": "standard",
+    "dangerous_patterns": []
+  },
+  "mcp_compatible": true,
+  "required_mcp_capabilities": [
+    "stackoverflow"
+  ],
+  "jade_signature": {
+    "version": "1.0.0",
+    "skill_id": "mcp_stackoverflow_search",
+    "content_hash": "sha256:c08a3bb97f6aa4be5c276cbf236b617dcc81f1dbc987eecf42b944eca26384c3",
+    "signature": "jade-sig-ND+hrV5mFvtetih9RW8GfoTzePXZLFyL2ap360cMiEVWQJfEAHHdqFKcl8tiYymPAaxnlaSGSjBmGG4uSJoeDw==",
+    "signer": {
+      "public_key": "jade-pk-root-o0p0Em+ufryyPQFFdKHEdSbWOPCqiGhUwwC9AjYJb/U=",
+      "fingerprint": "SHA256:HU0Dpg+xFPNxCURZhG9eX6Yx+ynMlbincaJxIRUJt98=",
+      "role": "root"
+    },
+    "timestamp": "2026-02-22T17:49:34Z",
+    "expires": "2027-02-22T17:49:34Z"
+  }
+}

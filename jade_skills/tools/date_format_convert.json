@@ -1,0 +1,120 @@
+{
+  "jade_version": "1.0.0",
+  "skill_id": "date_format_convert",
+  "metadata": {
+    "name": "Date Format Converter",
+    "version": "1.0.0",
+    "description": "Convert date strings between formats.",
+    "author": "jadegate",
+    "tags": [
+      "date",
+      "format",
+      "convert",
+      "time"
+    ],
+    "license": "BSL-1.1",
+    "created_at": "2026-02-22T17:50:21Z",
+    "updated_at": "2026-02-22T17:50:21Z"
+  },
+  "trigger": {
+    "type": "task_intent",
+    "conditions": [
+      {
+        "field": "task.type",
+        "operator": "in",
+        "value": [
+          "date_format_convert"
+        ]
+      }
+    ]
+  },
+  "input_schema": {
+    "required_params": [
+      {
+        "name": "date_string",
+        "type": "string",
+        "description": "Input date string"
+      },
+      {
+        "name": "target_format",
+        "type": "string",
+        "description": "Target format (e.g. ISO8601, YYYY-MM-DD)"
+      }
+    ],
+    "optional_params": [
+      {
+        "name": "source_format",
+        "type": "string",
+        "description": "Source format hint"
+      }
+    ]
+  },
+  "output_schema": {
+    "fields": [
+      {
+        "name": "converted",
+        "type": "string",
+        "description": "Converted date string"
+      },
+      {
+        "name": "status",
+        "type": "string",
+        "description": "Status"
+      }
+    ]
+  },
+  "execution_dag": {
+    "nodes": [
+      {
+        "id": "parse",
+        "action": "time_convert",
+        "params": {
+          "input": "{{input.date_string}}",
+          "format": "{{input.target_format}}"
+        }
+      },
+      {
+        "id": "ret",
+        "action": "return_result",
+        "params": {
+          "converted": "{{parse.output.value}}",
+          "status": "ok"
+        }
+      }
+    ],
+    "edges": [
+      {
+        "from": "parse",
+        "to": "ret"
+      }
+    ],
+    "entry_node": "parse",
+    "exit_node": [
+      "ret"
+    ]
+  },
+  "security": {
+    "network_whitelist": [],
+    "file_permissions": {
+      "read": [],
+      "write": []
+    },
+    "max_execution_time_ms": 10000,
+    "max_retries": 1,
+    "sandbox_level": "strict",
+    "dangerous_patterns": []
+  },
+  "jade_signature": {
+    "version": "1.0.0",
+    "skill_id": "date_format_convert",
+    "content_hash": "sha256:05d4c5595d7ca506efcadb1c475147808626b3e16474da21d316291ee1262748",
+    "signature": "jade-sig-Z6QDrRcn2TlNsGlIYNNqCj+pCHtYO1QsLIpFj/Fn+fsMJEAIZrqq46ULcmH2J1Z4BCeBxySVoCDVF+q23cl6CQ==",
+    "signer": {
+      "public_key": "jade-pk-root-o0p0Em+ufryyPQFFdKHEdSbWOPCqiGhUwwC9AjYJb/U=",
+      "fingerprint": "SHA256:HU0Dpg+xFPNxCURZhG9eX6Yx+ynMlbincaJxIRUJt98=",
+      "role": "root"
+    },
+    "timestamp": "2026-02-22T17:50:25Z",
+    "expires": "2027-02-22T17:50:25Z"
+  }
+}

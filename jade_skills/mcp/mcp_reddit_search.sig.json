@@ -1,0 +1,15 @@
+{
+  "jade_signature": {
+    "version": "1.0.0",
+    "skill_id": "mcp_reddit_search",
+    "content_hash": "sha256:7f5b04ebadb0ee803ae77924aa3a726c445209011dc2152f019899fa7780271e",
+    "signature": "jade-sig-+1q3Pgl4zsRh9gdXiXDMx1YlNCTZ5UdJHnkUWPXyt2AOH0mbqLdIY6PZy76ead/l6CFH3nJx6Dmnlp0ovLVeCA==",
+    "signer": {
+      "public_key": "jade-pk-root-o0p0Em+ufryyPQFFdKHEdSbWOPCqiGhUwwC9AjYJb/U=",
+      "fingerprint": "SHA256:HU0Dpg+xFPNxCURZhG9eX6Yx+ynMlbincaJxIRUJt98=",
+      "role": "root"
+    },
+    "timestamp": "2026-02-22T17:49:33Z",
+    "expires": "2027-02-22T17:49:33Z"
+  }
+}

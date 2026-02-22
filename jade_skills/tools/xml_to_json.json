@@ -1,20 +1,20 @@
 {
   "jade_version": "1.0.0",
-  "skill_id": "base64_encode",
+  "skill_id": "xml_to_json",
   "metadata": {
-    "name": "Base64 Encode",
+    "name": "XML to JSON Converter",
     "version": "1.0.0",
-    "description": "Encode text or file content to Base64.",
-    "author": "jade-mcp-bridge",
+    "description": "Parse XML input and convert to JSON structure.",
+    "author": "jadegate",
     "tags": [
-      "tools",
-      "base64",
-      "encode",
-      "convert"
+      "xml",
+      "json",
+      "convert",
+      "parse"
     ],
     "license": "BSL-1.1",
-    "created_at": "2026-02-22T16:23:40Z",
-    "updated_at": "2026-02-22T16:23:40Z"
+    "created_at": "2026-02-22T17:50:21Z",
+    "updated_at": "2026-02-22T17:50:21Z"
   },
   "trigger": {
     "type": "task_intent",
@@ -23,7 +23,7 @@
         "field": "task.type",
         "operator": "in",
         "value": [
-          "base64_encode"
+          "xml_to_json"
         ]
       }
     ]
@@ -31,9 +31,9 @@
   "input_schema": {
     "required_params": [
       {
-        "name": "content",
+        "name": "xml_content",
         "type": "string",
-        "description": "Content to encode"
+        "description": "XML string to convert"
       }
     ],
     "optional_params": []
@@ -41,43 +41,42 @@
   "output_schema": {
     "fields": [
       {
-        "name": "encoded",
-        "type": "string",
-        "description": "Base64 encoded string"
+        "name": "json_data",
+        "type": "object",
+        "description": "Converted JSON"
       },
       {
-        "name": "length",
-        "type": "number",
-        "description": "Output length"
+        "name": "status",
+        "type": "string",
+        "description": "Status"
       }
     ]
   },
   "execution_dag": {
     "nodes": [
       {
-        "id": "enc",
-        "action": "text_template",
+        "id": "parse",
+        "action": "xml_parse",
         "params": {
-          "template": "{{input.content}}",
-          "variables": {}
+          "data": "{{input.xml_content}}"
         }
       },
       {
         "id": "ret",
         "action": "return_result",
         "params": {
-          "encoded": "{{enc.output.result}}",
-          "length": 0
+          "json_data": "{{parse.output.value}}",
+          "status": "ok"
         }
       }
     ],
     "edges": [
       {
-        "from": "enc",
+        "from": "parse",
         "to": "ret"
       }
     ],
-    "entry_node": "enc",
+    "entry_node": "parse",
     "exit_node": [
       "ret"
     ]
@@ -88,22 +87,22 @@
       "read": [],
       "write": []
     },
-    "max_execution_time_ms": 15000,
+    "max_execution_time_ms": 10000,
     "max_retries": 1,
     "sandbox_level": "strict",
     "dangerous_patterns": []
   },
   "jade_signature": {
     "version": "1.0.0",
-    "skill_id": "base64_encode",
-    "content_hash": "sha256:fbfcc6112675a1fe049f023a6a45ad1e850eb2e476fb79f8838dec1bd81b8cc8",
-    "signature": "jade-sig-rExnJ+Kqtv9gDQayRL61GM+HYbfdR4MheA3FiXuS4LXaebrmDolamGd2uyo76VEoALdE8uEdf7sWdiBkyH3/Dw==",
+    "skill_id": "xml_to_json",
+    "content_hash": "sha256:3ccfafbb6bce5e9482baa198fdf08351c0525bdcd4a1f641fd870c366bb09491",
+    "signature": "jade-sig-XKE5QmukXWE+U0WT6X4TpC9zIbXXmvS6iieiQa5KrZjblhaA3ik0ecT4Itahef8VswEFBv2UosNti8MLJF0vAw==",
     "signer": {
       "public_key": "jade-pk-root-o0p0Em+ufryyPQFFdKHEdSbWOPCqiGhUwwC9AjYJb/U=",
       "fingerprint": "SHA256:HU0Dpg+xFPNxCURZhG9eX6Yx+ynMlbincaJxIRUJt98=",
       "role": "root"
     },
-    "timestamp": "2026-02-22T17:51:15Z",
-    "expires": "2027-02-22T17:51:15Z"
+    "timestamp": "2026-02-22T17:50:22Z",
+    "expires": "2027-02-22T17:50:22Z"
   }
 }

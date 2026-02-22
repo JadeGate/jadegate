@@ -1,0 +1,166 @@
+{
+  "jade_version": "1.0.0",
+  "skill_id": "mcp_stripe_checkout",
+  "metadata": {
+    "name": "MCP Stripe Checkout",
+    "version": "1.0.0",
+    "description": "Create a Stripe Checkout session.",
+    "author": "jade-mcp-bridge",
+    "tags": [
+      "mcp",
+      "stripe",
+      "checkout",
+      "payment"
+    ],
+    "license": "BSL-1.1",
+    "created_at": "2026-02-22T17:49:27Z",
+    "updated_at": "2026-02-22T17:49:27Z"
+  },
+  "trigger": {
+    "type": "task_intent",
+    "conditions": [
+      {
+        "field": "task.type",
+        "operator": "in",
+        "value": [
+          "mcp_stripe_checkout"
+        ]
+      }
+    ]
+  },
+  "input_schema": {
+    "required_params": [
+      {
+        "name": "mode",
+        "type": "string",
+        "description": "payment or subscription"
+      },
+      {
+        "name": "success_url",
+        "type": "string",
+        "description": "Success redirect URL"
+      },
+      {
+        "name": "cancel_url",
+        "type": "string",
+        "description": "Cancel redirect URL"
+      }
+    ],
+    "optional_params": []
+  },
+  "output_schema": {
+    "fields": [
+      {
+        "name": "session",
+        "type": "object",
+        "description": "Checkout session"
+      },
+      {
+        "name": "status",
+        "type": "string",
+        "description": "Status"
+      }
+    ]
+  },
+  "execution_dag": {
+    "nodes": [
+      {
+        "id": "create",
+        "action": "http_post",
+        "params": {
+          "url": "https://api.stripe.com/v1/checkout/sessions",
+          "headers": {
+            "Authorization": "Bearer {{env.STRIPE_SECRET}}",
+            "Content-Type": "application/x-www-form-urlencoded"
+          },
+          "body": {
+            "mode": "{{input.mode}}",
+            "success_url": "{{input.success_url}}",
+            "cancel_url": "{{input.cancel_url}}"
+          }
+        }
+      },
+      {
+        "id": "chk",
+        "action": "condition_check",
+        "params": {
+          "field": "{{create.output.status_code}}",
+          "operator": "equals",
+          "value": 200
+        }
+      },
+      {
+        "id": "ext",
+        "action": "json_extract",
+        "params": {
+          "data": "{{create.output.body}}",
+          "path": "$",
+          "fields": [
+            "id",
+            "url",
+            "status"
+          ]
+        }
+      },
+      {
+        "id": "ret",
+        "action": "return_result",
+        "params": {
+          "session": "{{ext.output.value}}",
+          "status": "ok"
+        }
+      }
+    ],
+    "edges": [
+      {
+        "from": "create",
+        "to": "chk"
+      },
+      {
+        "from": "chk",
+        "to": "ext"
+      },
+      {
+        "from": "ext",
+        "to": "ret"
+      }
+    ],
+    "entry_node": "create",
+    "exit_node": [
+      "ret"
+    ]
+  },
+  "security": {
+    "network_whitelist": [
+      "api.stripe.com"
+    ],
+    "file_permissions": {
+      "read": [],
+      "write": []
+    },
+    "max_execution_time_ms": 15000,
+    "max_retries": 1,
+    "sandbox_level": "standard",
+    "dangerous_patterns": [],
+    "env_whitelist": [
+      "STRIPE_SECRET"
+    ]
+  },
+  "mcp_compatible": true,
+  "required_mcp_capabilities": [
+    "stripe"
+  ],
+  "jade_signature": {
+    "version": "1.0.0",
+    "skill_id": "mcp_stripe_checkout",
+    "content_hash": "sha256:d814d6a7813c1dc88973c34a9940895cc4fc915570f2478e0873c76ea1c15e65",
+    "signature": "jade-sig-EToN5rVJAP3lNoAeNi1/Qa7/PoobWXlJiUfAT3LXDOxcsS89LNpMnuF6HAIja+N3Mz72o2GCgDldkMQJCboTDA==",
+    "signer": {
+      "public_key": "jade-pk-root-o0p0Em+ufryyPQFFdKHEdSbWOPCqiGhUwwC9AjYJb/U=",
+      "fingerprint": "SHA256:HU0Dpg+xFPNxCURZhG9eX6Yx+ynMlbincaJxIRUJt98=",
+      "role": "root"
+    },
+    "timestamp": "2026-02-22T17:49:32Z",
+    "expires": "2027-02-22T17:49:32Z"
+  }
+}

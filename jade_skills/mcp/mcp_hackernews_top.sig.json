@@ -1,0 +1,15 @@
+{
+  "jade_signature": {
+    "version": "1.0.0",
+    "skill_id": "mcp_hackernews_top",
+    "content_hash": "sha256:3793f128f6f12c735787320f7884a72c3a7cff987855ad76df2224a2bbf97bc8",
+    "signature": "jade-sig-0n1tUmLaZYXjxzK8YCqkC+uAQy3n6Wfrc/isnEbdTFz7fPAae6FeHnpgBfsaChg5rY+0MT41GYYPbK4X7N/iBQ==",
+    "signer": {
+      "public_key": "jade-pk-root-o0p0Em+ufryyPQFFdKHEdSbWOPCqiGhUwwC9AjYJb/U=",
+      "fingerprint": "SHA256:HU0Dpg+xFPNxCURZhG9eX6Yx+ynMlbincaJxIRUJt98=",
+      "role": "root"
+    },
+    "timestamp": "2026-02-22T17:49:33Z",
+    "expires": "2027-02-22T17:49:33Z"
+  }
+}

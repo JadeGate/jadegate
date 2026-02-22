@@ -1,0 +1,159 @@
+{
+  "jade_version": "1.0.0",
+  "skill_id": "mcp_github_code_search",
+  "metadata": {
+    "name": "MCP GitHub Code Search",
+    "version": "1.0.0",
+    "description": "Search code across GitHub repositories.",
+    "author": "jade-mcp-bridge",
+    "tags": [
+      "mcp",
+      "github",
+      "code",
+      "search"
+    ],
+    "license": "BSL-1.1",
+    "created_at": "2026-02-22T17:49:27Z",
+    "updated_at": "2026-02-22T17:49:27Z"
+  },
+  "trigger": {
+    "type": "task_intent",
+    "conditions": [
+      {
+        "field": "task.type",
+        "operator": "in",
+        "value": [
+          "mcp_github_code_search"
+        ]
+      }
+    ]
+  },
+  "input_schema": {
+    "required_params": [
+      {
+        "name": "query",
+        "type": "string",
+        "description": "Code search query"
+      }
+    ],
+    "optional_params": [
+      {
+        "name": "per_page",
+        "type": "number",
+        "description": "Results per page",
+        "default": 10
+      }
+    ]
+  },
+  "output_schema": {
+    "fields": [
+      {
+        "name": "results",
+        "type": "array",
+        "description": "Code search results"
+      },
+      {
+        "name": "status",
+        "type": "string",
+        "description": "Status"
+      }
+    ]
+  },
+  "execution_dag": {
+    "nodes": [
+      {
+        "id": "search",
+        "action": "http_get",
+        "params": {
+          "url": "https://api.github.com/search/code?q={{input.query}}",
+          "headers": {
+            "Authorization": "Bearer {{env.GITHUB_TOKEN}}",
+            "Accept": "application/vnd.github.v3+json"
+          }
+        }
+      },
+      {
+        "id": "chk",
+        "action": "condition_check",
+        "params": {
+          "field": "{{search.output.status_code}}",
+          "operator": "equals",
+          "value": 200
+        }
+      },
+      {
+        "id": "ext",
+        "action": "json_extract",
+        "params": {
+          "data": "{{search.output.body}}",
+          "path": "$.items[*]",
+          "fields": [
+            "name",
+            "path",
+            "repository",
+            "html_url"
+          ]
+        }
+      },
+      {
+        "id": "ret",
+        "action": "return_result",
+        "params": {
+          "results": "{{ext.output.value}}",
+          "status": "ok"
+        }
+      }
+    ],
+    "edges": [
+      {
+        "from": "search",
+        "to": "chk"
+      },
+      {
+        "from": "chk",
+        "to": "ext"
+      },
+      {
+        "from": "ext",
+        "to": "ret"
+      }
+    ],
+    "entry_node": "search",
+    "exit_node": [
+      "ret"
+    ]
+  },
+  "security": {
+    "network_whitelist": [
+      "api.github.com"
+    ],
+    "file_permissions": {
+      "read": [],
+      "write": []
+    },
+    "max_execution_time_ms": 15000,
+    "max_retries": 1,
+    "sandbox_level": "standard",
+    "dangerous_patterns": [],
+    "env_whitelist": [
+      "GITHUB_TOKEN"
+    ]
+  },
+  "mcp_compatible": true,
+  "required_mcp_capabilities": [
+    "github-code-search"
+  ],
+  "jade_signature": {
+    "version": "1.0.0",
+    "skill_id": "mcp_github_code_search",
+    "content_hash": "sha256:7cfcad1b86d77ecde8d18f11e7588f2739c332f900a657e001e16e09db826c47",
+    "signature": "jade-sig-1hz4P9qUIaOou8SCKqnwLP2GYnrHZN9tqKa2Vhcm8BrunEFLaT85ufQqPhJhutaheUu3o77jlpkOYTq5R1H0CA==",
+    "signer": {
+      "public_key": "jade-pk-root-o0p0Em+ufryyPQFFdKHEdSbWOPCqiGhUwwC9AjYJb/U=",
+      "fingerprint": "SHA256:HU0Dpg+xFPNxCURZhG9eX6Yx+ynMlbincaJxIRUJt98=",
+      "role": "root"
+    },
+    "timestamp": "2026-02-22T17:49:28Z",
+    "expires": "2027-02-22T17:49:28Z"
+  }
+}

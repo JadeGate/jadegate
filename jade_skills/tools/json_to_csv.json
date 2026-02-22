@@ -1,0 +1,120 @@
+{
+  "jade_version": "1.0.0",
+  "skill_id": "json_to_csv",
+  "metadata": {
+    "name": "JSON to CSV Converter",
+    "version": "1.0.0",
+    "description": "Convert JSON array to CSV format.",
+    "author": "jadegate",
+    "tags": [
+      "json",
+      "csv",
+      "convert",
+      "data"
+    ],
+    "license": "BSL-1.1",
+    "created_at": "2026-02-22T17:50:21Z",
+    "updated_at": "2026-02-22T17:50:21Z"
+  },
+  "trigger": {
+    "type": "task_intent",
+    "conditions": [
+      {
+        "field": "task.type",
+        "operator": "in",
+        "value": [
+          "json_to_csv"
+        ]
+      }
+    ]
+  },
+  "input_schema": {
+    "required_params": [
+      {
+        "name": "json_data",
+        "type": "string",
+        "description": "JSON array string to convert"
+      }
+    ],
+    "optional_params": []
+  },
+  "output_schema": {
+    "fields": [
+      {
+        "name": "csv_content",
+        "type": "string",
+        "description": "CSV output"
+      },
+      {
+        "name": "status",
+        "type": "string",
+        "description": "Status"
+      }
+    ]
+  },
+  "execution_dag": {
+    "nodes": [
+      {
+        "id": "parse",
+        "action": "json_parse",
+        "params": {
+          "data": "{{input.json_data}}"
+        }
+      },
+      {
+        "id": "convert",
+        "action": "data_transform",
+        "params": {
+          "input": "{{parse.output.value}}",
+          "format": "csv"
+        }
+      },
+      {
+        "id": "ret",
+        "action": "return_result",
+        "params": {
+          "csv_content": "{{convert.output.value}}",
+          "status": "ok"
+        }
+      }
+    ],
+    "edges": [
+      {
+        "from": "parse",
+        "to": "convert"
+      },
+      {
+        "from": "convert",
+        "to": "ret"
+      }
+    ],
+    "entry_node": "parse",
+    "exit_node": [
+      "ret"
+    ]
+  },
+  "security": {
+    "network_whitelist": [],
+    "file_permissions": {
+      "read": [],
+      "write": []
+    },
+    "max_execution_time_ms": 10000,
+    "max_retries": 1,
+    "sandbox_level": "strict",
+    "dangerous_patterns": []
+  },
+  "jade_signature": {
+    "version": "1.0.0",
+    "skill_id": "json_to_csv",
+    "content_hash": "sha256:0e055d42449d686df4fe806a038c58da6f6ff892c5b9ad9f3bc2c395b8888e80",
+    "signature": "jade-sig-W5F0mmwtPgIrbxlG17uf+oThOkq7rWNS6USg7nGjgsIqqsw1JgwzhASEGLYjrV1Rp8CM8Q6BZe44S0IECzQ6Bw==",
+    "signer": {
+      "public_key": "jade-pk-root-o0p0Em+ufryyPQFFdKHEdSbWOPCqiGhUwwC9AjYJb/U=",
+      "fingerprint": "SHA256:HU0Dpg+xFPNxCURZhG9eX6Yx+ynMlbincaJxIRUJt98=",
+      "role": "root"
+    },
+    "timestamp": "2026-02-22T17:50:22Z",
+    "expires": "2027-02-22T17:50:22Z"
+  }
+}

@@ -1,0 +1,167 @@
+{
+  "jade_version": "1.0.0",
+  "skill_id": "mcp_reddit_search",
+  "metadata": {
+    "name": "MCP Reddit Search",
+    "version": "1.0.0",
+    "description": "Search posts across Reddit.",
+    "author": "jade-mcp-bridge",
+    "tags": [
+      "mcp",
+      "reddit",
+      "search",
+      "social"
+    ],
+    "license": "BSL-1.1",
+    "created_at": "2026-02-22T17:49:27Z",
+    "updated_at": "2026-02-22T17:49:27Z"
+  },
+  "trigger": {
+    "type": "task_intent",
+    "conditions": [
+      {
+        "field": "task.type",
+        "operator": "in",
+        "value": [
+          "mcp_reddit_search"
+        ]
+      }
+    ]
+  },
+  "input_schema": {
+    "required_params": [
+      {
+        "name": "query",
+        "type": "string",
+        "description": "Search query"
+      }
+    ],
+    "optional_params": [
+      {
+        "name": "limit",
+        "type": "number",
+        "description": "Max results",
+        "default": 10
+      },
+      {
+        "name": "sort",
+        "type": "string",
+        "description": "Sort: relevance/hot/top/new",
+        "default": "relevance"
+      }
+    ]
+  },
+  "output_schema": {
+    "fields": [
+      {
+        "name": "results",
+        "type": "array",
+        "description": "Reddit posts"
+      },
+      {
+        "name": "status",
+        "type": "string",
+        "description": "Status"
+      }
+    ]
+  },
+  "execution_dag": {
+    "nodes": [
+      {
+        "id": "search",
+        "action": "http_get",
+        "params": {
+          "url": "https://oauth.reddit.com/search?q={{input.query}}&limit={{input.limit}}&sort={{input.sort}}",
+          "headers": {
+            "Authorization": "Bearer {{env.REDDIT_TOKEN}}",
+            "User-Agent": "JadeGate/1.0"
+          }
+        }
+      },
+      {
+        "id": "chk",
+        "action": "condition_check",
+        "params": {
+          "field": "{{search.output.status_code}}",
+          "operator": "equals",
+          "value": 200
+        }
+      },
+      {
+        "id": "ext",
+        "action": "json_extract",
+        "params": {
+          "data": "{{search.output.body}}",
+          "path": "$.data.children[*].data",
+          "fields": [
+            "title",
+            "subreddit",
+            "score",
+            "url",
+            "selftext",
+            "author"
+          ]
+        }
+      },
+      {
+        "id": "ret",
+        "action": "return_result",
+        "params": {
+          "results": "{{ext.output.value}}",
+          "status": "ok"
+        }
+      }
+    ],
+    "edges": [
+      {
+        "from": "search",
+        "to": "chk"
+      },
+      {
+        "from": "chk",
+        "to": "ext"
+      },
+      {
+        "from": "ext",
+        "to": "ret"
+      }
+    ],
+    "entry_node": "search",
+    "exit_node": [
+      "ret"
+    ]
+  },
+  "security": {
+    "network_whitelist": [
+      "oauth.reddit.com"
+    ],
+    "file_permissions": {
+      "read": [],
+      "write": []
+    },
+    "max_execution_time_ms": 15000,
+    "max_retries": 1,
+    "sandbox_level": "standard",
+    "dangerous_patterns": [],
+    "env_whitelist": [
+      "REDDIT_TOKEN"
+    ]
+  },
+  "mcp_compatible": true,
+  "required_mcp_capabilities": [
+    "reddit"
+  ],
+  "jade_signature": {
+    "version": "1.0.0",
+    "skill_id": "mcp_reddit_search",
+    "content_hash": "sha256:7f5b04ebadb0ee803ae77924aa3a726c445209011dc2152f019899fa7780271e",
+    "signature": "jade-sig-+1q3Pgl4zsRh9gdXiXDMx1YlNCTZ5UdJHnkUWPXyt2AOH0mbqLdIY6PZy76ead/l6CFH3nJx6Dmnlp0ovLVeCA==",
+    "signer": {
+      "public_key": "jade-pk-root-o0p0Em+ufryyPQFFdKHEdSbWOPCqiGhUwwC9AjYJb/U=",
+      "fingerprint": "SHA256:HU0Dpg+xFPNxCURZhG9eX6Yx+ynMlbincaJxIRUJt98=",
+      "role": "root"
+    },
+    "timestamp": "2026-02-22T17:49:33Z",
+    "expires": "2027-02-22T17:49:33Z"
+  }
+}

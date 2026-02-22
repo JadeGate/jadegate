@@ -1,0 +1,119 @@
+{
+  "jade_version": "1.0.0",
+  "skill_id": "url_parser",
+  "metadata": {
+    "name": "URL Parser",
+    "version": "1.0.0",
+    "description": "Parse a URL into its components (protocol, host, path, query, etc).",
+    "author": "jadegate",
+    "tags": [
+      "url",
+      "parse",
+      "utility",
+      "web"
+    ],
+    "license": "BSL-1.1",
+    "created_at": "2026-02-22T17:50:21Z",
+    "updated_at": "2026-02-22T17:50:21Z"
+  },
+  "trigger": {
+    "type": "task_intent",
+    "conditions": [
+      {
+        "field": "task.type",
+        "operator": "in",
+        "value": [
+          "url_parser"
+        ]
+      }
+    ]
+  },
+  "input_schema": {
+    "required_params": [
+      {
+        "name": "url",
+        "type": "string",
+        "description": "URL to parse"
+      }
+    ],
+    "optional_params": []
+  },
+  "output_schema": {
+    "fields": [
+      {
+        "name": "components",
+        "type": "object",
+        "description": "URL components"
+      },
+      {
+        "name": "status",
+        "type": "string",
+        "description": "Status"
+      }
+    ]
+  },
+  "execution_dag": {
+    "nodes": [
+      {
+        "id": "validate",
+        "action": "url_validate",
+        "params": {
+          "url": "{{input.url}}"
+        }
+      },
+      {
+        "id": "parse",
+        "action": "url_decode",
+        "params": {
+          "data": "{{input.url}}"
+        }
+      },
+      {
+        "id": "ret",
+        "action": "return_result",
+        "params": {
+          "components": "{{parse.output.value}}",
+          "status": "ok"
+        }
+      }
+    ],
+    "edges": [
+      {
+        "from": "validate",
+        "to": "parse"
+      },
+      {
+        "from": "parse",
+        "to": "ret"
+      }
+    ],
+    "entry_node": "validate",
+    "exit_node": [
+      "ret"
+    ]
+  },
+  "security": {
+    "network_whitelist": [],
+    "file_permissions": {
+      "read": [],
+      "write": []
+    },
+    "max_execution_time_ms": 10000,
+    "max_retries": 1,
+    "sandbox_level": "strict",
+    "dangerous_patterns": []
+  },
+  "jade_signature": {
+    "version": "1.0.0",
+    "skill_id": "url_parser",
+    "content_hash": "sha256:572d5cc8e8fd533289096121001693793b7670db245e114f154756052cca92fa",
+    "signature": "jade-sig-SyTFG7YzPzhS8eeFgmJQ/9TstmvkkGCCYnnDbN0pYxvhoMl1xvjQ5xLBonF8ShDod3j8bFa4S9L36x+AhV56DA==",
+    "signer": {
+      "public_key": "jade-pk-root-o0p0Em+ufryyPQFFdKHEdSbWOPCqiGhUwwC9AjYJb/U=",
+      "fingerprint": "SHA256:HU0Dpg+xFPNxCURZhG9eX6Yx+ynMlbincaJxIRUJt98=",
+      "role": "root"
+    },
+    "timestamp": "2026-02-22T17:50:24Z",
+    "expires": "2027-02-22T17:50:24Z"
+  }
+}

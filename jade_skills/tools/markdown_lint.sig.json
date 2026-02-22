@@ -2,14 +2,14 @@
   "jade_signature": {
     "version": "1.0.0",
     "skill_id": "markdown_lint",
-    "content_hash": "sha256:b212187261a258573c2238801b4dbd2614dec8783ea730a757a64522ae209473",
-    "signature": "jade-sig-za14MmwOv2FVxBDqIxXSZdbLzv8PmVJUcdYi1eWyH9/zXObZV1IJmaOpQzezMmPJVsrNIkNHTDZNta/5C3RrDg==",
+    "content_hash": "sha256:41e2d58cdf07ba897badeb7e09b7924bd28dbf242dffa52a06a60544acfab6e1",
+    "signature": "jade-sig-HseFlvImFZdfnqlxpKLW1zS5l1VFNsQzHh4DInqyjwruH3rsmGp05vaYOblcXjlMNoBumDrrp1DfGl2nklftCw==",
     "signer": {
       "public_key": "jade-pk-root-o0p0Em+ufryyPQFFdKHEdSbWOPCqiGhUwwC9AjYJb/U=",
       "fingerprint": "SHA256:HU0Dpg+xFPNxCURZhG9eX6Yx+ynMlbincaJxIRUJt98=",
       "role": "root"
     },
-    "timestamp": "2026-02-22T16:23:46Z",
-    "expires": "2027-02-22T16:23:46Z"
+    "timestamp": "2026-02-22T17:51:16Z",
+    "expires": "2027-02-22T17:51:16Z"
   }
 }

@@ -1,0 +1,15 @@
+{
+  "jade_signature": {
+    "version": "1.0.0",
+    "skill_id": "mcp_github_code_search",
+    "content_hash": "sha256:7cfcad1b86d77ecde8d18f11e7588f2739c332f900a657e001e16e09db826c47",
+    "signature": "jade-sig-1hz4P9qUIaOou8SCKqnwLP2GYnrHZN9tqKa2Vhcm8BrunEFLaT85ufQqPhJhutaheUu3o77jlpkOYTq5R1H0CA==",
+    "signer": {
+      "public_key": "jade-pk-root-o0p0Em+ufryyPQFFdKHEdSbWOPCqiGhUwwC9AjYJb/U=",
+      "fingerprint": "SHA256:HU0Dpg+xFPNxCURZhG9eX6Yx+ynMlbincaJxIRUJt98=",
+      "role": "root"
+    },
+    "timestamp": "2026-02-22T17:49:28Z",
+    "expires": "2027-02-22T17:49:28Z"
+  }
+}

@@ -1,0 +1,141 @@
+{
+  "jade_version": "1.0.0",
+  "skill_id": "mcp_hackernews_top",
+  "metadata": {
+    "name": "MCP Hacker News Top Stories",
+    "version": "1.0.0",
+    "description": "Get top stories from Hacker News.",
+    "author": "jade-mcp-bridge",
+    "tags": [
+      "mcp",
+      "hackernews",
+      "news",
+      "tech"
+    ],
+    "license": "BSL-1.1",
+    "created_at": "2026-02-22T17:49:27Z",
+    "updated_at": "2026-02-22T17:49:27Z"
+  },
+  "trigger": {
+    "type": "task_intent",
+    "conditions": [
+      {
+        "field": "task.type",
+        "operator": "in",
+        "value": [
+          "mcp_hackernews_top"
+        ]
+      }
+    ]
+  },
+  "input_schema": {
+    "required_params": [],
+    "optional_params": [
+      {
+        "name": "limit",
+        "type": "number",
+        "description": "Number of story IDs",
+        "default": 20
+      }
+    ]
+  },
+  "output_schema": {
+    "fields": [
+      {
+        "name": "results",
+        "type": "array",
+        "description": "Top story IDs"
+      },
+      {
+        "name": "status",
+        "type": "string",
+        "description": "Status"
+      }
+    ]
+  },
+  "execution_dag": {
+    "nodes": [
+      {
+        "id": "fetch",
+        "action": "http_get",
+        "params": {
+          "url": "https://hacker-news.firebaseio.com/v0/topstories.json"
+        }
+      },
+      {
+        "id": "chk",
+        "action": "condition_check",
+        "params": {
+          "field": "{{fetch.output.status_code}}",
+          "operator": "equals",
+          "value": 200
+        }
+      },
+      {
+        "id": "ext",
+        "action": "json_extract",
+        "params": {
+          "data": "{{fetch.output.body}}",
+          "path": "$[0:{{input.limit}}]",
+          "fields": []
+        }
+      },
+      {
+        "id": "ret",
+        "action": "return_result",
+        "params": {
+          "results": "{{ext.output.value}}",
+          "status": "ok"
+        }
+      }
+    ],
+    "edges": [
+      {
+        "from": "fetch",
+        "to": "chk"
+      },
+      {
+        "from": "chk",
+        "to": "ext"
+      },
+      {
+        "from": "ext",
+        "to": "ret"
+      }
+    ],
+    "entry_node": "fetch",
+    "exit_node": [
+      "ret"
+    ]
+  },
+  "security": {
+    "network_whitelist": [
+      "hacker-news.firebaseio.com"
+    ],
+    "file_permissions": {
+      "read": [],
+      "write": []
+    },
+    "max_execution_time_ms": 15000,
+    "max_retries": 1,
+    "sandbox_level": "standard",
+    "dangerous_patterns": []
+  },
+  "mcp_compatible": true,
+  "required_mcp_capabilities": [
+    "hackernews"
+  ],
+  "jade_signature": {
+    "version": "1.0.0",
+    "skill_id": "mcp_hackernews_top",
+    "content_hash": "sha256:3793f128f6f12c735787320f7884a72c3a7cff987855ad76df2224a2bbf97bc8",
+    "signature": "jade-sig-0n1tUmLaZYXjxzK8YCqkC+uAQy3n6Wfrc/isnEbdTFz7fPAae6FeHnpgBfsaChg5rY+0MT41GYYPbK4X7N/iBQ==",
+    "signer": {
+      "public_key": "jade-pk-root-o0p0Em+ufryyPQFFdKHEdSbWOPCqiGhUwwC9AjYJb/U=",
+      "fingerprint": "SHA256:HU0Dpg+xFPNxCURZhG9eX6Yx+ynMlbincaJxIRUJt98=",
+      "role": "root"
+    },
+    "timestamp": "2026-02-22T17:49:33Z",
+    "expires": "2027-02-22T17:49:33Z"
+  }
+}

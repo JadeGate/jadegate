@@ -1,0 +1,156 @@
+{
+  "jade_version": "1.0.0",
+  "skill_id": "mcp_kubernetes_pods",
+  "metadata": {
+    "name": "MCP Kubernetes Pods",
+    "version": "1.0.0",
+    "description": "List pods in a Kubernetes namespace.",
+    "author": "jade-mcp-bridge",
+    "tags": [
+      "mcp",
+      "kubernetes",
+      "k8s",
+      "pods",
+      "container"
+    ],
+    "license": "BSL-1.1",
+    "created_at": "2026-02-22T17:49:27Z",
+    "updated_at": "2026-02-22T17:49:27Z"
+  },
+  "trigger": {
+    "type": "task_intent",
+    "conditions": [
+      {
+        "field": "task.type",
+        "operator": "in",
+        "value": [
+          "mcp_kubernetes_pods"
+        ]
+      }
+    ]
+  },
+  "input_schema": {
+    "required_params": [
+      {
+        "name": "cluster",
+        "type": "string",
+        "description": "Kubernetes API server host"
+      },
+      {
+        "name": "namespace",
+        "type": "string",
+        "description": "Namespace"
+      }
+    ],
+    "optional_params": []
+  },
+  "output_schema": {
+    "fields": [
+      {
+        "name": "results",
+        "type": "array",
+        "description": "Pods"
+      },
+      {
+        "name": "status",
+        "type": "string",
+        "description": "Status"
+      }
+    ]
+  },
+  "execution_dag": {
+    "nodes": [
+      {
+        "id": "fetch",
+        "action": "http_get",
+        "params": {
+          "url": "https://{{input.cluster}}/api/v1/namespaces/{{input.namespace}}/pods",
+          "headers": {
+            "Authorization": "Bearer {{env.K8S_TOKEN}}"
+          }
+        }
+      },
+      {
+        "id": "chk",
+        "action": "condition_check",
+        "params": {
+          "field": "{{fetch.output.status_code}}",
+          "operator": "equals",
+          "value": 200
+        }
+      },
+      {
+        "id": "ext",
+        "action": "json_extract",
+        "params": {
+          "data": "{{fetch.output.body}}",
+          "path": "$.items[*]",
+          "fields": [
+            "metadata",
+            "status",
+            "spec"
+          ]
+        }
+      },
+      {
+        "id": "ret",
+        "action": "return_result",
+        "params": {
+          "results": "{{ext.output.value}}",
+          "status": "ok"
+        }
+      }
+    ],
+    "edges": [
+      {
+        "from": "fetch",
+        "to": "chk"
+      },
+      {
+        "from": "chk",
+        "to": "ext"
+      },
+      {
+        "from": "ext",
+        "to": "ret"
+      }
+    ],
+    "entry_node": "fetch",
+    "exit_node": [
+      "ret"
+    ]
+  },
+  "security": {
+    "network_whitelist": [
+      "kubernetes.default.svc"
+    ],
+    "file_permissions": {
+      "read": [],
+      "write": []
+    },
+    "max_execution_time_ms": 15000,
+    "max_retries": 1,
+    "sandbox_level": "standard",
+    "dangerous_patterns": [],
+    "env_whitelist": [
+      "K8S_TOKEN"
+    ]
+  },
+  "mcp_compatible": true,
+  "required_mcp_capabilities": [
+    "kubernetes"
+  ],
+  "jade_signature": {
+    "version": "1.0.0",
+    "skill_id": "mcp_kubernetes_pods",
+    "content_hash": "sha256:2694ae978b1ee650f360add8a5b1931b47eafe5ee2bc7defd47dbef78d96925a",
+    "signature": "jade-sig-lnvcpfZgkAAWHaj9b62E2ki0U+ndVStWkF6/h5ClASE/Wj7udJbNt+0RJZKL/xdQkQadn2psyvk58P13nfLiCw==",
+    "signer": {
+      "public_key": "jade-pk-root-o0p0Em+ufryyPQFFdKHEdSbWOPCqiGhUwwC9AjYJb/U=",
+      "fingerprint": "SHA256:HU0Dpg+xFPNxCURZhG9eX6Yx+ynMlbincaJxIRUJt98=",
+      "role": "root"
+    },
+    "timestamp": "2026-02-22T17:49:35Z",
+    "expires": "2027-02-22T17:49:35Z"
+  }
+}

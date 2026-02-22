@@ -1,0 +1,115 @@
+{
+  "jade_version": "1.0.0",
+  "skill_id": "string_case_convert",
+  "metadata": {
+    "name": "String Case Converter",
+    "version": "1.0.0",
+    "description": "Convert string between cases (camelCase, snake_case, kebab-case, etc).",
+    "author": "jadegate",
+    "tags": [
+      "string",
+      "case",
+      "convert",
+      "utility"
+    ],
+    "license": "BSL-1.1",
+    "created_at": "2026-02-22T17:50:21Z",
+    "updated_at": "2026-02-22T17:50:21Z"
+  },
+  "trigger": {
+    "type": "task_intent",
+    "conditions": [
+      {
+        "field": "task.type",
+        "operator": "in",
+        "value": [
+          "string_case_convert"
+        ]
+      }
+    ]
+  },
+  "input_schema": {
+    "required_params": [
+      {
+        "name": "text",
+        "type": "string",
+        "description": "Input string"
+      },
+      {
+        "name": "target_case",
+        "type": "string",
+        "description": "Target case: camel, snake, kebab, pascal, upper, lower"
+      }
+    ],
+    "optional_params": []
+  },
+  "output_schema": {
+    "fields": [
+      {
+        "name": "converted",
+        "type": "string",
+        "description": "Converted string"
+      },
+      {
+        "name": "status",
+        "type": "string",
+        "description": "Status"
+      }
+    ]
+  },
+  "execution_dag": {
+    "nodes": [
+      {
+        "id": "convert",
+        "action": "text_replace",
+        "params": {
+          "data": "{{input.text}}",
+          "pattern": "case_convert",
+          "replacement": "{{input.target_case}}"
+        }
+      },
+      {
+        "id": "ret",
+        "action": "return_result",
+        "params": {
+          "converted": "{{convert.output.value}}",
+          "status": "ok"
+        }
+      }
+    ],
+    "edges": [
+      {
+        "from": "convert",
+        "to": "ret"
+      }
+    ],
+    "entry_node": "convert",
+    "exit_node": [
+      "ret"
+    ]
+  },
+  "security": {
+    "network_whitelist": [],
+    "file_permissions": {
+      "read": [],
+      "write": []
+    },
+    "max_execution_time_ms": 10000,
+    "max_retries": 1,
+    "sandbox_level": "strict",
+    "dangerous_patterns": []
+  },
+  "jade_signature": {
+    "version": "1.0.0",
+    "skill_id": "string_case_convert",
+    "content_hash": "sha256:6f7627c36d39b9e57b5e3659bcf13af88d33e0ac1cf00ced62acb20b4c25bb68",
+    "signature": "jade-sig-5ol5I1Wy/EcJ8+IjE+Y0inl3Qy87guavh/tgI33+dEvFobcrDgVXfwVakjP68rlfeOy1lLJGZlBf/EwR90R5CA==",
+    "signer": {
+      "public_key": "jade-pk-root-o0p0Em+ufryyPQFFdKHEdSbWOPCqiGhUwwC9AjYJb/U=",
+      "fingerprint": "SHA256:HU0Dpg+xFPNxCURZhG9eX6Yx+ynMlbincaJxIRUJt98=",
+      "role": "root"
+    },
+    "timestamp": "2026-02-22T17:50:25Z",
+    "expires": "2027-02-22T17:50:25Z"
+  }
+}

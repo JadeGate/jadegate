@@ -1,9 +1,9 @@
 {
   "jade_signature": {
     "version": "1.0.0",
-    "skill_id": "base64_encode",
-    "content_hash": "sha256:fbfcc6112675a1fe049f023a6a45ad1e850eb2e476fb79f8838dec1bd81b8cc8",
-    "signature": "jade-sig-rExnJ+Kqtv9gDQayRL61GM+HYbfdR4MheA3FiXuS4LXaebrmDolamGd2uyo76VEoALdE8uEdf7sWdiBkyH3/Dw==",
+    "skill_id": "mcp_aws_s3_list",
+    "content_hash": "sha256:75960c3b34d9035a56de61fff5aea57d8905e609b8eb220e7e3ac31b79853fd0",
+    "signature": "jade-sig-ymirVFbhlVFRwOa5JyJqyzduPuJc+iqMJJR54F6SXEV5HQXj98bYYF7HyeFQA3z4KfmEO7B3NpBiPem8P6dJDQ==",
     "signer": {
       "public_key": "jade-pk-root-o0p0Em+ufryyPQFFdKHEdSbWOPCqiGhUwwC9AjYJb/U=",
       "fingerprint": "SHA256:HU0Dpg+xFPNxCURZhG9eX6Yx+ynMlbincaJxIRUJt98=",

@@ -2,10 +2,10 @@
   "jade_registry": "skill_index",
   "version": "1.0.0",
   "updated_at": "2026-02-22T00:00:00Z",
-  "total_skills": 121,
+  "total_skills": 151,
   "categories": {
-    "mcp": 71,
-    "tools": 45,
+    "mcp": 91,
+    "tools": 55,
     "standalone": 5
   },
   "skills": [
@@ -38,6 +38,21 @@
       "source_path": "jade_skills/mcp/mcp_anthropic_chat.json"
     },
     {
+      "skill_id": "mcp_aws_dynamodb",
+      "name": "MCP AWS DynamoDB Query",
+      "description": "Query items from an AWS DynamoDB table.",
+      "version": "1.0.0",
+      "tags": [
+        "mcp",
+        "aws",
+        "dynamodb",
+        "database"
+      ],
+      "category": "mcp",
+      "signed": true,
+      "source_path": "jade_skills/mcp/mcp_aws_dynamodb.json"
+    },
+    {
       "skill_id": "mcp_aws_lambda_invoke",
       "name": "AWS Lambda Invoke",
       "description": "Invoke an AWS Lambda function",
@@ -52,6 +67,21 @@
       "source_path": "jade_skills/mcp/mcp_aws_lambda_invoke.json"
     },
     {
+      "skill_id": "mcp_aws_s3_list",
+      "name": "MCP AWS S3 List Objects",
+      "description": "List objects in an AWS S3 bucket.",
+      "version": "1.0.0",
+      "tags": [
+        "mcp",
+        "aws",
+        "s3",
+        "storage"
+      ],
+      "category": "mcp",
+      "signed": true,
+      "source_path": "jade_skills/mcp/mcp_aws_s3_list.json"
+    },
+    {
       "skill_id": "mcp_azure_openai",
       "name": "Azure OpenAI Chat",
       "description": "Chat completion via Azure OpenAI Service",
@@ -64,6 +94,21 @@
       "category": "mcp",
       "signed": true,
       "source_path": "jade_skills/mcp/mcp_azure_openai.json"
+    },
+    {
+      "skill_id": "mcp_bitbucket_repos",
+      "name": "MCP Bitbucket Repositories",
+      "description": "List repositories in a Bitbucket workspace.",
+      "version": "1.0.0",
+      "tags": [
+        "mcp",
+        "bitbucket",
+        "repos",
+        "git"
+      ],
+      "category": "mcp",
+      "signed": true,
+      "source_path": "jade_skills/mcp/mcp_bitbucket_repos.json"
     },
     {
       "skill_id": "mcp_brave_search",
@@ -93,6 +138,22 @@
       "category": "mcp",
       "signed": true,
       "source_path": "jade_skills/mcp/mcp_chromadb_query.json"
+    },
+    {
+      "skill_id": "mcp_clickhouse_query",
+      "name": "MCP ClickHouse Query",
+      "description": "Execute SQL queries on ClickHouse.",
+      "version": "1.0.0",
+      "tags": [
+        "mcp",
+        "clickhouse",
+        "sql",
+        "analytics",
+        "database"
+      ],
+      "category": "mcp",
+      "signed": true,
+      "source_path": "jade_skills/mcp/mcp_clickhouse_query.json"
     },
     {
       "skill_id": "mcp_cloudflare_dns",
@@ -316,6 +377,37 @@
       "source_path": "jade_skills/mcp/mcp_firebase_read.json"
     },
     {
+      "skill_id": "mcp_gcp_bigquery",
+      "name": "MCP GCP BigQuery",
+      "description": "Run SQL queries on Google BigQuery.",
+      "version": "1.0.0",
+      "tags": [
+        "mcp",
+        "gcp",
+        "bigquery",
+        "sql",
+        "database"
+      ],
+      "category": "mcp",
+      "signed": true,
+      "source_path": "jade_skills/mcp/mcp_gcp_bigquery.json"
+    },
+    {
+      "skill_id": "mcp_gcp_storage",
+      "name": "MCP GCP Cloud Storage",
+      "description": "List objects in a Google Cloud Storage bucket.",
+      "version": "1.0.0",
+      "tags": [
+        "mcp",
+        "gcp",
+        "storage",
+        "cloud"
+      ],
+      "category": "mcp",
+      "signed": true,
+      "source_path": "jade_skills/mcp/mcp_gcp_storage.json"
+    },
+    {
       "skill_id": "mcp_gcp_translate",
       "name": "Google Cloud Translate",
       "description": "Translate text via Google Cloud Translation API",
@@ -374,6 +466,21 @@
       "source_path": "jade_skills/mcp/mcp_github_actions_trigger.json"
     },
     {
+      "skill_id": "mcp_github_code_search",
+      "name": "MCP GitHub Code Search",
+      "description": "Search code across GitHub repositories.",
+      "version": "1.0.0",
+      "tags": [
+        "mcp",
+        "github",
+        "code",
+        "search"
+      ],
+      "category": "mcp",
+      "signed": true,
+      "source_path": "jade_skills/mcp/mcp_github_code_search.json"
+    },
+    {
       "skill_id": "mcp_github_create_issue",
       "name": "MCP GitHub Create Issue",
       "description": "Create a GitHub issue via MCP GitHub server. Supports labels, assignees, and markdown body.",
@@ -417,6 +524,21 @@
       "source_path": "jade_skills/mcp/mcp_github_pr_create.json"
     },
     {
+      "skill_id": "mcp_github_releases",
+      "name": "MCP GitHub Releases",
+      "description": "List releases for a GitHub repository.",
+      "version": "1.0.0",
+      "tags": [
+        "mcp",
+        "github",
+        "releases",
+        "versions"
+      ],
+      "category": "mcp",
+      "signed": true,
+      "source_path": "jade_skills/mcp/mcp_github_releases.json"
+    },
+    {
       "skill_id": "mcp_github_search_repos",
       "name": "MCP GitHub Search Repositories",
       "description": "Search GitHub repositories via MCP GitHub server.",
@@ -430,6 +552,36 @@
       "category": "mcp",
       "signed": true,
       "source_path": "jade_skills/mcp/mcp_github_search_repos.json"
+    },
+    {
+      "skill_id": "mcp_gitlab_issues",
+      "name": "MCP GitLab Issues",
+      "description": "List issues for a GitLab project.",
+      "version": "1.0.0",
+      "tags": [
+        "mcp",
+        "gitlab",
+        "issues",
+        "project"
+      ],
+      "category": "mcp",
+      "signed": true,
+      "source_path": "jade_skills/mcp/mcp_gitlab_issues.json"
+    },
+    {
+      "skill_id": "mcp_gitlab_mr",
+      "name": "MCP GitLab Merge Requests",
+      "description": "List merge requests for a GitLab project.",
+      "version": "1.0.0",
+      "tags": [
+        "mcp",
+        "gitlab",
+        "merge-request",
+        "project"
+      ],
+      "category": "mcp",
+      "signed": true,
+      "source_path": "jade_skills/mcp/mcp_gitlab_mr.json"
     },
     {
       "skill_id": "mcp_google_calendar",
@@ -491,6 +643,21 @@
       "source_path": "jade_skills/mcp/mcp_grafana_dashboard.json"
     },
     {
+      "skill_id": "mcp_hackernews_top",
+      "name": "MCP Hacker News Top Stories",
+      "description": "Get top stories from Hacker News.",
+      "version": "1.0.0",
+      "tags": [
+        "mcp",
+        "hackernews",
+        "news",
+        "tech"
+      ],
+      "category": "mcp",
+      "signed": true,
+      "source_path": "jade_skills/mcp/mcp_hackernews_top.json"
+    },
+    {
       "skill_id": "mcp_hubspot_contacts",
       "name": "HubSpot List Contacts",
       "description": "List contacts from HubSpot CRM",
@@ -532,6 +699,22 @@
       "category": "mcp",
       "signed": true,
       "source_path": "jade_skills/mcp/mcp_jira_create_issue.json"
+    },
+    {
+      "skill_id": "mcp_kubernetes_pods",
+      "name": "MCP Kubernetes Pods",
+      "description": "List pods in a Kubernetes namespace.",
+      "version": "1.0.0",
+      "tags": [
+        "mcp",
+        "kubernetes",
+        "k8s",
+        "pods",
+        "container"
+      ],
+      "category": "mcp",
+      "signed": true,
+      "source_path": "jade_skills/mcp/mcp_kubernetes_pods.json"
     },
     {
       "skill_id": "mcp_linear_issues",
@@ -592,6 +775,21 @@
       "category": "mcp",
       "signed": true,
       "source_path": "jade_skills/mcp/mcp_notion_read.json"
+    },
+    {
+      "skill_id": "mcp_npm_package_info",
+      "name": "MCP npm Package Info",
+      "description": "Get detailed info about an npm package.",
+      "version": "1.0.0",
+      "tags": [
+        "mcp",
+        "npm",
+        "package",
+        "javascript"
+      ],
+      "category": "mcp",
+      "signed": true,
+      "source_path": "jade_skills/mcp/mcp_npm_package_info.json"
     },
     {
       "skill_id": "mcp_npm_search",
@@ -681,6 +879,21 @@
       "source_path": "jade_skills/mcp/mcp_postgres_query.json"
     },
     {
+      "skill_id": "mcp_prometheus_query",
+      "name": "MCP Prometheus Query",
+      "description": "Execute a PromQL query.",
+      "version": "1.0.0",
+      "tags": [
+        "mcp",
+        "prometheus",
+        "monitoring",
+        "metrics"
+      ],
+      "category": "mcp",
+      "signed": true,
+      "source_path": "jade_skills/mcp/mcp_prometheus_query.json"
+    },
+    {
       "skill_id": "mcp_puppeteer_screenshot",
       "name": "MCP Puppeteer Screenshot",
       "description": "Take a screenshot of a webpage via MCP puppeteer server.",
@@ -697,6 +910,21 @@
       "source_path": "jade_skills/mcp/mcp_puppeteer_screenshot.json"
     },
     {
+      "skill_id": "mcp_pypi_package_info",
+      "name": "MCP PyPI Package Info",
+      "description": "Get detailed info about a PyPI package.",
+      "version": "1.0.0",
+      "tags": [
+        "mcp",
+        "pypi",
+        "package",
+        "python"
+      ],
+      "category": "mcp",
+      "signed": true,
+      "source_path": "jade_skills/mcp/mcp_pypi_package_info.json"
+    },
+    {
       "skill_id": "mcp_pypi_search",
       "name": "PyPI Package Info",
       "description": "Get Python package info from PyPI",
@@ -709,6 +937,21 @@
       "category": "mcp",
       "signed": true,
       "source_path": "jade_skills/mcp/mcp_pypi_search.json"
+    },
+    {
+      "skill_id": "mcp_reddit_search",
+      "name": "MCP Reddit Search",
+      "description": "Search posts across Reddit.",
+      "version": "1.0.0",
+      "tags": [
+        "mcp",
+        "reddit",
+        "search",
+        "social"
+      ],
+      "category": "mcp",
+      "signed": true,
+      "source_path": "jade_skills/mcp/mcp_reddit_search.json"
     },
     {
       "skill_id": "mcp_redis_get",
@@ -890,6 +1133,36 @@
       "source_path": "jade_skills/mcp/mcp_sqlite_query.json"
     },
     {
+      "skill_id": "mcp_stackoverflow_search",
+      "name": "MCP StackOverflow Search",
+      "description": "Search questions on StackOverflow.",
+      "version": "1.0.0",
+      "tags": [
+        "mcp",
+        "stackoverflow",
+        "search",
+        "qa"
+      ],
+      "category": "mcp",
+      "signed": true,
+      "source_path": "jade_skills/mcp/mcp_stackoverflow_search.json"
+    },
+    {
+      "skill_id": "mcp_stripe_checkout",
+      "name": "MCP Stripe Checkout",
+      "description": "Create a Stripe Checkout session.",
+      "version": "1.0.0",
+      "tags": [
+        "mcp",
+        "stripe",
+        "checkout",
+        "payment"
+      ],
+      "category": "mcp",
+      "signed": true,
+      "source_path": "jade_skills/mcp/mcp_stripe_checkout.json"
+    },
+    {
       "skill_id": "mcp_stripe_payments",
       "name": "MCP Stripe List Payments",
       "description": "List recent Stripe payments.",
@@ -903,6 +1176,21 @@
       "category": "mcp",
       "signed": true,
       "source_path": "jade_skills/mcp/mcp_stripe_payments.json"
+    },
+    {
+      "skill_id": "mcp_stripe_subscriptions",
+      "name": "MCP Stripe Subscriptions",
+      "description": "List subscriptions for a Stripe customer.",
+      "version": "1.0.0",
+      "tags": [
+        "mcp",
+        "stripe",
+        "subscriptions",
+        "billing"
+      ],
+      "category": "mcp",
+      "signed": true,
+      "source_path": "jade_skills/mcp/mcp_stripe_subscriptions.json"
     },
     {
       "skill_id": "mcp_supabase_auth",
@@ -976,6 +1264,21 @@
       "category": "mcp",
       "signed": true,
       "source_path": "jade_skills/mcp/mcp_twilio_sms.json"
+    },
+    {
+      "skill_id": "mcp_twitch_streams",
+      "name": "MCP Twitch Streams",
+      "description": "List live streams on Twitch.",
+      "version": "1.0.0",
+      "tags": [
+        "mcp",
+        "twitch",
+        "streams",
+        "gaming"
+      ],
+      "category": "mcp",
+      "signed": true,
+      "source_path": "jade_skills/mcp/mcp_twitch_streams.json"
     },
     {
       "skill_id": "mcp_twitter_post",
@@ -1125,6 +1428,21 @@
       "source_path": "jade_skills/tools/csv_data_analysis.json"
     },
     {
+      "skill_id": "date_format_convert",
+      "name": "Date Format Converter",
+      "description": "Convert date strings between formats.",
+      "version": "1.0.0",
+      "tags": [
+        "date",
+        "format",
+        "convert",
+        "time"
+      ],
+      "category": "tools",
+      "signed": true,
+      "source_path": "jade_skills/tools/date_format_convert.json"
+    },
+    {
       "skill_id": "discord_webhook_send",
       "name": "Discord Webhook Sender",
       "description": "Send messages to Discord channels via webhook with embed support",
@@ -1197,6 +1515,21 @@
       "category": "tools",
       "signed": true,
       "source_path": "jade_skills/tools/exa_semantic_search.json"
+    },
+    {
+      "skill_id": "file_checksum",
+      "name": "File Checksum Calculator",
+      "description": "Calculate hash checksum of a file.",
+      "version": "1.0.0",
+      "tags": [
+        "file",
+        "checksum",
+        "hash",
+        "verify"
+      ],
+      "category": "tools",
+      "signed": true,
+      "source_path": "jade_skills/tools/file_checksum.json"
     },
     {
       "skill_id": "git_clone_repo",
@@ -1274,6 +1607,21 @@
       "source_path": "jade_skills/tools/hash_text.json"
     },
     {
+      "skill_id": "html_sanitizer",
+      "name": "HTML Sanitizer",
+      "description": "Sanitize HTML input by removing dangerous tags and attributes.",
+      "version": "1.0.0",
+      "tags": [
+        "html",
+        "sanitize",
+        "security",
+        "xss"
+      ],
+      "category": "tools",
+      "signed": true,
+      "source_path": "jade_skills/tools/html_sanitizer.json"
+    },
+    {
       "skill_id": "http_health_check",
       "name": "HTTP Health Check",
       "description": "Check if a website is up by sending HTTP GET and measuring response time",
@@ -1319,6 +1667,21 @@
       "source_path": "jade_skills/tools/ip_geolocation.json"
     },
     {
+      "skill_id": "ip_subnet_calc",
+      "name": "IP Subnet Calculator",
+      "description": "Calculate subnet details from CIDR notation.",
+      "version": "1.0.0",
+      "tags": [
+        "ip",
+        "subnet",
+        "network",
+        "cidr"
+      ],
+      "category": "tools",
+      "signed": true,
+      "source_path": "jade_skills/tools/ip_subnet_calc.json"
+    },
+    {
       "skill_id": "json_data_transform",
       "name": "JSON Data Transform",
       "description": "Parse, extract, and transform JSON data with JSONPath queries",
@@ -1332,6 +1695,21 @@
       "category": "tools",
       "signed": true,
       "source_path": "jade_skills/tools/json_data_transform.json"
+    },
+    {
+      "skill_id": "json_to_csv",
+      "name": "JSON to CSV Converter",
+      "description": "Convert JSON array to CSV format.",
+      "version": "1.0.0",
+      "tags": [
+        "json",
+        "csv",
+        "convert",
+        "data"
+      ],
+      "category": "tools",
+      "signed": true,
+      "source_path": "jade_skills/tools/json_to_csv.json"
     },
     {
       "skill_id": "jwt_decode",
@@ -1540,6 +1918,21 @@
       "source_path": "jade_skills/tools/ssl_cert_check.json"
     },
     {
+      "skill_id": "string_case_convert",
+      "name": "String Case Converter",
+      "description": "Convert string between cases (camelCase, snake_case, kebab-case, etc).",
+      "version": "1.0.0",
+      "tags": [
+        "string",
+        "case",
+        "convert",
+        "utility"
+      ],
+      "category": "tools",
+      "signed": true,
+      "source_path": "jade_skills/tools/string_case_convert.json"
+    },
+    {
       "skill_id": "telegram_send_msg",
       "name": "Telegram Send Message",
       "description": "Send a message via Telegram Bot API",
@@ -1568,6 +1961,21 @@
       "category": "tools",
       "signed": true,
       "source_path": "jade_skills/tools/text_diff.json"
+    },
+    {
+      "skill_id": "text_encrypt_decrypt",
+      "name": "Text Encrypt/Decrypt",
+      "description": "Encrypt or decrypt text using AES-256.",
+      "version": "1.0.0",
+      "tags": [
+        "text",
+        "encrypt",
+        "decrypt",
+        "security"
+      ],
+      "category": "tools",
+      "signed": true,
+      "source_path": "jade_skills/tools/text_encrypt_decrypt.json"
     },
     {
       "skill_id": "text_sentiment",
@@ -1600,6 +2008,21 @@
       "source_path": "jade_skills/tools/text_translation.json"
     },
     {
+      "skill_id": "text_word_count",
+      "name": "Text Word Counter",
+      "description": "Count words, characters, and lines in text.",
+      "version": "1.0.0",
+      "tags": [
+        "text",
+        "count",
+        "words",
+        "utility"
+      ],
+      "category": "tools",
+      "signed": true,
+      "source_path": "jade_skills/tools/text_word_count.json"
+    },
+    {
       "skill_id": "timezone_query",
       "name": "Time Zone Query",
       "description": "Get current time in any timezone and convert between timezones",
@@ -1613,6 +2036,21 @@
       "category": "tools",
       "signed": true,
       "source_path": "jade_skills/tools/timezone_query.json"
+    },
+    {
+      "skill_id": "url_parser",
+      "name": "URL Parser",
+      "description": "Parse a URL into its components (protocol, host, path, query, etc).",
+      "version": "1.0.0",
+      "tags": [
+        "url",
+        "parse",
+        "utility",
+        "web"
+      ],
+      "category": "tools",
+      "signed": true,
+      "source_path": "jade_skills/tools/url_parser.json"
     },
     {
       "skill_id": "url_shortener",
@@ -1701,6 +2139,21 @@
       "category": "tools",
       "signed": true,
       "source_path": "jade_skills/tools/whois_lookup.json"
+    },
+    {
+      "skill_id": "xml_to_json",
+      "name": "XML to JSON Converter",
+      "description": "Parse XML input and convert to JSON structure.",
+      "version": "1.0.0",
+      "tags": [
+        "xml",
+        "json",
+        "convert",
+        "parse"
+      ],
+      "category": "tools",
+      "signed": true,
+      "source_path": "jade_skills/tools/xml_to_json.json"
     },
     {
       "skill_id": "yaml_json_converter",

@@ -1,0 +1,166 @@
+{
+  "jade_version": "1.0.0",
+  "skill_id": "mcp_aws_s3_list",
+  "metadata": {
+    "name": "MCP AWS S3 List Objects",
+    "version": "1.0.0",
+    "description": "List objects in an AWS S3 bucket.",
+    "author": "jade-mcp-bridge",
+    "tags": [
+      "mcp",
+      "aws",
+      "s3",
+      "storage"
+    ],
+    "license": "BSL-1.1",
+    "created_at": "2026-02-22T17:49:27Z",
+    "updated_at": "2026-02-22T17:49:27Z"
+  },
+  "trigger": {
+    "type": "task_intent",
+    "conditions": [
+      {
+        "field": "task.type",
+        "operator": "in",
+        "value": [
+          "mcp_aws_s3_list"
+        ]
+      }
+    ]
+  },
+  "input_schema": {
+    "required_params": [
+      {
+        "name": "bucket",
+        "type": "string",
+        "description": "S3 bucket name"
+      },
+      {
+        "name": "region",
+        "type": "string",
+        "description": "AWS region"
+      }
+    ],
+    "optional_params": [
+      {
+        "name": "prefix",
+        "type": "string",
+        "description": "Key prefix filter",
+        "default": ""
+      }
+    ]
+  },
+  "output_schema": {
+    "fields": [
+      {
+        "name": "results",
+        "type": "array",
+        "description": "S3 objects"
+      },
+      {
+        "name": "status",
+        "type": "string",
+        "description": "Status"
+      }
+    ]
+  },
+  "execution_dag": {
+    "nodes": [
+      {
+        "id": "fetch",
+        "action": "http_get",
+        "params": {
+          "url": "https://s3.{{input.region}}.amazonaws.com/{{input.bucket}}?list-type=2&prefix={{input.prefix}}",
+          "headers": {
+            "Authorization": "Bearer {{env.AWS_TOKEN}}"
+          }
+        }
+      },
+      {
+        "id": "chk",
+        "action": "condition_check",
+        "params": {
+          "field": "{{fetch.output.status_code}}",
+          "operator": "equals",
+          "value": 200
+        }
+      },
+      {
+        "id": "ext",
+        "action": "json_extract",
+        "params": {
+          "data": "{{fetch.output.body}}",
+          "path": "$.ListBucketResult.Contents[*]",
+          "fields": [
+            "Key",
+            "Size",
+            "LastModified"
+          ]
+        }
+      },
+      {
+        "id": "ret",
+        "action": "return_result",
+        "params": {
+          "results": "{{ext.output.value}}",
+          "status": "ok"
+        }
+      }
+    ],
+    "edges": [
+      {
+        "from": "fetch",
+        "to": "chk"
+      },
+      {
+        "from": "chk",
+        "to": "ext"
+      },
+      {
+        "from": "ext",
+        "to": "ret"
+      }
+    ],
+    "entry_node": "fetch",
+    "exit_node": [
+      "ret"
+    ]
+  },
+  "security": {
+    "network_whitelist": [
+      "s3.us-east-1.amazonaws.com",
+      "s3.us-west-2.amazonaws.com",
+      "s3.eu-west-1.amazonaws.com",
+      "s3.ap-northeast-1.amazonaws.com",
+      "s3.placeholder.amazonaws.com"
+    ],
+    "file_permissions": {
+      "read": [],
+      "write": []
+    },
+    "max_execution_time_ms": 15000,
+    "max_retries": 1,
+    "sandbox_level": "standard",
+    "dangerous_patterns": [],
+    "env_whitelist": [
+      "AWS_TOKEN"
+    ]
+  },
+  "mcp_compatible": true,
+  "required_mcp_capabilities": [
+    "aws-s3"
+  ],
+  "jade_signature": {
+    "version": "1.0.0",
+    "skill_id": "mcp_aws_s3_list",
+    "content_hash": "sha256:75960c3b34d9035a56de61fff5aea57d8905e609b8eb220e7e3ac31b79853fd0",
+    "signature": "jade-sig-ymirVFbhlVFRwOa5JyJqyzduPuJc+iqMJJR54F6SXEV5HQXj98bYYF7HyeFQA3z4KfmEO7B3NpBiPem8P6dJDQ==",
+    "signer": {
+      "public_key": "jade-pk-root-o0p0Em+ufryyPQFFdKHEdSbWOPCqiGhUwwC9AjYJb/U=",
+      "fingerprint": "SHA256:HU0Dpg+xFPNxCURZhG9eX6Yx+ynMlbincaJxIRUJt98=",
+      "role": "root"
+    },
+    "timestamp": "2026-02-22T17:51:15Z",
+    "expires": "2027-02-22T17:51:15Z"
+  }
+}

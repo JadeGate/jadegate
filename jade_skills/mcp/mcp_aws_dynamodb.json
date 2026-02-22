@@ -1,0 +1,165 @@
+{
+  "jade_version": "1.0.0",
+  "skill_id": "mcp_aws_dynamodb",
+  "metadata": {
+    "name": "MCP AWS DynamoDB Query",
+    "version": "1.0.0",
+    "description": "Query items from an AWS DynamoDB table.",
+    "author": "jade-mcp-bridge",
+    "tags": [
+      "mcp",
+      "aws",
+      "dynamodb",
+      "database"
+    ],
+    "license": "BSL-1.1",
+    "created_at": "2026-02-22T17:49:27Z",
+    "updated_at": "2026-02-22T17:49:27Z"
+  },
+  "trigger": {
+    "type": "task_intent",
+    "conditions": [
+      {
+        "field": "task.type",
+        "operator": "in",
+        "value": [
+          "mcp_aws_dynamodb"
+        ]
+      }
+    ]
+  },
+  "input_schema": {
+    "required_params": [
+      {
+        "name": "table",
+        "type": "string",
+        "description": "DynamoDB table name"
+      },
+      {
+        "name": "region",
+        "type": "string",
+        "description": "AWS region"
+      },
+      {
+        "name": "key_condition",
+        "type": "string",
+        "description": "Key condition expression"
+      }
+    ],
+    "optional_params": []
+  },
+  "output_schema": {
+    "fields": [
+      {
+        "name": "results",
+        "type": "array",
+        "description": "Query results"
+      },
+      {
+        "name": "status",
+        "type": "string",
+        "description": "Status"
+      }
+    ]
+  },
+  "execution_dag": {
+    "nodes": [
+      {
+        "id": "query",
+        "action": "http_post",
+        "params": {
+          "url": "https://dynamodb.{{input.region}}.amazonaws.com/",
+          "headers": {
+            "Authorization": "Bearer {{env.AWS_TOKEN}}",
+            "X-Amz-Target": "DynamoDB_20120810.Query",
+            "Content-Type": "application/x-amz-json-1.0"
+          },
+          "body": {
+            "TableName": "{{input.table}}",
+            "KeyConditionExpression": "{{input.key_condition}}"
+          }
+        }
+      },
+      {
+        "id": "chk",
+        "action": "condition_check",
+        "params": {
+          "field": "{{query.output.status_code}}",
+          "operator": "equals",
+          "value": 200
+        }
+      },
+      {
+        "id": "ext",
+        "action": "json_extract",
+        "params": {
+          "data": "{{query.output.body}}",
+          "path": "$.Items[*]"
+        }
+      },
+      {
+        "id": "ret",
+        "action": "return_result",
+        "params": {
+          "results": "{{ext.output.value}}",
+          "status": "ok"
+        }
+      }
+    ],
+    "edges": [
+      {
+        "from": "query",
+        "to": "chk"
+      },
+      {
+        "from": "chk",
+        "to": "ext"
+      },
+      {
+        "from": "ext",
+        "to": "ret"
+      }
+    ],
+    "entry_node": "query",
+    "exit_node": [
+      "ret"
+    ]
+  },
+  "security": {
+    "network_whitelist": [
+      "dynamodb.us-east-1.amazonaws.com",
+      "dynamodb.us-west-2.amazonaws.com",
+      "dynamodb.eu-west-1.amazonaws.com",
+      "dynamodb.ap-northeast-1.amazonaws.com",
+      "dynamodb.placeholder.amazonaws.com"
+    ],
+    "file_permissions": {
+      "read": [],
+      "write": []
+    },
+    "max_execution_time_ms": 15000,
+    "max_retries": 1,
+    "sandbox_level": "standard",
+    "dangerous_patterns": [],
+    "env_whitelist": [
+      "AWS_TOKEN"
+    ]
+  },
+  "mcp_compatible": true,
+  "required_mcp_capabilities": [
+    "aws-dynamodb"
+  ],
+  "jade_signature": {
+    "version": "1.0.0",
+    "skill_id": "mcp_aws_dynamodb",
+    "content_hash": "sha256:22872c9476824f6b53388fd71c431b73c1a77b15ef9d6eba49491b4fa73c5611",
+    "signature": "jade-sig-yf5/RwHkhwYZGZyq1JPWbnS0+xDyMmDkgMtqD5bP+9/PApVC9eu6o+cUJtqdMjpiNnxxE83+CEUchXRAnSyJAw==",
+    "signer": {
+      "public_key": "jade-pk-root-o0p0Em+ufryyPQFFdKHEdSbWOPCqiGhUwwC9AjYJb/U=",
+      "fingerprint": "SHA256:HU0Dpg+xFPNxCURZhG9eX6Yx+ynMlbincaJxIRUJt98=",
+      "role": "root"
+    },
+    "timestamp": "2026-02-22T17:51:14Z",
+    "expires": "2027-02-22T17:51:14Z"
+  }
+}

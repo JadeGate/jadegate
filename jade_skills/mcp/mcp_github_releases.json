@@ -1,0 +1,164 @@
+{
+  "jade_version": "1.0.0",
+  "skill_id": "mcp_github_releases",
+  "metadata": {
+    "name": "MCP GitHub Releases",
+    "version": "1.0.0",
+    "description": "List releases for a GitHub repository.",
+    "author": "jade-mcp-bridge",
+    "tags": [
+      "mcp",
+      "github",
+      "releases",
+      "versions"
+    ],
+    "license": "BSL-1.1",
+    "created_at": "2026-02-22T17:49:27Z",
+    "updated_at": "2026-02-22T17:49:27Z"
+  },
+  "trigger": {
+    "type": "task_intent",
+    "conditions": [
+      {
+        "field": "task.type",
+        "operator": "in",
+        "value": [
+          "mcp_github_releases"
+        ]
+      }
+    ]
+  },
+  "input_schema": {
+    "required_params": [
+      {
+        "name": "owner",
+        "type": "string",
+        "description": "Repository owner"
+      },
+      {
+        "name": "repo",
+        "type": "string",
+        "description": "Repository name"
+      }
+    ],
+    "optional_params": [
+      {
+        "name": "per_page",
+        "type": "number",
+        "description": "Results per page",
+        "default": 10
+      }
+    ]
+  },
+  "output_schema": {
+    "fields": [
+      {
+        "name": "results",
+        "type": "array",
+        "description": "Releases"
+      },
+      {
+        "name": "status",
+        "type": "string",
+        "description": "Status"
+      }
+    ]
+  },
+  "execution_dag": {
+    "nodes": [
+      {
+        "id": "fetch",
+        "action": "http_get",
+        "params": {
+          "url": "https://api.github.com/repos/{{input.owner}}/{{input.repo}}/releases",
+          "headers": {
+            "Authorization": "Bearer {{env.GITHUB_TOKEN}}",
+            "Accept": "application/vnd.github.v3+json"
+          }
+        }
+      },
+      {
+        "id": "chk",
+        "action": "condition_check",
+        "params": {
+          "field": "{{fetch.output.status_code}}",
+          "operator": "equals",
+          "value": 200
+        }
+      },
+      {
+        "id": "ext",
+        "action": "json_extract",
+        "params": {
+          "data": "{{fetch.output.body}}",
+          "path": "$[*]",
+          "fields": [
+            "tag_name",
+            "name",
+            "published_at",
+            "body"
+          ]
+        }
+      },
+      {
+        "id": "ret",
+        "action": "return_result",
+        "params": {
+          "results": "{{ext.output.value}}",
+          "status": "ok"
+        }
+      }
+    ],
+    "edges": [
+      {
+        "from": "fetch",
+        "to": "chk"
+      },
+      {
+        "from": "chk",
+        "to": "ext"
+      },
+      {
+        "from": "ext",
+        "to": "ret"
+      }
+    ],
+    "entry_node": "fetch",
+    "exit_node": [
+      "ret"
+    ]
+  },
+  "security": {
+    "network_whitelist": [
+      "api.github.com"
+    ],
+    "file_permissions": {
+      "read": [],
+      "write": []
+    },
+    "max_execution_time_ms": 15000,
+    "max_retries": 1,
+    "sandbox_level": "standard",
+    "dangerous_patterns": [],
+    "env_whitelist": [
+      "GITHUB_TOKEN"
+    ]
+  },
+  "mcp_compatible": true,
+  "required_mcp_capabilities": [
+    "github"
+  ],
+  "jade_signature": {
+    "version": "1.0.0",
+    "skill_id": "mcp_github_releases",
+    "content_hash": "sha256:4e41a31790dd4df479d1fe27d86354b70f986083af40f521e580253dbeb5bbd9",
+    "signature": "jade-sig-dGdn3tbmyvtu0QfX0UCW7YW1798xVl7/4FUbEdgNhZ/uCYBMvsk7a8fTDjuEfFnGYkcDrmMS1CmkdUydcSuODw==",
+    "signer": {
+      "public_key": "jade-pk-root-o0p0Em+ufryyPQFFdKHEdSbWOPCqiGhUwwC9AjYJb/U=",
+      "fingerprint": "SHA256:HU0Dpg+xFPNxCURZhG9eX6Yx+ynMlbincaJxIRUJt98=",
+      "role": "root"
+    },
+    "timestamp": "2026-02-22T17:49:28Z",
+    "expires": "2027-02-22T17:49:28Z"
+  }
+}

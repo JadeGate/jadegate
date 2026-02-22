@@ -1,0 +1,148 @@
+{
+  "jade_version": "1.0.0",
+  "skill_id": "mcp_pypi_package_info",
+  "metadata": {
+    "name": "MCP PyPI Package Info",
+    "version": "1.0.0",
+    "description": "Get detailed info about a PyPI package.",
+    "author": "jade-mcp-bridge",
+    "tags": [
+      "mcp",
+      "pypi",
+      "package",
+      "python"
+    ],
+    "license": "BSL-1.1",
+    "created_at": "2026-02-22T17:49:27Z",
+    "updated_at": "2026-02-22T17:49:27Z"
+  },
+  "trigger": {
+    "type": "task_intent",
+    "conditions": [
+      {
+        "field": "task.type",
+        "operator": "in",
+        "value": [
+          "mcp_pypi_package_info"
+        ]
+      }
+    ]
+  },
+  "input_schema": {
+    "required_params": [
+      {
+        "name": "package",
+        "type": "string",
+        "description": "PyPI package name"
+      }
+    ],
+    "optional_params": []
+  },
+  "output_schema": {
+    "fields": [
+      {
+        "name": "results",
+        "type": "object",
+        "description": "Package info"
+      },
+      {
+        "name": "status",
+        "type": "string",
+        "description": "Status"
+      }
+    ]
+  },
+  "execution_dag": {
+    "nodes": [
+      {
+        "id": "fetch",
+        "action": "http_get",
+        "params": {
+          "url": "https://pypi.org/pypi/{{input.package}}/json"
+        }
+      },
+      {
+        "id": "chk",
+        "action": "condition_check",
+        "params": {
+          "field": "{{fetch.output.status_code}}",
+          "operator": "equals",
+          "value": 200
+        }
+      },
+      {
+        "id": "ext",
+        "action": "json_extract",
+        "params": {
+          "data": "{{fetch.output.body}}",
+          "path": "$.info",
+          "fields": [
+            "name",
+            "version",
+            "summary",
+            "author",
+            "license",
+            "home_page",
+            "keywords"
+          ]
+        }
+      },
+      {
+        "id": "ret",
+        "action": "return_result",
+        "params": {
+          "results": "{{ext.output.value}}",
+          "status": "ok"
+        }
+      }
+    ],
+    "edges": [
+      {
+        "from": "fetch",
+        "to": "chk"
+      },
+      {
+        "from": "chk",
+        "to": "ext"
+      },
+      {
+        "from": "ext",
+        "to": "ret"
+      }
+    ],
+    "entry_node": "fetch",
+    "exit_node": [
+      "ret"
+    ]
+  },
+  "security": {
+    "network_whitelist": [
+      "pypi.org"
+    ],
+    "file_permissions": {
+      "read": [],
+      "write": []
+    },
+    "max_execution_time_ms": 15000,
+    "max_retries": 1,
+    "sandbox_level": "standard",
+    "dangerous_patterns": []
+  },
+  "mcp_compatible": true,
+  "required_mcp_capabilities": [
+    "pypi"
+  ],
+  "jade_signature": {
+    "version": "1.0.0",
+    "skill_id": "mcp_pypi_package_info",
+    "content_hash": "sha256:11efdf7ea334248893484ee881b588908ded5454723b8703653132cc3f1590b5",
+    "signature": "jade-sig-TyOFUfpW0czRURAUl5+qJH1Ve9WfG4CEWJ01U3M7uKMCIvkg8d43/S/MkT0q6LlpeWJaRRDpZZS58G2TEeb8DA==",
+    "signer": {
+      "public_key": "jade-pk-root-o0p0Em+ufryyPQFFdKHEdSbWOPCqiGhUwwC9AjYJb/U=",
+      "fingerprint": "SHA256:HU0Dpg+xFPNxCURZhG9eX6Yx+ynMlbincaJxIRUJt98=",
+      "role": "root"
+    },
+    "timestamp": "2026-02-22T17:49:35Z",
+    "expires": "2027-02-22T17:49:35Z"
+  }
+}

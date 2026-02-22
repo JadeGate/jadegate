@@ -1,0 +1,158 @@
+{
+  "jade_version": "1.0.0",
+  "skill_id": "mcp_gcp_storage",
+  "metadata": {
+    "name": "MCP GCP Cloud Storage",
+    "version": "1.0.0",
+    "description": "List objects in a Google Cloud Storage bucket.",
+    "author": "jade-mcp-bridge",
+    "tags": [
+      "mcp",
+      "gcp",
+      "storage",
+      "cloud"
+    ],
+    "license": "BSL-1.1",
+    "created_at": "2026-02-22T17:49:27Z",
+    "updated_at": "2026-02-22T17:49:27Z"
+  },
+  "trigger": {
+    "type": "task_intent",
+    "conditions": [
+      {
+        "field": "task.type",
+        "operator": "in",
+        "value": [
+          "mcp_gcp_storage"
+        ]
+      }
+    ]
+  },
+  "input_schema": {
+    "required_params": [
+      {
+        "name": "bucket",
+        "type": "string",
+        "description": "GCS bucket name"
+      }
+    ],
+    "optional_params": [
+      {
+        "name": "prefix",
+        "type": "string",
+        "description": "Object prefix filter",
+        "default": ""
+      }
+    ]
+  },
+  "output_schema": {
+    "fields": [
+      {
+        "name": "results",
+        "type": "array",
+        "description": "Storage objects"
+      },
+      {
+        "name": "status",
+        "type": "string",
+        "description": "Status"
+      }
+    ]
+  },
+  "execution_dag": {
+    "nodes": [
+      {
+        "id": "fetch",
+        "action": "http_get",
+        "params": {
+          "url": "https://storage.googleapis.com/storage/v1/b/{{input.bucket}}/o?prefix={{input.prefix}}",
+          "headers": {
+            "Authorization": "Bearer {{env.GCP_TOKEN}}"
+          }
+        }
+      },
+      {
+        "id": "chk",
+        "action": "condition_check",
+        "params": {
+          "field": "{{fetch.output.status_code}}",
+          "operator": "equals",
+          "value": 200
+        }
+      },
+      {
+        "id": "ext",
+        "action": "json_extract",
+        "params": {
+          "data": "{{fetch.output.body}}",
+          "path": "$.items[*]",
+          "fields": [
+            "name",
+            "size",
+            "updated",
+            "contentType"
+          ]
+        }
+      },
+      {
+        "id": "ret",
+        "action": "return_result",
+        "params": {
+          "results": "{{ext.output.value}}",
+          "status": "ok"
+        }
+      }
+    ],
+    "edges": [
+      {
+        "from": "fetch",
+        "to": "chk"
+      },
+      {
+        "from": "chk",
+        "to": "ext"
+      },
+      {
+        "from": "ext",
+        "to": "ret"
+      }
+    ],
+    "entry_node": "fetch",
+    "exit_node": [
+      "ret"
+    ]
+  },
+  "security": {
+    "network_whitelist": [
+      "storage.googleapis.com"
+    ],
+    "file_permissions": {
+      "read": [],
+      "write": []
+    },
+    "max_execution_time_ms": 15000,
+    "max_retries": 1,
+    "sandbox_level": "standard",
+    "dangerous_patterns": [],
+    "env_whitelist": [
+      "GCP_TOKEN"
+    ]
+  },
+  "mcp_compatible": true,
+  "required_mcp_capabilities": [
+    "gcp-storage"
+  ],
+  "jade_signature": {
+    "version": "1.0.0",
+    "skill_id": "mcp_gcp_storage",
+    "content_hash": "sha256:6b993490111498f0678a403cd329040101a6726ae29e2ed029dde93a1e47a29d",
+    "signature": "jade-sig-UI68swdP5uKVOGRrLkKrMejiELpQ8MEnvT/V97UETld8yer0OTtyW9kZ0JqaX3GHEYV1IvO02zUvXZ6flNqcCg==",
+    "signer": {
+      "public_key": "jade-pk-root-o0p0Em+ufryyPQFFdKHEdSbWOPCqiGhUwwC9AjYJb/U=",
+      "fingerprint": "SHA256:HU0Dpg+xFPNxCURZhG9eX6Yx+ynMlbincaJxIRUJt98=",
+      "role": "root"
+    },
+    "timestamp": "2026-02-22T17:49:32Z",
+    "expires": "2027-02-22T17:49:32Z"
+  }
+}

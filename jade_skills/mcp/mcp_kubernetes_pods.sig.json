@@ -1,0 +1,15 @@
+{
+  "jade_signature": {
+    "version": "1.0.0",
+    "skill_id": "mcp_kubernetes_pods",
+    "content_hash": "sha256:2694ae978b1ee650f360add8a5b1931b47eafe5ee2bc7defd47dbef78d96925a",
+    "signature": "jade-sig-lnvcpfZgkAAWHaj9b62E2ki0U+ndVStWkF6/h5ClASE/Wj7udJbNt+0RJZKL/xdQkQadn2psyvk58P13nfLiCw==",
+    "signer": {
+      "public_key": "jade-pk-root-o0p0Em+ufryyPQFFdKHEdSbWOPCqiGhUwwC9AjYJb/U=",
+      "fingerprint": "SHA256:HU0Dpg+xFPNxCURZhG9eX6Yx+ynMlbincaJxIRUJt98=",
+      "role": "root"
+    },
+    "timestamp": "2026-02-22T17:49:35Z",
+    "expires": "2027-02-22T17:49:35Z"
+  }
+}

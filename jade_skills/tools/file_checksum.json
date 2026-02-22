@@ -1,0 +1,138 @@
+{
+  "jade_version": "1.0.0",
+  "skill_id": "file_checksum",
+  "metadata": {
+    "name": "File Checksum Calculator",
+    "version": "1.0.0",
+    "description": "Calculate hash checksum of a file.",
+    "author": "jadegate",
+    "tags": [
+      "file",
+      "checksum",
+      "hash",
+      "verify"
+    ],
+    "license": "BSL-1.1",
+    "created_at": "2026-02-22T17:50:21Z",
+    "updated_at": "2026-02-22T17:50:21Z"
+  },
+  "trigger": {
+    "type": "task_intent",
+    "conditions": [
+      {
+        "field": "task.type",
+        "operator": "in",
+        "value": [
+          "file_checksum"
+        ]
+      }
+    ]
+  },
+  "input_schema": {
+    "required_params": [
+      {
+        "name": "file_path",
+        "type": "string",
+        "description": "Path to file"
+      }
+    ],
+    "optional_params": [
+      {
+        "name": "algorithm",
+        "type": "string",
+        "description": "Hash algorithm",
+        "default": "sha256"
+      }
+    ]
+  },
+  "output_schema": {
+    "fields": [
+      {
+        "name": "checksum",
+        "type": "string",
+        "description": "Computed checksum"
+      },
+      {
+        "name": "status",
+        "type": "string",
+        "description": "Status"
+      }
+    ]
+  },
+  "execution_dag": {
+    "nodes": [
+      {
+        "id": "validate",
+        "action": "path_validate",
+        "params": {
+          "path": "{{input.file_path}}"
+        }
+      },
+      {
+        "id": "read",
+        "action": "file_read",
+        "params": {
+          "path": "{{input.file_path}}"
+        }
+      },
+      {
+        "id": "hash",
+        "action": "hash_compute",
+        "params": {
+          "data": "{{read.output.content}}",
+          "algorithm": "{{input.algorithm}}"
+        }
+      },
+      {
+        "id": "ret",
+        "action": "return_result",
+        "params": {
+          "checksum": "{{hash.output.value}}",
+          "status": "ok"
+        }
+      }
+    ],
+    "edges": [
+      {
+        "from": "validate",
+        "to": "read"
+      },
+      {
+        "from": "read",
+        "to": "hash"
+      },
+      {
+        "from": "hash",
+        "to": "ret"
+      }
+    ],
+    "entry_node": "validate",
+    "exit_node": [
+      "ret"
+    ]
+  },
+  "security": {
+    "network_whitelist": [],
+    "file_permissions": {
+      "read": [],
+      "write": []
+    },
+    "max_execution_time_ms": 10000,
+    "max_retries": 1,
+    "sandbox_level": "strict",
+    "dangerous_patterns": []
+  },
+  "jade_signature": {
+    "version": "1.0.0",
+    "skill_id": "file_checksum",
+    "content_hash": "sha256:68ddf0d621cd214768c675ff2f9d889619dfa4bd38027d45b58c75f28b4cb070",
+    "signature": "jade-sig-+cqgIIGLQKoFjoeC0Y62UJAgUPeXfvahuA3aX7MXFSKpz//snU5jjcZTLYpNzKfpbW0G9Kuch8YGYsq5+iHVBA==",
+    "signer": {
+      "public_key": "jade-pk-root-o0p0Em+ufryyPQFFdKHEdSbWOPCqiGhUwwC9AjYJb/U=",
+      "fingerprint": "SHA256:HU0Dpg+xFPNxCURZhG9eX6Yx+ynMlbincaJxIRUJt98=",
+      "role": "root"
+    },
+    "timestamp": "2026-02-22T17:50:23Z",
+    "expires": "2027-02-22T17:50:23Z"
+  }
+}

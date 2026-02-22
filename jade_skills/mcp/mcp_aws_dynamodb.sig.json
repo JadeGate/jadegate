@@ -1,0 +1,15 @@
+{
+  "jade_signature": {
+    "version": "1.0.0",
+    "skill_id": "mcp_aws_dynamodb",
+    "content_hash": "sha256:22872c9476824f6b53388fd71c431b73c1a77b15ef9d6eba49491b4fa73c5611",
+    "signature": "jade-sig-yf5/RwHkhwYZGZyq1JPWbnS0+xDyMmDkgMtqD5bP+9/PApVC9eu6o+cUJtqdMjpiNnxxE83+CEUchXRAnSyJAw==",
+    "signer": {
+      "public_key": "jade-pk-root-o0p0Em+ufryyPQFFdKHEdSbWOPCqiGhUwwC9AjYJb/U=",
+      "fingerprint": "SHA256:HU0Dpg+xFPNxCURZhG9eX6Yx+ynMlbincaJxIRUJt98=",
+      "role": "root"
+    },
+    "timestamp": "2026-02-22T17:51:14Z",
+    "expires": "2027-02-22T17:51:14Z"
+  }
+}
