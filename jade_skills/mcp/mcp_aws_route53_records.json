@@ -1,0 +1,104 @@
+{
+  "jade_version": "1.0.0",
+  "skill_id": "mcp_aws_route53_records",
+  "metadata": {
+    "name": "MCP AWS Route53 Records",
+    "version": "1.0.0",
+    "description": "Manage Route53 DNS records.",
+    "author": "jade-registry",
+    "tags": [
+      "mcp",
+      "aws",
+      "route53",
+      "dns"
+    ],
+    "license": "BSL-1.1",
+    "created_at": "2026-02-23T14:03:13Z",
+    "updated_at": "2026-02-23T14:03:13Z",
+    "category": "mcp"
+  },
+  "trigger": {
+    "type": "task_intent",
+    "conditions": [
+      {
+        "field": "task.type",
+        "operator": "in",
+        "value": [
+          "mcp_aws_route53_records"
+        ]
+      }
+    ]
+  },
+  "input_schema": {
+    "required_params": [
+      {
+        "name": "hosted_zone_id",
+        "type": "string",
+        "description": "Hosted zone ID"
+      },
+      {
+        "name": "record_name",
+        "type": "string",
+        "description": "Record name"
+      }
+    ],
+    "optional_params": []
+  },
+  "output_schema": {
+    "fields": [
+      {
+        "name": "result",
+        "type": "object",
+        "description": "Result from MCP AWS Route53 Records"
+      }
+    ]
+  },
+  "execution_dag": {
+    "nodes": [
+      {
+        "id": "exec",
+        "action": "http_get",
+        "params": {
+          "endpoint": "/mcp_aws_route53_records"
+        }
+      },
+      {
+        "id": "parse",
+        "action": "json_extract",
+        "params": {
+          "path": "$.result"
+        }
+      },
+      {
+        "id": "ret",
+        "action": "return_result",
+        "params": {}
+      }
+    ],
+    "edges": [
+      {
+        "from": "exec",
+        "to": "parse"
+      },
+      {
+        "from": "parse",
+        "to": "ret"
+      }
+    ],
+    "entry_node": "exec",
+    "exit_node": "ret"
+  },
+  "security": {
+    "network_whitelist": [],
+    "file_permissions": {
+      "read": [],
+      "write": []
+    },
+    "max_execution_time_ms": 30000,
+    "max_retries": 2,
+    "sandbox_level": "strict",
+    "dangerous_patterns": []
+  },
+  "mcp_compatible": true,
+  "required_mcp_capabilities": []
+}

@@ -1,0 +1,99 @@
+{
+  "jade_version": "1.0.0",
+  "skill_id": "mcp_cloudflare_waf",
+  "metadata": {
+    "name": "MCP Cloudflare WAF",
+    "version": "1.0.0",
+    "description": "Manage Cloudflare WAF rules.",
+    "author": "jade-registry",
+    "tags": [
+      "mcp",
+      "cloudflare",
+      "waf",
+      "security"
+    ],
+    "license": "BSL-1.1",
+    "created_at": "2026-02-23T14:03:13Z",
+    "updated_at": "2026-02-23T14:03:13Z",
+    "category": "mcp"
+  },
+  "trigger": {
+    "type": "task_intent",
+    "conditions": [
+      {
+        "field": "task.type",
+        "operator": "in",
+        "value": [
+          "mcp_cloudflare_waf"
+        ]
+      }
+    ]
+  },
+  "input_schema": {
+    "required_params": [
+      {
+        "name": "zone_id",
+        "type": "string",
+        "description": "Zone ID"
+      }
+    ],
+    "optional_params": []
+  },
+  "output_schema": {
+    "fields": [
+      {
+        "name": "result",
+        "type": "object",
+        "description": "Result from MCP Cloudflare WAF"
+      }
+    ]
+  },
+  "execution_dag": {
+    "nodes": [
+      {
+        "id": "exec",
+        "action": "http_get",
+        "params": {
+          "endpoint": "/mcp_cloudflare_waf"
+        }
+      },
+      {
+        "id": "parse",
+        "action": "json_extract",
+        "params": {
+          "path": "$.result"
+        }
+      },
+      {
+        "id": "ret",
+        "action": "return_result",
+        "params": {}
+      }
+    ],
+    "edges": [
+      {
+        "from": "exec",
+        "to": "parse"
+      },
+      {
+        "from": "parse",
+        "to": "ret"
+      }
+    ],
+    "entry_node": "exec",
+    "exit_node": "ret"
+  },
+  "security": {
+    "network_whitelist": [],
+    "file_permissions": {
+      "read": [],
+      "write": []
+    },
+    "max_execution_time_ms": 30000,
+    "max_retries": 2,
+    "sandbox_level": "strict",
+    "dangerous_patterns": []
+  },
+  "mcp_compatible": true,
+  "required_mcp_capabilities": []
+}

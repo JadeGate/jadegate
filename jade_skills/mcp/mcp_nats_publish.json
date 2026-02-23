@@ -1,0 +1,104 @@
+{
+  "jade_version": "1.0.0",
+  "skill_id": "mcp_nats_publish",
+  "metadata": {
+    "name": "MCP NATS Publish",
+    "version": "1.0.0",
+    "description": "Publish messages to NATS.",
+    "author": "jade-registry",
+    "tags": [
+      "mcp",
+      "nats",
+      "messaging",
+      "realtime"
+    ],
+    "license": "BSL-1.1",
+    "created_at": "2026-02-23T14:03:13Z",
+    "updated_at": "2026-02-23T14:03:13Z",
+    "category": "mcp"
+  },
+  "trigger": {
+    "type": "task_intent",
+    "conditions": [
+      {
+        "field": "task.type",
+        "operator": "in",
+        "value": [
+          "mcp_nats_publish"
+        ]
+      }
+    ]
+  },
+  "input_schema": {
+    "required_params": [
+      {
+        "name": "subject",
+        "type": "string",
+        "description": "Subject"
+      },
+      {
+        "name": "data",
+        "type": "string",
+        "description": "Message data"
+      }
+    ],
+    "optional_params": []
+  },
+  "output_schema": {
+    "fields": [
+      {
+        "name": "result",
+        "type": "object",
+        "description": "Result from MCP NATS Publish"
+      }
+    ]
+  },
+  "execution_dag": {
+    "nodes": [
+      {
+        "id": "exec",
+        "action": "http_get",
+        "params": {
+          "endpoint": "/mcp_nats_publish"
+        }
+      },
+      {
+        "id": "parse",
+        "action": "json_extract",
+        "params": {
+          "path": "$.result"
+        }
+      },
+      {
+        "id": "ret",
+        "action": "return_result",
+        "params": {}
+      }
+    ],
+    "edges": [
+      {
+        "from": "exec",
+        "to": "parse"
+      },
+      {
+        "from": "parse",
+        "to": "ret"
+      }
+    ],
+    "entry_node": "exec",
+    "exit_node": "ret"
+  },
+  "security": {
+    "network_whitelist": [],
+    "file_permissions": {
+      "read": [],
+      "write": []
+    },
+    "max_execution_time_ms": 30000,
+    "max_retries": 2,
+    "sandbox_level": "strict",
+    "dangerous_patterns": []
+  },
+  "mcp_compatible": true,
+  "required_mcp_capabilities": []
+}

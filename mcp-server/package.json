@@ -27,5 +27,8 @@
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.0.0"
   },
-  "type": "module"
+  "type": "module",
+  "publishConfig": {
+    "access": "public"
+  }
 }

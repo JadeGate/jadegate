@@ -1,0 +1,104 @@
+{
+  "jade_version": "1.0.0",
+  "skill_id": "mcp_mixpanel_track",
+  "metadata": {
+    "name": "MCP Mixpanel Track",
+    "version": "1.0.0",
+    "description": "Track events in Mixpanel.",
+    "author": "jade-registry",
+    "tags": [
+      "mcp",
+      "mixpanel",
+      "analytics",
+      "events"
+    ],
+    "license": "BSL-1.1",
+    "created_at": "2026-02-23T13:59:56Z",
+    "updated_at": "2026-02-23T13:59:56Z",
+    "category": "mcp"
+  },
+  "trigger": {
+    "type": "task_intent",
+    "conditions": [
+      {
+        "field": "task.type",
+        "operator": "in",
+        "value": [
+          "mcp_mixpanel_track"
+        ]
+      }
+    ]
+  },
+  "input_schema": {
+    "required_params": [
+      {
+        "name": "event",
+        "type": "string",
+        "description": "Event name"
+      },
+      {
+        "name": "properties",
+        "type": "object",
+        "description": "Event properties"
+      }
+    ],
+    "optional_params": []
+  },
+  "output_schema": {
+    "fields": [
+      {
+        "name": "result",
+        "type": "object",
+        "description": "Result from MCP Mixpanel Track"
+      }
+    ]
+  },
+  "execution_dag": {
+    "nodes": [
+      {
+        "id": "exec",
+        "action": "http_get",
+        "params": {
+          "endpoint": "/mcp_mixpanel_track"
+        }
+      },
+      {
+        "id": "parse",
+        "action": "json_extract",
+        "params": {
+          "path": "$.result"
+        }
+      },
+      {
+        "id": "ret",
+        "action": "return_result",
+        "params": {}
+      }
+    ],
+    "edges": [
+      {
+        "from": "exec",
+        "to": "parse"
+      },
+      {
+        "from": "parse",
+        "to": "ret"
+      }
+    ],
+    "entry_node": "exec",
+    "exit_node": "ret"
+  },
+  "security": {
+    "network_whitelist": [],
+    "file_permissions": {
+      "read": [],
+      "write": []
+    },
+    "max_execution_time_ms": 30000,
+    "max_retries": 2,
+    "sandbox_level": "strict",
+    "dangerous_patterns": []
+  },
+  "mcp_compatible": true,
+  "required_mcp_capabilities": []
+}

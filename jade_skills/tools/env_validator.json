@@ -1,0 +1,99 @@
+{
+  "jade_version": "1.0.0",
+  "skill_id": "env_validator",
+  "metadata": {
+    "name": "Environment Validator",
+    "version": "1.0.0",
+    "description": "Validate environment variables.",
+    "author": "jade-registry",
+    "tags": [
+      "tools",
+      "env",
+      "validation",
+      "config"
+    ],
+    "license": "BSL-1.1",
+    "created_at": "2026-02-23T14:03:13Z",
+    "updated_at": "2026-02-23T14:03:13Z",
+    "category": "tools"
+  },
+  "trigger": {
+    "type": "task_intent",
+    "conditions": [
+      {
+        "field": "task.type",
+        "operator": "in",
+        "value": [
+          "env_validator"
+        ]
+      }
+    ]
+  },
+  "input_schema": {
+    "required_params": [
+      {
+        "name": "schema",
+        "type": "object",
+        "description": "Expected env var schema"
+      }
+    ],
+    "optional_params": []
+  },
+  "output_schema": {
+    "fields": [
+      {
+        "name": "result",
+        "type": "object",
+        "description": "Result from Environment Validator"
+      }
+    ]
+  },
+  "execution_dag": {
+    "nodes": [
+      {
+        "id": "exec",
+        "action": "http_get",
+        "params": {
+          "endpoint": "/env_validator"
+        }
+      },
+      {
+        "id": "parse",
+        "action": "json_extract",
+        "params": {
+          "path": "$.result"
+        }
+      },
+      {
+        "id": "ret",
+        "action": "return_result",
+        "params": {}
+      }
+    ],
+    "edges": [
+      {
+        "from": "exec",
+        "to": "parse"
+      },
+      {
+        "from": "parse",
+        "to": "ret"
+      }
+    ],
+    "entry_node": "exec",
+    "exit_node": "ret"
+  },
+  "security": {
+    "network_whitelist": [],
+    "file_permissions": {
+      "read": [],
+      "write": []
+    },
+    "max_execution_time_ms": 30000,
+    "max_retries": 2,
+    "sandbox_level": "strict",
+    "dangerous_patterns": []
+  },
+  "mcp_compatible": false,
+  "required_mcp_capabilities": []
+}

@@ -10,7 +10,7 @@ Zero trust. Five-layer mathematical verification. Runs locally. No cloud. No LLM
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-green.svg)](https://python.org)
 [![Zero Dependencies](https://img.shields.io/badge/dependencies-zero-brightgreen.svg)](#)
 
-[Website](https://jadegate.io) · [Documentation](https://jadegate.io/docs) · [Skill Registry](https://jadegate.io/registry) · [中文](#中文)
+[Website](https://jadegate.io) · [Documentation](https://github.com/JadeGate/jade-core#readme) · [Skill Registry](https://jadegate.io/#explorer) · [中文](#中文)
 
 </div>
 

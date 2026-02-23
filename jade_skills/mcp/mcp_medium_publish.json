@@ -1,0 +1,104 @@
+{
+  "jade_version": "1.0.0",
+  "skill_id": "mcp_medium_publish",
+  "metadata": {
+    "name": "MCP Medium Publish",
+    "version": "1.0.0",
+    "description": "Publish articles to Medium.",
+    "author": "jade-registry",
+    "tags": [
+      "mcp",
+      "medium",
+      "blog",
+      "publishing"
+    ],
+    "license": "BSL-1.1",
+    "created_at": "2026-02-23T14:03:13Z",
+    "updated_at": "2026-02-23T14:03:13Z",
+    "category": "mcp"
+  },
+  "trigger": {
+    "type": "task_intent",
+    "conditions": [
+      {
+        "field": "task.type",
+        "operator": "in",
+        "value": [
+          "mcp_medium_publish"
+        ]
+      }
+    ]
+  },
+  "input_schema": {
+    "required_params": [
+      {
+        "name": "title",
+        "type": "string",
+        "description": "Article title"
+      },
+      {
+        "name": "content",
+        "type": "string",
+        "description": "Article content in markdown"
+      }
+    ],
+    "optional_params": []
+  },
+  "output_schema": {
+    "fields": [
+      {
+        "name": "result",
+        "type": "object",
+        "description": "Result from MCP Medium Publish"
+      }
+    ]
+  },
+  "execution_dag": {
+    "nodes": [
+      {
+        "id": "exec",
+        "action": "http_get",
+        "params": {
+          "endpoint": "/mcp_medium_publish"
+        }
+      },
+      {
+        "id": "parse",
+        "action": "json_extract",
+        "params": {
+          "path": "$.result"
+        }
+      },
+      {
+        "id": "ret",
+        "action": "return_result",
+        "params": {}
+      }
+    ],
+    "edges": [
+      {
+        "from": "exec",
+        "to": "parse"
+      },
+      {
+        "from": "parse",
+        "to": "ret"
+      }
+    ],
+    "entry_node": "exec",
+    "exit_node": "ret"
+  },
+  "security": {
+    "network_whitelist": [],
+    "file_permissions": {
+      "read": [],
+      "write": []
+    },
+    "max_execution_time_ms": 30000,
+    "max_retries": 2,
+    "sandbox_level": "strict",
+    "dangerous_patterns": []
+  },
+  "mcp_compatible": true,
+  "required_mcp_capabilities": []
+}

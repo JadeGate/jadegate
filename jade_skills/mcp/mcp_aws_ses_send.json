@@ -1,0 +1,104 @@
+{
+  "jade_version": "1.0.0",
+  "skill_id": "mcp_aws_ses_send",
+  "metadata": {
+    "name": "MCP AWS SES Send",
+    "version": "1.0.0",
+    "description": "Send emails via AWS SES.",
+    "author": "jade-registry",
+    "tags": [
+      "mcp",
+      "aws",
+      "ses",
+      "email"
+    ],
+    "license": "BSL-1.1",
+    "created_at": "2026-02-23T14:01:30Z",
+    "updated_at": "2026-02-23T14:01:30Z",
+    "category": "mcp"
+  },
+  "trigger": {
+    "type": "task_intent",
+    "conditions": [
+      {
+        "field": "task.type",
+        "operator": "in",
+        "value": [
+          "mcp_aws_ses_send"
+        ]
+      }
+    ]
+  },
+  "input_schema": {
+    "required_params": [
+      {
+        "name": "to",
+        "type": "string",
+        "description": "Recipient"
+      },
+      {
+        "name": "subject",
+        "type": "string",
+        "description": "Subject"
+      }
+    ],
+    "optional_params": []
+  },
+  "output_schema": {
+    "fields": [
+      {
+        "name": "result",
+        "type": "object",
+        "description": "Result from MCP AWS SES Send"
+      }
+    ]
+  },
+  "execution_dag": {
+    "nodes": [
+      {
+        "id": "exec",
+        "action": "http_get",
+        "params": {
+          "endpoint": "/mcp_aws_ses_send"
+        }
+      },
+      {
+        "id": "parse",
+        "action": "json_extract",
+        "params": {
+          "path": "$.result"
+        }
+      },
+      {
+        "id": "ret",
+        "action": "return_result",
+        "params": {}
+      }
+    ],
+    "edges": [
+      {
+        "from": "exec",
+        "to": "parse"
+      },
+      {
+        "from": "parse",
+        "to": "ret"
+      }
+    ],
+    "entry_node": "exec",
+    "exit_node": "ret"
+  },
+  "security": {
+    "network_whitelist": [],
+    "file_permissions": {
+      "read": [],
+      "write": []
+    },
+    "max_execution_time_ms": 30000,
+    "max_retries": 2,
+    "sandbox_level": "strict",
+    "dangerous_patterns": []
+  },
+  "mcp_compatible": true,
+  "required_mcp_capabilities": []
+}
