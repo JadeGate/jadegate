@@ -6,7 +6,7 @@
 
 Zero trust. Five-layer mathematical verification. Runs locally. No cloud. No LLM. No token cost.
 
-[![License: Apache-2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
+[![License: BSL-1.1](https://img.shields.io/badge/License-BSL%201.1-blue.svg)](LICENSE)
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-green.svg)](https://python.org)
 [![Zero Dependencies](https://img.shields.io/badge/dependencies-zero-brightgreen.svg)](#)
 
@@ -309,7 +309,7 @@ We welcome contributions! See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
 ## License
 
-Apache 2.0 — Use it, modify it, ship it. Just keep the attribution.
+BSL 1.1 — Source-available. Free for non-production use. Converts to open source after 3 years.
 
 ---
 

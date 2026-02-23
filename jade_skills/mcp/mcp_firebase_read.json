@@ -9,7 +9,8 @@
       "firebase",
       "database",
       "google"
-    ]
+    ],
+    "license": "BSL-1.1"
   },
   "trigger": {
     "type": "task_intent",

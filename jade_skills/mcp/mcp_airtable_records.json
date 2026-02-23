@@ -9,7 +9,8 @@
       "airtable",
       "database",
       "spreadsheet"
-    ]
+    ],
+    "license": "BSL-1.1"
   },
   "trigger": {
     "type": "task_intent",
