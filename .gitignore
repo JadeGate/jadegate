@@ -51,3 +51,9 @@ build/
 *credential*
 *password*
 jade_keygen_root.py
+!.well-known/
+!.well-known/**
+!mcp-server/
+!mcp-server/**
+# 但排除 node_modules
+mcp-server/node_modules/

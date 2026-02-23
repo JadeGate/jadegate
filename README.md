@@ -100,6 +100,35 @@ else:
 - No executable code means no sandbox escape, no prompt injection via skills
 - Machine-readable validation output — agents parse results directly, no scraping
 
+**MCP Server (Claude, Cursor, Windsurf):**
+
+```bash
+# Run directly with npx
+npx @jadegate/mcp-server
+
+# Or install globally
+npm install -g @jadegate/mcp-server
+jadegate-mcp
+```
+
+Add to your Claude Desktop config (`claude_desktop_config.json`):
+```json
+{
+  "mcpServers": {
+    "jadegate": {
+      "command": "npx",
+      "args": ["@jadegate/mcp-server"]
+    }
+  }
+}
+```
+
+Available MCP tools: `jade_verify`, `jade_search`, `jade_info`, `jade_list`, `jade_stats`
+
+**Discovery endpoints:**
+- `https://jadegate.io/.well-known/agents.json` — Machine-readable integration spec
+- `https://jadegate.io/llms.txt` — LLM-friendly project overview
+
 **Agent integration patterns:**
 - MCP servers can call JadeGate before loading any skill
 - LangChain/LlamaIndex tool loaders can validate on import
