@@ -9,6 +9,7 @@
  *   jade_info     — Get detailed info about a skill
  *   jade_list     — List all available skills
  *   jade_stats    — Registry statistics
+ *   jade_dag      — Visualize skill execution DAG (Mermaid/D3/DOT)
  */
 
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
@@ -139,6 +140,18 @@ server.setRequestHandler(ListToolsRequestSchema, async () => ({
       description: "Get JadeGate registry statistics: total skills, categories, verification status.",
       inputSchema: { type: "object", properties: {} },
     },
+    {
+      name: "jade_dag",
+      description: "Visualize a skill's execution DAG as Mermaid flowchart. Helps agents understand skill execution flow.",
+      inputSchema: {
+        type: "object",
+        properties: {
+          skill_id: { type: "string", description: "Skill ID to look up from registry" },
+          skill_json: { type: "string", description: "Raw skill JSON string" },
+          format: { type: "string", enum: ["mermaid", "d3", "dot"], description: "Output format (default: mermaid)" },
+        },
+      },
+    },
   ],
 }));
 
@@ -165,7 +178,11 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 from jade_core.validator import JadeValidator
 import json
 v = JadeValidator()
-r = v.validate_file("${filePath}")
+// Sanitize file path
+fp = "${filePath}".replace('"', '').replace("'", "").replace(";", "").replace("\\", "")
+import os.path
+fp = os.path.abspath(fp)
+r = v.validate_file(fp)
 out = {
     "valid": r.valid,
     "layers_passed": r.layers_passed,
@@ -246,6 +263,53 @@ print(json.dumps(out, indent=2))
             verification_layers: 5,
             crypto: "Ed25519"
           }, null, 2)
+        }]
+      };
+    }
+
+    case "jade_dag": {
+      let skillJson = args?.skill_json;
+
+      // If skill_id provided, find the file
+      if (args?.skill_id && !skillJson) {
+        const skills = getAllSkills();
+        const found = skills.find(s => s.skill_id === args.skill_id);
+        if (!found) {
+          return { content: [{ type: "text", text: `Skill not found: ${args.skill_id}` }] };
+        }
+        skillJson = JSON.stringify(found);
+      }
+
+      if (!skillJson) {
+        return { content: [{ type: "text", text: "Error: provide skill_id or skill_json" }] };
+      }
+
+      const fmt = args?.format || "mermaid";
+      const pyMethod = fmt === "d3" ? "to_d3_json" : fmt === "dot" ? "to_dot" : "to_mermaid";
+      const serialize = fmt === "d3" ? "import json; print(json.dumps(result, indent=2))" : "print(result)";
+
+      // Write skill JSON to temp file for safe passing
+      const tmpSkill = `/tmp/jade_dag_${Date.now()}.json`;
+      require("fs").writeFileSync(tmpSkill, skillJson);
+
+      const result = runJadeCmd(`
+import json
+from jade_core.models import JadeSkill
+from jade_core.dag import DAGAnalyzer
+with open('${tmpSkill}') as f:
+    data = json.load(f)
+skill = JadeSkill.from_dict(data)
+analyzer = DAGAnalyzer()
+result = analyzer.${pyMethod}(skill)
+${serialize}
+`);
+
+      try { require("fs").unlinkSync(tmpSkill); } catch {}
+
+      return {
+        content: [{
+          type: "text",
+          text: result
         }]
       };
     }

@@ -451,6 +451,56 @@ def cmd_key(args):
 
 
 
+def cmd_dag(args):
+    """Visualize skill execution DAG."""
+    print(jade_banner())
+    print()
+
+    filepath = args.file
+    if not os.path.isfile(filepath):
+        print(f"  {C.RED}✗ File not found: {filepath}{C.RESET}")
+        sys.exit(1)
+
+    try:
+        with open(filepath) as fh:
+            data = json.load(fh)
+    except json.JSONDecodeError as e:
+        print(f"  {C.RED}✗ Invalid JSON: {e}{C.RESET}")
+        sys.exit(1)
+
+    base = _find_base()
+    sys.path.insert(0, base)
+    from jade_core.models import JadeSkill
+    from jade_core.dag import DAGAnalyzer
+
+    try:
+        skill = JadeSkill.from_dict(data)
+    except (KeyError, TypeError) as e:
+        print(f"  {C.RED}✗ Invalid skill format: {e}{C.RESET}")
+        sys.exit(1)
+
+    analyzer = DAGAnalyzer()
+    fmt = getattr(args, "format", "mermaid")
+
+    if fmt == "mermaid":
+        output = analyzer.to_mermaid(skill)
+    elif fmt == "d3":
+        output = json.dumps(analyzer.to_d3_json(skill), indent=2)
+    elif fmt == "dot":
+        output = analyzer.to_dot(skill)
+    else:
+        print(f"  {C.RED}✗ Unknown format: {fmt}{C.RESET}")
+        sys.exit(1)
+
+    out_path = getattr(args, "output", None)
+    if out_path:
+        with open(out_path, "w") as fh:
+            fh.write(output)
+        print(f"  {C.GREEN}✅ DAG ({fmt}) saved to {out_path}{C.RESET}")
+    else:
+        print(output)
+
+
 def main():
     parser = argparse.ArgumentParser(
         prog="jade",
@@ -482,6 +532,15 @@ def main():
     p_key.set_defaults(func=cmd_key)
     p_info.add_argument("skill_id", help="Skill ID")
     p_info.set_defaults(func=cmd_info)
+
+
+    # jade dag
+    p_dag = sub.add_parser("dag", help="Visualize skill execution DAG")
+    p_dag.add_argument("file", help="Skill JSON file")
+    p_dag.add_argument("--format", "-f", choices=["mermaid", "d3", "dot"],
+                        default="mermaid", help="Output format (default: mermaid)")
+    p_dag.add_argument("--output", "-o", help="Save output to file")
+    p_dag.set_defaults(func=cmd_dag)
 
     args = parser.parse_args()
     if not args.command:

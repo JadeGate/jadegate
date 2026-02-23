@@ -60,7 +60,7 @@ DANGEROUS_COMMANDS = [
     r'\bfdisk\b',
     r'\bchmod\s+777\b',
     r'\bchmod\s+-R\s+777\b',
-    r'\b:(){ :\|:& };:',  # fork bomb
+    r':\(\)\s*\{.*:\|:.*&\s*\};:',  # fork bomb
     r'\bshutdown\b',
     r'\breboot\b',
     r'\binit\s+0\b',
@@ -442,6 +442,6 @@ class SecurityEngine:
             if domain == allowed:
                 return True
             # Support wildcard subdomains: *.example.com
-            if allowed.startswith("*.") and domain.endswith(allowed[1:]):
+            if allowed.startswith("*.") and (domain == allowed[2:] or domain.endswith("." + allowed[2:])):
                 return True
         return False

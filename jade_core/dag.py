@@ -373,3 +373,138 @@ class DAGAnalyzer:
                     dist[neighbor] = dist[node_id] + 1
 
         return max(dist.values()) if dist else 0
+
+    # ─── Visualization ──────────────────────────────────────────────
+
+    def _build_node_label(self, node: DAGNode) -> str:
+        """Build a display label for a DAG node: id [action]."""
+        return f"{node.id} [{node.action}]"
+
+    def _build_edge_label(self, edge: DAGEdge) -> Optional[str]:
+        """Return the edge condition as label, or None."""
+        return edge.condition if edge.condition else None
+
+    def to_mermaid(self, skill: JadeSkill) -> str:
+        """
+        Export the skill's execution DAG as a Mermaid flowchart.
+
+        Nodes are labeled with their action type.
+        Edges are labeled with their condition (if any).
+        Entry node uses stadium shape, exit nodes use double-circle shape.
+
+        Args:
+            skill: The JadeSkill whose DAG to visualize.
+
+        Returns:
+            A Mermaid flowchart string (embeddable in Markdown).
+        """
+        dag = skill.execution_dag
+        node_map: Dict[str, DAGNode] = {n.id: n for n in dag.nodes}
+        exit_set = set(dag.exit_node)
+        lines: List[str] = ["graph TD"]
+
+        # Node definitions with shapes
+        for node in dag.nodes:
+            label = self._build_node_label(node)
+            if node.id == dag.entry_node:
+                # Stadium shape for entry
+                lines.append(f"    {node.id}([{label}])")
+            elif node.id in exit_set:
+                # Double-circle shape for exit
+                lines.append(f"    {node.id}(({label}))")
+            else:
+                lines.append(f"    {node.id}[{label}]")
+
+        # Edges
+        for edge in dag.edges:
+            cond = self._build_edge_label(edge)
+            if cond:
+                lines.append(f"    {edge.from_node} -->|{cond}| {edge.to_node}")
+            else:
+                lines.append(f"    {edge.from_node} --> {edge.to_node}")
+
+        return "\n".join(lines)
+
+    def to_d3_json(self, skill: JadeSkill) -> Dict[str, Any]:
+        """
+        Export the skill's execution DAG as D3.js-compatible JSON.
+
+        Returns a dict with 'nodes' and 'links' arrays.
+        Each node has: id, action, is_entry, is_exit.
+        Each link has: source, target, condition.
+
+        Args:
+            skill: The JadeSkill whose DAG to visualize.
+
+        Returns:
+            A dict with 'nodes' and 'links' keys.
+        """
+        dag = skill.execution_dag
+        exit_set = set(dag.exit_node)
+
+        nodes: List[Dict[str, Any]] = []
+        for node in dag.nodes:
+            nodes.append({
+                "id": node.id,
+                "action": node.action,
+                "is_entry": node.id == dag.entry_node,
+                "is_exit": node.id in exit_set,
+            })
+
+        links: List[Dict[str, Any]] = []
+        for edge in dag.edges:
+            link: Dict[str, Any] = {
+                "source": edge.from_node,
+                "target": edge.to_node,
+            }
+            if edge.condition:
+                link["condition"] = edge.condition
+            links.append(link)
+
+        return {"nodes": nodes, "links": links}
+
+    def to_dot(self, skill: JadeSkill) -> str:
+        """
+        Export the skill's execution DAG as Graphviz DOT format.
+
+        Entry node is shown as a box with bold border.
+        Exit nodes are shown as double-circle.
+        Regular nodes are boxes. Edge conditions are labels.
+
+        Args:
+            skill: The JadeSkill whose DAG to visualize.
+
+        Returns:
+            A DOT-format string for Graphviz rendering.
+        """
+        dag = skill.execution_dag
+        exit_set = set(dag.exit_node)
+        lines: List[str] = [
+            "digraph JadeDAG {",
+            "    rankdir=TB;",
+            '    node [fontname="Helvetica", fontsize=10];',
+            '    edge [fontname="Helvetica", fontsize=9];',
+        ]
+
+        # Node definitions
+        for node in dag.nodes:
+            label = self._build_node_label(node)
+            attrs: List[str] = [f'label="{label}"']
+            if node.id == dag.entry_node:
+                attrs.extend(['shape=box', 'style=bold', 'penwidth=2'])
+            elif node.id in exit_set:
+                attrs.extend(['shape=doublecircle'])
+            else:
+                attrs.extend(['shape=box'])
+            lines.append(f'    {node.id} [{", ".join(attrs)}];')
+
+        # Edges
+        for edge in dag.edges:
+            cond = self._build_edge_label(edge)
+            if cond:
+                lines.append(f'    {edge.from_node} -> {edge.to_node} [label="{cond}"];')
+            else:
+                lines.append(f"    {edge.from_node} -> {edge.to_node};")
+
+        lines.append("}")
+        return "\n".join(lines)

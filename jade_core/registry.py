@@ -131,7 +131,9 @@ class JadeRegistry:
             raise ValueError(f"Skill '{skill_id}' not found in registry")
 
         # Verify hash matches
-        if attestation.skill_hash and attestation.skill_hash != entry.skill_hash:
+        if not attestation.skill_hash:
+            return entry  # Reject empty hash attestations
+        if attestation.skill_hash != entry.skill_hash:
             raise ValueError(
                 f"Attestation hash mismatch for '{skill_id}': "
                 f"expected {entry.skill_hash}, got {attestation.skill_hash}"

@@ -209,7 +209,14 @@ class JadeClient:
 
     # ─── Cache Management ───────────────────────────────────────────
 
+    def _sanitize_skill_id(self, skill_id: str) -> str:
+        """Sanitize skill_id to prevent path traversal."""
+        if "/" in skill_id or "\\" in skill_id or ".." in skill_id:
+            raise ValueError(f"Invalid skill_id: {skill_id}")
+        return skill_id
+
     def _load_from_cache(self, skill_id: str) -> Optional[Dict[str, Any]]:
+        skill_id = self._sanitize_skill_id(skill_id)
         """Load a skill from local cache."""
         cache_file = self._cache_dir / f"{skill_id}.json"
         if cache_file.exists():
@@ -221,6 +228,7 @@ class JadeClient:
         return None
 
     def _save_to_cache(self, skill_id: str, data: Dict[str, Any]) -> None:
+        skill_id = self._sanitize_skill_id(skill_id)
         """Save a skill to local cache."""
         cache_file = self._cache_dir / f"{skill_id}.json"
         with open(cache_file, "w", encoding="utf-8") as f:
@@ -342,4 +350,80 @@ class JadeClient:
             info = self.get_skill_info(sid)
             if info is not None:
                 results.append(info)
+        return results
+
+    # ─── DAG Visualization & Batch ──────────────────────────────────
+
+    def verify_and_visualize(self, skill_id: str) -> Dict[str, Any]:
+        """
+        Verify a skill and return its DAG visualization.
+
+        Fetches (or uses cached) skill, runs full validation, and generates
+        a Mermaid DAG visualization in one call.
+
+        Args:
+            skill_id: The skill ID to verify and visualize.
+
+        Returns:
+            A dict with 'valid', 'issues', 'dag_mermaid', and 'dag_d3'.
+            Returns error info if skill not found.
+        """
+        from .dag import DAGAnalyzer
+
+        skill = self._loaded_skills.get(skill_id)
+        if not skill:
+            skill, result = self.fetch(skill_id)
+            if not skill:
+                return {
+                    "skill_id": skill_id,
+                    "valid": False,
+                    "error": f"Skill not found: {skill_id}",
+                    "issues": [i.to_dict() for i in result.issues],
+                }
+
+        result = self._validator.validate_dict(skill.raw_data)
+
+        analyzer = DAGAnalyzer()
+
+        return {
+            "skill_id": skill_id,
+            "valid": result.valid,
+            "issues": [i.to_dict() for i in result.issues],
+            "dag_mermaid": analyzer.to_mermaid(skill),
+            "dag_d3": analyzer.to_d3_json(skill),
+        }
+
+    def batch_verify(self, skill_ids: List[str]) -> List[Dict[str, Any]]:
+        """
+        Verify multiple skills in batch.
+
+        Fetches and validates each skill, returning a summary for each.
+
+        Args:
+            skill_ids: List of skill IDs to verify.
+
+        Returns:
+            A list of dicts, each with 'skill_id', 'valid', 'issues', and 'hash'.
+        """
+        results: List[Dict[str, Any]] = []
+        for skill_id in skill_ids:
+            skill = self._loaded_skills.get(skill_id)
+            if not skill:
+                skill, vr = self.fetch(skill_id)
+                if not skill:
+                    results.append({
+                        "skill_id": skill_id,
+                        "valid": False,
+                        "error": f"Skill not found: {skill_id}",
+                        "issues": [i.to_dict() for i in vr.issues],
+                    })
+                    continue
+
+            vr = self._validator.validate_dict(skill.raw_data)
+            results.append({
+                "skill_id": skill_id,
+                "valid": vr.valid,
+                "issues": [i.to_dict() for i in vr.issues],
+                "hash": skill.compute_hash(),
+            })
         return results

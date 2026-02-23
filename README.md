@@ -149,6 +149,53 @@ Available MCP tools: `jade_verify`, `jade_search`, `jade_info`, `jade_list`, `ja
 <img src="assets/trust_hierarchy.png" alt="JadeGate Trust Hierarchy" width="800"/>
 </div>
 
+
+## DAG Visualization 📊
+
+JadeGate can visualize skill execution DAGs in multiple formats — useful for understanding, debugging, and documenting skill flows.
+
+**CLI:**
+```bash
+jade dag my_skill.json                    # Mermaid (default)
+jade dag my_skill.json --format dot       # Graphviz DOT
+jade dag my_skill.json --format d3        # D3.js JSON
+jade dag my_skill.json -o flow.md         # Save to file
+```
+
+**Python SDK:**
+```python
+from jadegate import DAGAnalyzer, JadeSkill
+
+skill = JadeSkill.from_file("my_skill.json")
+analyzer = DAGAnalyzer()
+print(analyzer.to_mermaid(skill))
+```
+
+**Example Mermaid output:**
+```mermaid
+graph TD
+    validate_input([validate_input [json_parse]])
+    fetch_data[fetch_data [http_request]]
+    transform[transform [json_extract]]
+    return_result((return_result [return_result]))
+    validate_input --> fetch_data
+    fetch_data -->|success| transform
+    fetch_data -->|error| return_result
+    transform --> return_result
+```
+
+**MCP tool:** `jade_dag` — pass a `skill_id` or raw `skill_json` to get the Mermaid visualization directly in your agent workflow.
+
+**Client SDK:**
+```python
+client = JadeClient()
+result = client.verify_and_visualize("weather_api_query")
+# Returns: { valid, issues, dag_mermaid, dag_d3 }
+
+results = client.batch_verify(["skill_a", "skill_b", "skill_c"])
+# Returns: [{ skill_id, valid, issues, hash }, ...]
+```
+
 ## Cryptographic Trust Chain
 
 Skills can be signed by verified publishers using Ed25519 signatures.
