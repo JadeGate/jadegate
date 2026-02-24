@@ -38,6 +38,14 @@ pip install jadegate && jade verify my_skill.json
 
 </div>
 
+## What is a "Skill"?
+
+A **Skill** is a JSON file that describes what an AI agent can do — call an API, process data, query a database — without containing any executable code.
+
+Think of it as a **blueprint**: it declares the steps (as a DAG), the network endpoints, the inputs/outputs, and the security constraints. The agent runtime reads the blueprint and executes it. JadeGate verifies the blueprint is safe *before* execution.
+
+**Skills vs MCP Tools:** MCP defines *how* agents talk to tools (the protocol). JadeGate defines *whether* a tool is safe to use (the verification). They're complementary — JadeGate can verify MCP server definitions too.
+
 ## Why JadeGate?
 
 AI agents are powerful. They call tools, execute skills, access APIs. But **who verifies those skills are safe?**
@@ -55,6 +63,32 @@ pip install jadegate
 jade verify my_skill.json
 # ✅ Passed 5/5 layers | Confidence: 0.97 | 💠 Verified
 ```
+
+## Installation
+
+```bash
+pip install jadegate
+```
+
+<details>
+<summary>Troubleshooting</summary>
+
+**PEP 668 error (externally-managed-environment):**
+```bash
+python3 -m venv jadegate-env
+source jadegate-env/bin/activate
+pip install jadegate
+```
+
+**`jade` command not found:**
+```bash
+# Add to PATH
+export PATH="$HOME/.local/bin:$PATH"
+# Or run directly
+python3 -m jade_core.cli verify my_skill.json
+```
+
+</details>
 
 ## The Five Layers
 
