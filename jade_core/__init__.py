@@ -13,7 +13,7 @@ Core modules:
 - registry: Index management and confidence scoring
 """
 
-__version__ = "1.3.0"
+__version__ = "1.3.1"
 __protocol_version__ = "1.0.0"
 
 from .models import (

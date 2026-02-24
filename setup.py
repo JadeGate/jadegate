@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="jadegate",
-    version="1.3.0",
+    version="1.3.1",
     description="Deterministic Security for AI Agent Skills — 151 verified skills with Ed25519 signature chain",
     long_description=open("README.md", encoding="utf-8").read() if __import__("os").path.exists("README.md") else "",
     long_description_content_type="text/markdown",
