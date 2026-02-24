@@ -114,6 +114,19 @@ class JadeValidator:
         """Validate a JADE skill JSON file."""
         issues: List[ValidationIssue] = []
 
+        # 0. Path sanitization — prevent path traversal
+        file_path = os.path.realpath(file_path)
+        if ".." in os.path.relpath(file_path):
+            return ValidationResult(
+                valid=False,
+                issues=[ValidationIssue(
+                    severity=ValidationSeverity.ERROR,
+                    code="PATH_TRAVERSAL",
+                    message="Path traversal detected. Use absolute paths or paths without '..'",
+                    hint="Provide a direct path to the skill JSON file.",
+                )],
+            )
+
         # 1. File existence and readability
         if not os.path.exists(file_path):
             return ValidationResult(

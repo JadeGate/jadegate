@@ -31,7 +31,7 @@ setup(
     classifiers=[
         "Development Status :: 4 - Beta",
         "Intended Audience :: Developers",
-        "License :: OSI Approved :: MIT License",
+        "License :: Other/Proprietary License",
         "Programming Language :: Python :: 3",
         "Topic :: Security",
         "Topic :: Scientific/Engineering :: Artificial Intelligence",

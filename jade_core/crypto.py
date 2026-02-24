@@ -1,6 +1,11 @@
 """
 JadeGate Cryptographic Engine — Ed25519 Pure Python Implementation
 
+⚠️ SECURITY NOTE: This is a pure-Python Ed25519 implementation for zero-dependency operation.
+For production environments handling high-value signatures, consider using the `cryptography` library
+(pip install cryptography) which provides constant-time C implementations.
+This implementation uses hmac.compare_digest for timing-safe comparisons.
+
 This is the "权柄" (authority scepter) of JadeGate.
 Root CA private key holder can:
   - Sign any skill file (root-level certification)
@@ -15,6 +20,7 @@ Signature format: jade-sig-{base64}
 from __future__ import annotations
 
 import hashlib
+import hmac
 import json
 import os
 import base64
@@ -151,7 +157,10 @@ def _checkvalid(s: bytes, m: bytes, pk: bytes) -> bool:
     A = _decodepoint(pk)
     S = _decodeint(s[b // 8:b // 4])
     h = _Hint(_encodepoint(R) + pk + m)
-    if _scalarmult(_B, S) != _edwards(R, _scalarmult(A, h)):
+    # Constant-time comparison to prevent timing attacks
+    lhs = _encodepoint(_scalarmult(_B, S))
+    rhs = _encodepoint(_edwards(R, _scalarmult(A, h)))
+    if not hmac.compare_digest(lhs, rhs):
         return False
     return True
 
@@ -308,7 +317,7 @@ class JadeSkillSigner:
 
         # Check content hash
         expected_hash = sig_info.get("content_hash", "")
-        if expected_hash != f"sha256:{content_hash}":
+        if not hmac.compare_digest(expected_hash, f"sha256:{content_hash}"):
             return {"verified": False, "error": "Content hash mismatch — skill was tampered", "signed": True}
 
         # Verify signature

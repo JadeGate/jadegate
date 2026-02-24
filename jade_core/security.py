@@ -60,7 +60,7 @@ DANGEROUS_COMMANDS = [
     r'\bfdisk\b',
     r'\bchmod\s+777\b',
     r'\bchmod\s+-R\s+777\b',
-    r':\(\)\s*\{.*:\|:.*&\s*\};:',  # fork bomb
+    r':\(\)\s*\{.{0,100}:\|:.{0,100}&\s*\};:',  # fork bomb
     r'\bshutdown\b',
     r'\breboot\b',
     r'\binit\s+0\b',
