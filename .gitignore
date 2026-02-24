@@ -57,3 +57,5 @@ jade_keygen_root.py
 !mcp-server/**
 # 但排除 node_modules
 mcp-server/node_modules/
+!CONTRIBUTING.md
+!SECURITY.md
