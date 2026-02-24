@@ -309,7 +309,7 @@ We welcome contributions! See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
 ## License
 
-BSL 1.1 — Source-available. Free for non-production use. Converts to open source after 3 years.
+BSL 1.1 — Source-available. Free for non-production use. Converts to Apache 2.0 on 2030-02-21 (4 years).
 
 ---
 
