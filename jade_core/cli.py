@@ -541,6 +541,10 @@ def main():
     p_info.set_defaults(func=cmd_info)
 
 
+    # jade mcp-serve
+    p_mcp = sub.add_parser("mcp-serve", help="Start JadeGate as an MCP server (stdio)")
+    p_mcp.set_defaults(func=lambda args: __import__('jade_core.mcp_server', fromlist=['run_mcp_server']).run_mcp_server())
+
     # jade dag
     p_dag = sub.add_parser("dag", help="Visualize skill execution DAG")
     p_dag.add_argument("file", help="Skill JSON file")
