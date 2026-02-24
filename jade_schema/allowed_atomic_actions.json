@@ -84,11 +84,16 @@
             },
             "headers": {
               "type": "object",
-              "required": true
+              "required": true,
+              "additionalProperties": {
+                "type": "string"
+              }
             },
             "body": {
               "type": "object",
-              "required": true
+              "required": true,
+              "additionalProperties": true,
+              "description": "Request body (arbitrary JSON)"
             }
           },
           "returns": {
@@ -106,11 +111,16 @@
             },
             "headers": {
               "type": "object",
-              "required": true
+              "required": true,
+              "additionalProperties": {
+                "type": "string"
+              }
             },
             "body": {
               "type": "object",
-              "required": true
+              "required": true,
+              "additionalProperties": true,
+              "description": "Request body (arbitrary JSON)"
             }
           },
           "returns": {
