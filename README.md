@@ -1,150 +1,198 @@
-# Project JADE 🟢
+# JadeGate 💠
 
-**Deterministic Security Protocol for AI Agents**
+**The TLS of AI Tool Calls.**
 
-*The Package Manager and Immunity Network for AI Agent Skills.*
+One command. Every MCP server protected. Zero config.
+
+```bash
+pip install jadegate
+# That's it. All your MCP servers are now protected.
+```
 
 ---
 
-## What is JADE?
+## The Problem
 
-JADE (JSON-based Agent Deterministic Execution) is a structural security protocol that makes AI agent skills **safe by design, not by review**.
+MCP has no security layer. Any tool can read your files, make network requests, or execute commands — and your AI client will happily comply.
 
-The core insight: if a skill definition is **non-Turing-complete** (pure JSON, no executable code), then security becomes a **structural property** rather than a behavioral one. You don't need to "test" if a skill is safe — you can **prove** it.
+There are 10,000+ MCP servers on GitHub. Most have never been audited. Security researchers have demonstrated tools that silently access `~/.ssh/`, `.env` files, and browser cookies while claiming to do something harmless.
+
+MCP is TCP without TLS. JadeGate adds the TLS.
+
+## How It Works
+
+JadeGate sits between your AI client and MCP servers as a transparent proxy. Every tool call passes through 6 security layers before execution:
 
 ```
-Traditional approach:  Code → Run → Hope it's safe → Review → Maybe safe
-JADE approach:         JSON Schema → Validate → Mathematically safe → Execute
+AI Client (Claude, Cursor, etc.)
+    ↓
+  JadeGate Proxy          ← policy check, anomaly detection, trust verification
+    ↓
+  MCP Server (filesystem, github, puppeteer, etc.)
 ```
 
-## Architecture: The JADE Trinity
+### The 6 Layers
 
-### 1. The Schema (`jade_schema/`) — "The Constitution"
+| Layer | What it does |
+|-------|-------------|
+| **Policy** | Allowlist/blocklist rules per tool, rate limiting, argument validation |
+| **Runtime** | Dynamic call-chain tracking (DAG), anomaly detection, circuit breaker |
+| **Transport** | Transparent MCP proxy — intercepts stdio/SSE without modifying the server |
+| **Trust** | TOFU (Trust On First Use) + Ed25519 certificates for server identity |
+| **Scanner** | Static analysis of MCP server capabilities, risk scoring |
+| **Installer** | Auto-injects into all MCP client configs (Claude, Cursor, Windsurf, Cline, Continue, Zed) |
 
-A strict JSON Schema that defines how skills must be structured:
-- **Declarative only**: Skills describe WHAT to do, never HOW
-- **No executable code**: Zero Turing-complete constructs allowed
-- **Atomic actions**: Every operation must come from the allowed actions list
-- **Explicit permissions**: Network whitelist, file permissions, sandbox level
+## Install
 
-### 2. The Validator (`jade_core/validator.py`) — "The Supreme Court"
+```bash
+pip install jadegate
+```
 
-A multi-layer validation engine:
-- **Schema compliance**: Structural correctness check
-- **Security scan**: Executable code detection, dangerous pattern matching, data exfiltration prevention
-- **DAG analysis**: Cycle detection, reachability verification, orphan node detection
-- **Semantic validation**: Cross-field consistency checks
+That's it. On install, JadeGate automatically:
+1. Scans your system for MCP client configurations
+2. Wraps each MCP server with the JadeGate proxy
+3. Backs up original configs (fully reversible)
 
-### 3. The Registry (`jade_registry/`) — "The Index"
+Next time you open Claude Desktop, Cursor, or any supported client — protection is active.
 
-A Bayesian confidence-scored skill registry:
-- **Hash-based indexing**: Every skill identified by its SHA-256 hash
-- **Bayesian scoring**: Confidence updated via Beta distribution posterior
-- **Time decay**: Unused skills lose confidence over time
-- **Attestation system**: Agents report success/failure, feeding the scoring engine
+### Uninstall
 
-## Quick Start
+```bash
+jadegate uninstall   # Restores all original configs
+pip uninstall jadegate
+```
+
+## Commands
+
+```bash
+jadegate status      # Check what's protected
+jadegate scan        # Security audit all MCP servers
+jadegate install     # Re-run auto-injection (after adding new MCP servers)
+jadegate uninstall   # Revert all changes
+```
+
+### Scan Output
+
+```
+$ jadegate scan
+
+  💠 JadeGate v2.0.0 — AI Tool Call Security Protocol
+
+  MCP Server Security Scan
+
+  ✓ filesystem  ● MEDIUM    filesystem access
+    tools: 3 discovered
+  ✓ github      ● MEDIUM    network access
+    tools: 5 discovered
+  ✓ puppeteer   ● CRITICAL  shell + network + browser
+    tools: 8 discovered
+
+  3 servers scanned: 0 low, 2 medium, 0 high, 1 critical
+  All servers protected by JadeGate proxy.
+```
+
+## Python SDK Protection
+
+For Python agents using OpenAI or Anthropic SDKs directly:
+
+```bash
+export JADEGATE=1
+python my_agent.py
+# All SDK tool calls are now intercepted and protected
+```
+
+Or in code:
 
 ```python
-from jade_core import JadeValidator, JadeClient, JadeRegistry
+import jadegate
+jadegate.activate()
 
-# Validate a skill
-validator = JadeValidator()
-result = validator.validate_file("jade_skills/weather_api.json")
-print(f"Valid: {result.valid}")  # True
-
-# Load and use skills
-client = JadeClient()
-skill, result = client.load_file("jade_skills/weather_api.json")
-print(f"Skill: {skill.metadata.name}")  # Weather API Query SOP
-print(f"Nodes: {len(skill.execution_dag.nodes)}")  # 10
-
-# Register and track confidence
-registry = JadeRegistry()
-entry = registry.register(skill)
-print(f"Confidence: {entry.confidence_score}")  # 0.5 (initial)
-
-# Load all skills from a directory
-results = client.load_directory("jade_skills/")
-print(f"Loaded: {len(results)} skills")  # 5
+# Now use OpenAI/Anthropic as normal — JadeGate intercepts tool calls
+from openai import OpenAI
+client = OpenAI()
 ```
 
-## Golden Skills (v1.0)
+## Policy Configuration
 
-| Skill | Description | Network | Sandbox |
-|-------|-------------|---------|---------|
-| `web_anti_crawl` | Anti-crawl bypass with robots.txt respect | `*` | strict |
-| `pdf_table_parser` | PDF table extraction, no script execution | none | strict |
-| `weather_api` | Free weather API with provider fallback | `wttr.in`, `api.open-meteo.com` | strict |
-| `file_batch_rename` | Regex batch rename with collision detection | none | strict |
-| `email_send_safe` | SMTP email with human confirmation gate | SMTP host | strict |
+Default policy blocks dangerous patterns. Customize per tool:
 
-## Security Model
-
-JADE enforces security at **five layers**:
-
-1. **Non-Turing-Complete**: No `eval`, `exec`, `import`, `<script>`, `Function()` — 20+ patterns blocked
-2. **Dangerous Command Detection**: `rm -rf`, `mkfs`, `sudo`, `curl|sh` — 25+ patterns blocked
-3. **Network Whitelist**: Every domain must be explicitly declared; private IPs, `.onion`, `localhost` flagged
-4. **Data Exfiltration Prevention**: Detects references to `~/.ssh/`, `.env`, `api_key`, `password`, `~/.aws/credentials`
-5. **DAG Structural Safety**: Cycle detection, reachability proof, orphan node detection
-
-## Bayesian Confidence Scoring
-
-Skills earn trust through usage attestations:
-
-```
-P(reliable) = (successes + 1) / (successes + failures + 2)
+```json
+{
+  "default_action": "allow",
+  "tool_rules": {
+    "filesystem:write_file": {
+      "action": "ask",
+      "reason": "File write requires confirmation"
+    },
+    "shell:exec": {
+      "action": "deny",
+      "reason": "Shell execution blocked by policy"
+    }
+  },
+  "rate_limit": {
+    "max_calls_per_minute": 60
+  }
+}
 ```
 
-- New skill: `0.5` (maximum uncertainty)
-- 10 successes, 0 failures: `0.917`
-- 100 successes, 1 failure: `0.990`
-- 0 successes, 10 failures: `0.083`
-
-Confidence decays exponentially without new attestations (half-life: 30 days).
-
-## CI/CD Integration
-
-JADE includes a GitHub Actions workflow that automatically:
-1. Validates any skill JSON submitted via PR
-2. Runs deep security scan
-3. Comments verification results on the PR
-4. Labels verified PRs with `✅ jade-verified`
-
-## Project Structure
+## Architecture
 
 ```
-ProjectJADE/
-├── jade_schema/                  # The "Constitution"
-│   ├── jade-schema-v1.json       # Core schema definition
-│   └── allowed_atomic_actions.json  # Periodic table of actions
-├── jade_skills/                  # The "Sanctuary" - 5 golden skills
-├── jade_core/                    # Core Python package
-│   ├── validator.py              # Schema + security validator
-│   ├── security.py               # Zero-trust security engine
-│   ├── dag.py                    # DAG structural analyzer
-│   ├── client.py                 # Agent-facing SDK
-│   ├── registry.py               # Bayesian confidence registry
-│   └── models.py                 # Data models
-├── jade_registry/                # Global skill index
-├── tests/                        # 135 tests, 100% pass
-└── .github/workflows/            # CI/CD automation
+jadegate/
+├── policy/          # Allowlist/blocklist rules, rate limiting
+├── runtime/         # DAG tracking, circuit breaker, anomaly detection
+├── transport/       # MCP proxy (stdio/SSE), SDK hooks
+├── trust/           # TOFU, Ed25519 certificates, trust store
+├── scanner/         # Static analysis, risk scoring
+├── installer.py     # Auto-inject into MCP client configs
+├── cli.py           # Command-line interface
+└── post_install.py  # pip install auto-activation
 ```
+
+## Supported Clients
+
+| Client | Config Path | Auto-detected |
+|--------|-----------|:---:|
+| Claude Desktop | `~/.config/claude/` | ✅ |
+| Cursor | `~/.cursor/` | ✅ |
+| Windsurf | `~/.codeium/windsurf/` | ✅ |
+| Cline | `~/.vscode/cline/` | ✅ |
+| Continue | `~/.continue/` | ✅ |
+| Zed | `~/.config/zed/` | ✅ |
+| Custom | `jadegate install --config <path>` | ➕ |
+
+## Design Principles
+
+- **Zero config**: `pip install` = protected. No setup, no env vars, no config files.
+- **Transparent**: MCP servers don't know JadeGate exists. No server-side changes needed.
+- **Reversible**: `jadegate uninstall` restores everything. Clean removal guaranteed.
+- **Offline**: All analysis runs locally. No telemetry, no cloud, no data leaves your machine.
+- **Fail-open safe**: If JadeGate crashes, your MCP servers still work (graceful degradation).
 
 ## Running Tests
 
 ```bash
 pip install pytest
-python -m pytest tests/ -v
+pytest tests/ -v
+# 238 tests, all passing
 ```
 
-## Philosophy
+## Comparison
 
-> Skills should be like laws — written in plain language, publicly auditable, and structurally incapable of harm.
+| | Raw MCP | JadeGate |
+|---|---|---|
+| Tool call policy | ❌ None | ✅ Per-tool allow/deny/ask |
+| Call chain tracking | ❌ None | ✅ Dynamic DAG |
+| Anomaly detection | ❌ None | ✅ Circuit breaker + rate limit |
+| Server identity | ❌ None | ✅ TOFU + Ed25519 |
+| Security scan | ❌ None | ✅ Static analysis + risk score |
+| Setup effort | N/A | `pip install jadegate` |
 
-JADE doesn't review code for safety. JADE makes unsafe code **structurally impossible**.
+## License
+
+MIT
 
 ---
 
-**License**: MIT
+**GitHub**: https://github.com/JadeGate/jade-core
+**PyPI**: https://pypi.org/project/jadegate/
