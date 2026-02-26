@@ -40,7 +40,7 @@ setup(
     long_description=open("README.md", encoding="utf-8").read() if os.path.exists("README.md") else "",
     long_description_content_type="text/markdown",
     author="Project JADE",
-    url="https://github.com/JadeGate/jade-core",
+    url="https://github.com/JadeGate/jadegate",
     license="MIT",
     packages=find_packages(exclude=["tests", "tests.*"]),
     package_data={

@@ -180,5 +180,5 @@ MIT
 
 ---
 
-**GitHub**: https://github.com/JadeGate/jade-core
+**GitHub**: https://github.com/JadeGate/jadegate
 **PyPI**: https://pypi.org/project/jadegate/
