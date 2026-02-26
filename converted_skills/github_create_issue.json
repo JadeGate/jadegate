@@ -1,0 +1,173 @@
+{
+  "jade_version": "1.0.0",
+  "skill_id": "github_create_issue",
+  "metadata": {
+    "name": "GitHub Issue Creator",
+    "version": "1.0.0",
+    "description": "Create a new issue on a GitHub repository via API",
+    "author": "jadegate-community",
+    "tags": [
+      "github",
+      "issue",
+      "api",
+      "repository"
+    ],
+    "license": "MIT",
+    "created_at": "2026-02-21T03:00:00Z",
+    "updated_at": "2026-02-21T03:00:00Z"
+  },
+  "trigger": {
+    "type": "task_intent",
+    "conditions": [
+      {
+        "field": "task.type",
+        "operator": "in",
+        "value": [
+          "create_issue",
+          "github_issue"
+        ]
+      }
+    ]
+  },
+  "input_schema": {
+    "required_params": [
+      {
+        "name": "repo",
+        "type": "string",
+        "description": "Repository in owner/repo format"
+      },
+      {
+        "name": "title",
+        "type": "string",
+        "description": "Issue title"
+      },
+      {
+        "name": "body",
+        "type": "string",
+        "description": "Issue body"
+      },
+      {
+        "name": "token",
+        "type": "string",
+        "description": "GitHub personal access token"
+      }
+    ]
+  },
+  "output_schema": {
+    "fields": [
+      {
+        "name": "issue_number",
+        "type": "number",
+        "description": "Created issue number"
+      },
+      {
+        "name": "url",
+        "type": "string",
+        "description": "Issue URL"
+      }
+    ]
+  },
+  "execution_dag": {
+    "nodes": [
+      {
+        "id": "build",
+        "action": "text_template",
+        "params": {
+          "template": "{\"title\":\"{{input.title}}\",\"body\":\"{{input.body}}\"}"
+        }
+      },
+      {
+        "id": "post",
+        "action": "http_post",
+        "params": {
+          "url": "https://api.github.com/repos/{{input.repo}}/issues",
+          "headers": {
+            "Authorization": "Bearer {{input.token}}",
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "JadeBot/1.0"
+          },
+          "body": "{{build.output.result}}",
+          "timeout_ms": 15000
+        }
+      },
+      {
+        "id": "check",
+        "action": "condition_check",
+        "params": {
+          "field": "{{post.output.status_code}}",
+          "operator": "equals",
+          "value": 201
+        }
+      },
+      {
+        "id": "parse",
+        "action": "json_parse",
+        "params": {
+          "input": "{{post.output.body}}"
+        }
+      },
+      {
+        "id": "ret_ok",
+        "action": "return_result",
+        "params": {
+          "issue_number": "{{parse.output.data.number}}",
+          "url": "{{parse.output.data.html_url}}"
+        }
+      },
+      {
+        "id": "ret_fail",
+        "action": "return_error",
+        "params": {
+          "error_code": "GITHUB_FAILED",
+          "message": "Failed to create issue: {{post.output.status_code}}"
+        }
+      }
+    ],
+    "edges": [
+      {
+        "from": "build",
+        "to": "post"
+      },
+      {
+        "from": "post",
+        "to": "check"
+      },
+      {
+        "from": "check",
+        "to": "parse",
+        "condition": "success"
+      },
+      {
+        "from": "check",
+        "to": "ret_fail",
+        "condition": "failure"
+      },
+      {
+        "from": "parse",
+        "to": "ret_ok"
+      }
+    ],
+    "entry_node": "build",
+    "exit_node": [
+      "ret_ok",
+      "ret_fail"
+    ]
+  },
+  "security": {
+    "network_whitelist": [
+      "api.github.com"
+    ],
+    "file_permissions": {
+      "read": [],
+      "write": []
+    },
+    "max_execution_time_ms": 30000,
+    "max_retries": 2,
+    "sandbox_level": "strict",
+    "dangerous_patterns": []
+  },
+  "mcp_compatible": true,
+  "required_mcp_capabilities": [
+    "http"
+  ]
+}

@@ -1,0 +1,85 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+dist/
+build/
+*.egg
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Secrets & credentials — NEVER commit
+*.key
+*.pem
+*.p12
+*.pfx
+*.env
+.env.*
+secrets/
+credentials/
+
+# OpenClaw workspace files — personal data
+memory/
+MEMORY.md
+memory.md
+USER.md
+SOUL.md
+IDENTITY.md
+AGENTS.md
+HEARTBEAT.md
+BOOTSTRAP.md
+TOOLS.md
+secure-store/
+
+# Session & conversation data
+*.jsonl
+*.jsonl.lock
+sessions/
+
+# Deployment — contains credentials, account info, strategy docs
+deployment/
+
+# Internal tools — contains cookies, account data, proxy configs
+tools/
+
+# Internal handoff & status docs
+CLAWBOT_HANDOFF.md
+HOW_TO_HANDOFF.md
+FIX_TRACKER.md
+PROJECT_STATUS.md
+clawbot_start.sh
+
+# Embedded git repos
+jade-core-live
+
+# Demo / temp files
+demo_terminal.html
+*.tmp
+*.bak
+
+# Node modules
+node_modules/
+
+# Test artifacts
+.pytest_cache/
+htmlcov/
+.coverage
+
+# Benchmarks (may contain internal data)
+benchmarks/
+
+# Broken symlinks & embedded repos
+jadegate.github.io
+jade-core/
+
+# Docs (separate repo)
+docs/

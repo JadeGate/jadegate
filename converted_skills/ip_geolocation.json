@@ -1,0 +1,178 @@
+{
+  "jade_version": "1.0.0",
+  "skill_id": "ip_geolocation",
+  "metadata": {
+    "name": "IP Geolocation Lookup",
+    "version": "1.0.0",
+    "description": "Look up geographic location of an IP address using free API",
+    "author": "jadegate-community",
+    "tags": [
+      "ip",
+      "geolocation",
+      "location",
+      "network"
+    ],
+    "license": "MIT",
+    "created_at": "2026-02-21T03:00:00Z",
+    "updated_at": "2026-02-21T03:00:00Z"
+  },
+  "trigger": {
+    "type": "task_intent",
+    "conditions": [
+      {
+        "field": "task.type",
+        "operator": "in",
+        "value": [
+          "ip_location",
+          "geolocate_ip"
+        ]
+      }
+    ]
+  },
+  "input_schema": {
+    "required_params": [
+      {
+        "name": "ip_address",
+        "type": "string",
+        "description": "IP address to look up"
+      }
+    ]
+  },
+  "output_schema": {
+    "fields": [
+      {
+        "name": "country",
+        "type": "string",
+        "description": "Country name"
+      },
+      {
+        "name": "city",
+        "type": "string",
+        "description": "City name"
+      },
+      {
+        "name": "lat",
+        "type": "number",
+        "description": "Latitude"
+      },
+      {
+        "name": "lon",
+        "type": "number",
+        "description": "Longitude"
+      },
+      {
+        "name": "isp",
+        "type": "string",
+        "description": "ISP name"
+      }
+    ]
+  },
+  "execution_dag": {
+    "nodes": [
+      {
+        "id": "fetch",
+        "action": "http_get",
+        "params": {
+          "url": "https://ip-api.com/json/{{input.ip_address}}",
+          "timeout_ms": 8000
+        }
+      },
+      {
+        "id": "check",
+        "action": "condition_check",
+        "params": {
+          "field": "{{fetch.output.status_code}}",
+          "operator": "equals",
+          "value": 200
+        }
+      },
+      {
+        "id": "parse",
+        "action": "json_parse",
+        "params": {
+          "input": "{{fetch.output.body}}"
+        }
+      },
+      {
+        "id": "check_ok",
+        "action": "condition_check",
+        "params": {
+          "field": "{{parse.output.data.status}}",
+          "operator": "equals",
+          "value": "success"
+        }
+      },
+      {
+        "id": "ret_ok",
+        "action": "return_result",
+        "params": {
+          "country": "{{parse.output.data.country}}",
+          "city": "{{parse.output.data.city}}",
+          "lat": "{{parse.output.data.lat}}",
+          "lon": "{{parse.output.data.lon}}",
+          "isp": "{{parse.output.data.isp}}"
+        }
+      },
+      {
+        "id": "ret_fail",
+        "action": "return_error",
+        "params": {
+          "error_code": "GEO_FAILED",
+          "message": "IP geolocation lookup failed"
+        }
+      }
+    ],
+    "edges": [
+      {
+        "from": "fetch",
+        "to": "check"
+      },
+      {
+        "from": "check",
+        "to": "parse",
+        "condition": "success"
+      },
+      {
+        "from": "check",
+        "to": "ret_fail",
+        "condition": "failure"
+      },
+      {
+        "from": "parse",
+        "to": "check_ok"
+      },
+      {
+        "from": "check_ok",
+        "to": "ret_ok",
+        "condition": "success"
+      },
+      {
+        "from": "check_ok",
+        "to": "ret_fail",
+        "condition": "failure"
+      }
+    ],
+    "entry_node": "fetch",
+    "exit_node": [
+      "ret_ok",
+      "ret_fail"
+    ]
+  },
+  "security": {
+    "network_whitelist": [
+      "ip-api.com"
+    ],
+    "file_permissions": {
+      "read": [],
+      "write": []
+    },
+    "max_execution_time_ms": 30000,
+    "max_retries": 2,
+    "sandbox_level": "strict",
+    "dangerous_patterns": []
+  },
+  "mcp_compatible": true,
+  "required_mcp_capabilities": [
+    "http"
+  ]
+}

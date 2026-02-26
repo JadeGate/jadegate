@@ -1,0 +1,344 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/project-jade/jade-schema-v1.json",
+  "title": "JADE Skill Schema v1",
+  "description": "Project JADE - Deterministic Security Protocol for AI Agents. A skill is a declarative, non-Turing-complete SOP (Standard Operating Procedure) that describes WHAT to do, not HOW to do it.",
+  "type": "object",
+  "required": [
+    "jade_version",
+    "skill_id",
+    "metadata",
+    "trigger",
+    "execution_dag",
+    "security"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "jade_version": {
+      "type": "string",
+      "pattern": "^1\\.\\d+\\.\\d+$",
+      "description": "JADE protocol version, must be 1.x.x for v1 schema"
+    },
+    "skill_id": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]{2,63}$",
+      "description": "Unique skill identifier, lowercase alphanumeric with underscores"
+    },
+    "metadata": {
+      "type": "object",
+      "required": ["name", "version", "description", "author", "tags"],
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "version": {
+          "type": "string",
+          "pattern": "^\\d+\\.\\d+\\.\\d+$"
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1024
+        },
+        "author": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "tags": {
+          "type": "array",
+          "items": { "type": "string", "maxLength": 32 },
+          "minItems": 1,
+          "maxItems": 10,
+          "uniqueItems": true
+        },
+        "license": {
+          "type": "string",
+          "default": "MIT"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "trigger": {
+      "type": "object",
+      "description": "Conditions that activate this skill",
+      "required": ["type", "conditions"],
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["error_code", "task_intent", "environment_state", "manual"]
+        },
+        "conditions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["field", "operator", "value"],
+            "additionalProperties": false,
+            "properties": {
+              "field": {
+                "type": "string",
+                "description": "The state field to evaluate, e.g. 'error.code', 'task.type'"
+              },
+              "operator": {
+                "type": "string",
+                "enum": ["equals", "contains", "matches", "greater_than", "less_than", "in", "not_in", "exists"]
+              },
+              "value": {
+                "oneOf": [
+                  { "type": "string" },
+                  { "type": "number" },
+                  { "type": "boolean" },
+                  { "type": "array", "items": { "type": "string" } }
+                ]
+              }
+            }
+          },
+          "minItems": 1
+        }
+      }
+    },
+    "input_schema": {
+      "type": "object",
+      "description": "Defines expected input parameters for this skill",
+      "properties": {
+        "required_params": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["name", "type", "description"],
+            "additionalProperties": false,
+            "properties": {
+              "name": { "type": "string" },
+              "type": { "type": "string", "enum": ["string", "number", "boolean", "array", "object"] },
+              "description": { "type": "string" },
+              "default": {}
+            }
+          }
+        },
+        "optional_params": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["name", "type", "description"],
+            "additionalProperties": false,
+            "properties": {
+              "name": { "type": "string" },
+              "type": { "type": "string", "enum": ["string", "number", "boolean", "array", "object"] },
+              "description": { "type": "string" },
+              "default": {}
+            }
+          }
+        }
+      }
+    },
+    "output_schema": {
+      "type": "object",
+      "description": "Defines the output structure of this skill",
+      "properties": {
+        "fields": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["name", "type", "description"],
+            "additionalProperties": false,
+            "properties": {
+              "name": { "type": "string" },
+              "type": { "type": "string", "enum": ["string", "number", "boolean", "array", "object"] },
+              "description": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+    "execution_dag": {
+      "type": "object",
+      "description": "Directed Acyclic Graph of atomic operations. Describes WHAT to do, never HOW.",
+      "required": ["nodes", "edges", "entry_node", "exit_node"],
+      "additionalProperties": false,
+      "properties": {
+        "nodes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "action", "params"],
+            "additionalProperties": false,
+            "properties": {
+              "id": {
+                "type": "string",
+                "pattern": "^[a-z][a-z0-9_]{0,31}$"
+              },
+              "action": {
+                "type": "string",
+                "description": "Must be a registered atomic action from allowed_atomic_actions.json"
+              },
+              "params": {
+                "type": "object",
+                "description": "Parameters for this atomic action. Values can reference input via ${input.param_name} or previous node output via ${node_id.field}"
+              },
+              "description": {
+                "type": "string"
+              },
+              "timeout_ms": {
+                "type": "integer",
+                "minimum": 100,
+                "maximum": 300000,
+                "default": 30000
+              },
+              "retry": {
+                "type": "object",
+                "properties": {
+                  "max_attempts": { "type": "integer", "minimum": 0, "maximum": 5 },
+                  "backoff_ms": { "type": "integer", "minimum": 100, "maximum": 60000 }
+                }
+              },
+              "on_failure": {
+                "type": "string",
+                "enum": ["abort", "skip", "goto"],
+                "default": "abort"
+              },
+              "failure_goto": {
+                "type": "string",
+                "description": "Node ID to jump to on failure, only valid when on_failure is 'goto'"
+              }
+            }
+          },
+          "minItems": 1,
+          "maxItems": 64
+        },
+        "edges": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["from", "to"],
+            "additionalProperties": false,
+            "properties": {
+              "from": { "type": "string" },
+              "to": { "type": "string" },
+              "condition": {
+                "type": "object",
+                "description": "Optional condition for this edge transition",
+                "properties": {
+                  "field": { "type": "string" },
+                  "operator": { "type": "string", "enum": ["equals", "contains", "matches", "greater_than", "less_than", "exists"] },
+                  "value": {}
+                }
+              }
+            }
+          }
+        },
+        "entry_node": {
+          "type": "string",
+          "description": "ID of the first node to execute"
+        },
+        "exit_node": {
+          "type": "string",
+          "description": "ID of the final success node"
+        }
+      }
+    },
+    "security": {
+      "type": "object",
+      "description": "Security constraints - the core of JADE's safety guarantee",
+      "required": ["network_whitelist", "filesystem_access", "required_permissions"],
+      "additionalProperties": false,
+      "properties": {
+        "network_whitelist": {
+          "type": "array",
+          "description": "Exhaustive list of allowed domains. Empty array means no network access.",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-zA-Z0-9][a-zA-Z0-9\\-\\.]*\\.[a-zA-Z]{2,}$"
+          },
+          "uniqueItems": true
+        },
+        "filesystem_access": {
+          "type": "object",
+          "required": ["read_paths", "write_paths"],
+          "additionalProperties": false,
+          "properties": {
+            "read_paths": {
+              "type": "array",
+              "items": { "type": "string" },
+              "description": "Allowed read path patterns (glob). Empty = no read access."
+            },
+            "write_paths": {
+              "type": "array",
+              "items": { "type": "string" },
+              "description": "Allowed write path patterns (glob). Empty = no write access."
+            }
+          }
+        },
+        "required_permissions": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["network", "filesystem_read", "filesystem_write", "clipboard", "screenshot", "keyboard", "mouse", "subprocess", "environment_vars"]
+          },
+          "uniqueItems": true
+        },
+        "forbidden_patterns": {
+          "type": "array",
+          "description": "Regex patterns that must NOT appear anywhere in the skill",
+          "items": { "type": "string" }
+        },
+        "max_execution_time_ms": {
+          "type": "integer",
+          "minimum": 1000,
+          "maximum": 600000,
+          "default": 60000
+        }
+      }
+    },
+    "mcp_compatibility": {
+      "type": "object",
+      "description": "Optional MCP (Model Context Protocol) compatibility layer",
+      "properties": {
+        "required_mcp_tools": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "mcp_server_uri": {
+          "type": "string",
+          "format": "uri"
+        }
+      }
+    },
+    "attestation": {
+      "type": "object",
+      "description": "Proof of Success (PoS) tracking",
+      "properties": {
+        "success_count": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0
+        },
+        "failure_count": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0
+        },
+        "confidence_score": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 1.0,
+          "default": 0.5
+        },
+        "last_verified": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    }
+  }
+}

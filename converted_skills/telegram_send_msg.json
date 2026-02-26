@@ -1,0 +1,167 @@
+{
+  "jade_version": "1.0.0",
+  "skill_id": "telegram_send_msg",
+  "metadata": {
+    "name": "Telegram Send Message",
+    "version": "1.0.0",
+    "description": "Send a message via Telegram Bot API",
+    "author": "jadegate-community",
+    "tags": [
+      "telegram",
+      "message",
+      "bot",
+      "chat"
+    ],
+    "license": "MIT",
+    "created_at": "2026-02-21T03:00:00Z",
+    "updated_at": "2026-02-21T03:00:00Z"
+  },
+  "trigger": {
+    "type": "task_intent",
+    "conditions": [
+      {
+        "field": "task.type",
+        "operator": "in",
+        "value": [
+          "telegram_send",
+          "send_telegram"
+        ]
+      }
+    ]
+  },
+  "input_schema": {
+    "required_params": [
+      {
+        "name": "bot_token",
+        "type": "string",
+        "description": "Telegram bot token"
+      },
+      {
+        "name": "chat_id",
+        "type": "string",
+        "description": "Target chat ID"
+      },
+      {
+        "name": "text",
+        "type": "string",
+        "description": "Message text"
+      }
+    ]
+  },
+  "output_schema": {
+    "fields": [
+      {
+        "name": "message_id",
+        "type": "number",
+        "description": "Sent message ID"
+      },
+      {
+        "name": "success",
+        "type": "boolean",
+        "description": "Send success"
+      }
+    ]
+  },
+  "execution_dag": {
+    "nodes": [
+      {
+        "id": "encode",
+        "action": "url_encode",
+        "params": {
+          "input": "{{input.text}}"
+        }
+      },
+      {
+        "id": "send",
+        "action": "http_post",
+        "params": {
+          "url": "https://api.telegram.org/bot{{input.bot_token}}/sendMessage",
+          "body": {
+            "chat_id": "{{input.chat_id}}",
+            "text": "{{input.text}}",
+            "parse_mode": "Markdown"
+          },
+          "timeout_ms": 10000
+        }
+      },
+      {
+        "id": "check",
+        "action": "condition_check",
+        "params": {
+          "field": "{{send.output.status_code}}",
+          "operator": "equals",
+          "value": 200
+        }
+      },
+      {
+        "id": "parse",
+        "action": "json_parse",
+        "params": {
+          "input": "{{send.output.body}}"
+        }
+      },
+      {
+        "id": "ret_ok",
+        "action": "return_result",
+        "params": {
+          "message_id": "{{parse.output.data.result.message_id}}",
+          "success": true
+        }
+      },
+      {
+        "id": "ret_fail",
+        "action": "return_error",
+        "params": {
+          "error_code": "TELEGRAM_FAILED",
+          "message": "Failed to send Telegram message"
+        }
+      }
+    ],
+    "edges": [
+      {
+        "from": "encode",
+        "to": "send"
+      },
+      {
+        "from": "send",
+        "to": "check"
+      },
+      {
+        "from": "check",
+        "to": "parse",
+        "condition": "success"
+      },
+      {
+        "from": "check",
+        "to": "ret_fail",
+        "condition": "failure"
+      },
+      {
+        "from": "parse",
+        "to": "ret_ok"
+      }
+    ],
+    "entry_node": "encode",
+    "exit_node": [
+      "ret_ok",
+      "ret_fail"
+    ]
+  },
+  "security": {
+    "network_whitelist": [
+      "api.telegram.org"
+    ],
+    "file_permissions": {
+      "read": [],
+      "write": []
+    },
+    "max_execution_time_ms": 30000,
+    "max_retries": 2,
+    "sandbox_level": "strict",
+    "dangerous_patterns": []
+  },
+  "mcp_compatible": true,
+  "required_mcp_capabilities": [
+    "http"
+  ]
+}

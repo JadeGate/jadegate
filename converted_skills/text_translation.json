@@ -1,0 +1,216 @@
+{
+  "jade_version": "1.0.0",
+  "skill_id": "text_translation",
+  "metadata": {
+    "name": "Multi-Language Translation",
+    "version": "1.0.0",
+    "description": "Translate text between languages using free translation APIs with fallback",
+    "author": "jadegate-community",
+    "tags": [
+      "translate",
+      "language",
+      "i18n",
+      "multilingual"
+    ],
+    "license": "MIT",
+    "created_at": "2026-02-21T03:00:00Z",
+    "updated_at": "2026-02-21T03:00:00Z"
+  },
+  "trigger": {
+    "type": "task_intent",
+    "conditions": [
+      {
+        "field": "task.type",
+        "operator": "in",
+        "value": [
+          "translate_text",
+          "translation"
+        ]
+      }
+    ]
+  },
+  "input_schema": {
+    "required_params": [
+      {
+        "name": "text",
+        "type": "string",
+        "description": "Text to translate"
+      },
+      {
+        "name": "target_lang",
+        "type": "string",
+        "description": "Target language code (en, zh, ja, etc)"
+      }
+    ]
+  },
+  "output_schema": {
+    "fields": [
+      {
+        "name": "translated",
+        "type": "string",
+        "description": "Translated text"
+      },
+      {
+        "name": "source_lang",
+        "type": "string",
+        "description": "Detected source language"
+      },
+      {
+        "name": "provider",
+        "type": "string",
+        "description": "Translation provider"
+      }
+    ]
+  },
+  "execution_dag": {
+    "nodes": [
+      {
+        "id": "encode",
+        "action": "url_encode",
+        "params": {
+          "input": "{{input.text}}"
+        }
+      },
+      {
+        "id": "try_libre",
+        "action": "http_get",
+        "params": {
+          "url": "https://libretranslate.com/translate?q={{encode.output.result}}&target={{input.target_lang}}&format=text",
+          "timeout_ms": 10000
+        }
+      },
+      {
+        "id": "check_libre",
+        "action": "condition_check",
+        "params": {
+          "field": "{{try_libre.output.status_code}}",
+          "operator": "equals",
+          "value": 200
+        }
+      },
+      {
+        "id": "parse_libre",
+        "action": "json_parse",
+        "params": {
+          "input": "{{try_libre.output.body}}"
+        }
+      },
+      {
+        "id": "ret_libre",
+        "action": "return_result",
+        "params": {
+          "translated": "{{parse_libre.output.data.translatedText}}",
+          "source_lang": "{{parse_libre.output.data.detectedLanguage.language}}",
+          "provider": "libretranslate"
+        }
+      },
+      {
+        "id": "try_mymemory",
+        "action": "http_get",
+        "params": {
+          "url": "https://api.mymemory.translated.net/get?q={{encode.output.result}}&langpair=auto|{{input.target_lang}}",
+          "timeout_ms": 10000
+        }
+      },
+      {
+        "id": "check_mm",
+        "action": "condition_check",
+        "params": {
+          "field": "{{try_mymemory.output.status_code}}",
+          "operator": "equals",
+          "value": 200
+        }
+      },
+      {
+        "id": "parse_mm",
+        "action": "json_parse",
+        "params": {
+          "input": "{{try_mymemory.output.body}}"
+        }
+      },
+      {
+        "id": "ret_mm",
+        "action": "return_result",
+        "params": {
+          "translated": "{{parse_mm.output.data.responseData.translatedText}}",
+          "source_lang": "auto",
+          "provider": "mymemory"
+        }
+      },
+      {
+        "id": "ret_fail",
+        "action": "return_error",
+        "params": {
+          "error_code": "TRANSLATE_FAILED",
+          "message": "All translation providers failed"
+        }
+      }
+    ],
+    "edges": [
+      {
+        "from": "encode",
+        "to": "try_libre"
+      },
+      {
+        "from": "try_libre",
+        "to": "check_libre"
+      },
+      {
+        "from": "check_libre",
+        "to": "parse_libre",
+        "condition": "success"
+      },
+      {
+        "from": "check_libre",
+        "to": "try_mymemory",
+        "condition": "failure"
+      },
+      {
+        "from": "parse_libre",
+        "to": "ret_libre"
+      },
+      {
+        "from": "try_mymemory",
+        "to": "check_mm"
+      },
+      {
+        "from": "check_mm",
+        "to": "parse_mm",
+        "condition": "success"
+      },
+      {
+        "from": "check_mm",
+        "to": "ret_fail",
+        "condition": "failure"
+      },
+      {
+        "from": "parse_mm",
+        "to": "ret_mm"
+      }
+    ],
+    "entry_node": "encode",
+    "exit_node": [
+      "ret_libre",
+      "ret_mm",
+      "ret_fail"
+    ]
+  },
+  "security": {
+    "network_whitelist": [
+      "libretranslate.com",
+      "api.mymemory.translated.net"
+    ],
+    "file_permissions": {
+      "read": [],
+      "write": []
+    },
+    "max_execution_time_ms": 30000,
+    "max_retries": 2,
+    "sandbox_level": "strict",
+    "dangerous_patterns": []
+  },
+  "mcp_compatible": true,
+  "required_mcp_capabilities": [
+    "http"
+  ]
+}

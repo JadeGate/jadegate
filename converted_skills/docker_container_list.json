@@ -1,0 +1,141 @@
+{
+  "jade_version": "1.0.0",
+  "skill_id": "docker_container_list",
+  "metadata": {
+    "name": "Docker Container List",
+    "version": "1.0.0",
+    "description": "List running Docker containers via Docker socket API",
+    "author": "jadegate-community",
+    "tags": [
+      "docker",
+      "container",
+      "devops",
+      "list"
+    ],
+    "license": "MIT",
+    "created_at": "2026-02-21T03:00:00Z",
+    "updated_at": "2026-02-21T03:00:00Z"
+  },
+  "trigger": {
+    "type": "task_intent",
+    "conditions": [
+      {
+        "field": "task.type",
+        "operator": "in",
+        "value": [
+          "docker_list",
+          "list_containers"
+        ]
+      }
+    ]
+  },
+  "input_schema": {
+    "required_params": [
+      {
+        "name": "filter_status",
+        "type": "string",
+        "description": "Filter by status: running, exited, all"
+      }
+    ]
+  },
+  "output_schema": {
+    "fields": [
+      {
+        "name": "containers",
+        "type": "array",
+        "description": "List of containers"
+      },
+      {
+        "name": "count",
+        "type": "number",
+        "description": "Number of containers"
+      }
+    ]
+  },
+  "execution_dag": {
+    "nodes": [
+      {
+        "id": "fetch",
+        "action": "http_get",
+        "params": {
+          "url": "http://localhost:2375/containers/json?all={{input.filter_status}}",
+          "timeout_ms": 5000
+        }
+      },
+      {
+        "id": "check",
+        "action": "condition_check",
+        "params": {
+          "field": "{{fetch.output.status_code}}",
+          "operator": "equals",
+          "value": 200
+        }
+      },
+      {
+        "id": "parse",
+        "action": "json_parse",
+        "params": {
+          "input": "{{fetch.output.body}}"
+        }
+      },
+      {
+        "id": "ret_ok",
+        "action": "return_result",
+        "params": {
+          "containers": "{{parse.output.data}}",
+          "count": "{{parse.output.data.length}}"
+        }
+      },
+      {
+        "id": "ret_fail",
+        "action": "return_error",
+        "params": {
+          "error_code": "DOCKER_FAILED",
+          "message": "Cannot connect to Docker daemon"
+        }
+      }
+    ],
+    "edges": [
+      {
+        "from": "fetch",
+        "to": "check"
+      },
+      {
+        "from": "check",
+        "to": "parse",
+        "condition": "success"
+      },
+      {
+        "from": "check",
+        "to": "ret_fail",
+        "condition": "failure"
+      },
+      {
+        "from": "parse",
+        "to": "ret_ok"
+      }
+    ],
+    "entry_node": "fetch",
+    "exit_node": [
+      "ret_ok",
+      "ret_fail"
+    ]
+  },
+  "security": {
+    "network_whitelist": [
+      "*"
+    ],
+    "file_permissions": {
+      "read": [],
+      "write": []
+    },
+    "max_execution_time_ms": 30000,
+    "max_retries": 2,
+    "sandbox_level": "standard",
+    "dangerous_patterns": []
+  },
+  "mcp_compatible": true,
+  "required_mcp_capabilities": [
+    "http"
+  ]
+}

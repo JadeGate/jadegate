@@ -1,0 +1,277 @@
+{
+  "jade_version": "1.0.0",
+  "skill_id": "email_send_safe",
+  "metadata": {
+    "name": "Safe Email Sending SOP",
+    "version": "1.0.0",
+    "description": "Securely send emails via SMTP with mandatory confirmation step, content sanitization, and attachment size limits. Prevents accidental mass-mailing and sensitive data leakage through strict guardrails.",
+    "author": "jade-core-team",
+    "tags": ["email", "smtp", "send", "safe", "communication"],
+    "license": "MIT",
+    "created_at": "2026-02-21T00:00:00Z",
+    "updated_at": "2026-02-21T00:00:00Z"
+  },
+  "trigger": {
+    "type": "task_intent",
+    "conditions": [
+      {
+        "field": "task.type",
+        "operator": "in",
+        "value": ["send_email", "email_send", "compose_email"]
+      }
+    ]
+  },
+  "input_schema": {
+    "required_params": [
+      {
+        "name": "to",
+        "type": "string",
+        "description": "Recipient email address (single address only for safety)"
+      },
+      {
+        "name": "subject",
+        "type": "string",
+        "description": "Email subject line"
+      },
+      {
+        "name": "body",
+        "type": "string",
+        "description": "Email body content (plain text)"
+      },
+      {
+        "name": "smtp_host",
+        "type": "string",
+        "description": "SMTP server hostname"
+      },
+      {
+        "name": "smtp_user",
+        "type": "string",
+        "description": "SMTP authentication username"
+      },
+      {
+        "name": "smtp_pass",
+        "type": "string",
+        "description": "SMTP authentication password"
+      }
+    ],
+    "optional_params": [
+      {
+        "name": "smtp_port",
+        "type": "number",
+        "description": "SMTP server port",
+        "default": 587
+      },
+      {
+        "name": "from_name",
+        "type": "string",
+        "description": "Sender display name",
+        "default": ""
+      },
+      {
+        "name": "attachment_path",
+        "type": "string",
+        "description": "Optional file path for a single attachment"
+      },
+      {
+        "name": "require_confirmation",
+        "type": "boolean",
+        "description": "Whether to require human confirmation before sending",
+        "default": true
+      }
+    ]
+  },
+  "output_schema": {
+    "fields": [
+      { "name": "sent", "type": "boolean", "description": "Whether the email was successfully sent" },
+      { "name": "message_id", "type": "string", "description": "SMTP message ID if sent" },
+      { "name": "sanitized_fields", "type": "array", "description": "List of fields that were sanitized" }
+    ]
+  },
+  "execution_dag": {
+    "nodes": [
+      {
+        "id": "validate_recipient",
+        "action": "regex_match",
+        "params": {
+          "input": "{{input.to}}",
+          "pattern": "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"
+        }
+      },
+      {
+        "id": "check_valid_email",
+        "action": "condition_check",
+        "params": {
+          "field": "{{validate_recipient.output.matched}}",
+          "operator": "equals",
+          "value": true
+        }
+      },
+      {
+        "id": "check_single_recipient",
+        "action": "condition_check",
+        "params": {
+          "field": "{{input.to}}",
+          "operator": "not_contains",
+          "value": ","
+        }
+      },
+      {
+        "id": "sanitize_body",
+        "action": "text_sanitize",
+        "params": {
+          "input": "{{input.body}}",
+          "rules": ["strip_html", "remove_scripts", "mask_credit_cards", "mask_ssn"]
+        }
+      },
+      {
+        "id": "check_attachment",
+        "action": "condition_check",
+        "params": {
+          "field": "{{input.attachment_path}}",
+          "operator": "exists",
+          "value": true
+        }
+      },
+      {
+        "id": "validate_attachment_size",
+        "action": "file_read",
+        "params": {
+          "path": "{{input.attachment_path}}",
+          "encoding": "binary"
+        }
+      },
+      {
+        "id": "check_size_limit",
+        "action": "condition_check",
+        "params": {
+          "field": "{{validate_attachment_size.output.size_bytes}}",
+          "operator": "less_than",
+          "value": 10485760
+        }
+      },
+      {
+        "id": "build_email",
+        "action": "data_transform",
+        "params": {
+          "input_data": {
+            "to": "{{input.to}}",
+            "subject": "{{input.subject}}",
+            "body": "{{sanitize_body.output.result}}",
+            "from": "{{input.smtp_user}}"
+          },
+          "format": "email_mime"
+        }
+      },
+      {
+        "id": "request_confirmation",
+        "action": "human_confirm",
+        "params": {
+          "message": "About to send email to {{input.to}} with subject '{{input.subject}}'. Confirm?",
+          "timeout_ms": 60000
+        }
+      },
+      {
+        "id": "check_confirmed",
+        "action": "condition_check",
+        "params": {
+          "field": "{{request_confirmation.output.confirmed}}",
+          "operator": "equals",
+          "value": true
+        }
+      },
+      {
+        "id": "send_smtp",
+        "action": "smtp_send",
+        "params": {
+          "host": "{{input.smtp_host}}",
+          "port": "{{input.smtp_port | default:587}}",
+          "username": "{{input.smtp_user}}",
+          "password": "{{input.smtp_pass}}",
+          "message": "{{build_email.output.result}}",
+          "use_tls": true
+        }
+      },
+      {
+        "id": "return_success",
+        "action": "return_result",
+        "params": {
+          "sent": true,
+          "message_id": "{{send_smtp.output.message_id}}",
+          "sanitized_fields": "{{sanitize_body.output.sanitized_fields}}"
+        }
+      },
+      {
+        "id": "abort_invalid_email",
+        "action": "return_error",
+        "params": {
+          "error_code": "INVALID_RECIPIENT",
+          "message": "Recipient email address format is invalid"
+        }
+      },
+      {
+        "id": "abort_multi_recipient",
+        "action": "return_error",
+        "params": {
+          "error_code": "MULTI_RECIPIENT_BLOCKED",
+          "message": "JADE safety: only single recipient allowed per email to prevent mass-mailing"
+        }
+      },
+      {
+        "id": "abort_attachment_too_large",
+        "action": "return_error",
+        "params": {
+          "error_code": "ATTACHMENT_TOO_LARGE",
+          "message": "Attachment exceeds 10MB safety limit"
+        }
+      },
+      {
+        "id": "abort_not_confirmed",
+        "action": "return_error",
+        "params": {
+          "error_code": "USER_CANCELLED",
+          "message": "Email sending cancelled by user confirmation"
+        }
+      }
+    ],
+    "edges": [
+      { "from": "validate_recipient", "to": "check_valid_email" },
+      { "from": "check_valid_email", "to": "check_single_recipient", "condition": "success" },
+      { "from": "check_valid_email", "to": "abort_invalid_email", "condition": "failure" },
+      { "from": "check_single_recipient", "to": "sanitize_body", "condition": "success" },
+      { "from": "check_single_recipient", "to": "abort_multi_recipient", "condition": "failure" },
+      { "from": "sanitize_body", "to": "check_attachment" },
+      { "from": "check_attachment", "to": "validate_attachment_size", "condition": "success" },
+      { "from": "check_attachment", "to": "build_email", "condition": "failure" },
+      { "from": "validate_attachment_size", "to": "check_size_limit" },
+      { "from": "check_size_limit", "to": "build_email", "condition": "success" },
+      { "from": "check_size_limit", "to": "abort_attachment_too_large", "condition": "failure" },
+      { "from": "build_email", "to": "request_confirmation" },
+      { "from": "request_confirmation", "to": "check_confirmed" },
+      { "from": "check_confirmed", "to": "send_smtp", "condition": "success" },
+      { "from": "check_confirmed", "to": "abort_not_confirmed", "condition": "failure" },
+      { "from": "send_smtp", "to": "return_success" }
+    ],
+    "entry_node": "validate_recipient",
+    "exit_node": ["return_success", "abort_invalid_email", "abort_multi_recipient", "abort_attachment_too_large", "abort_not_confirmed"]
+  },
+  "security": {
+    "network_whitelist": [
+      "smtp.gmail.com",
+      "smtp.qq.com",
+      "smtp.163.com",
+      "smtp.outlook.com",
+      "smtp.office365.com",
+      "smtp.mail.yahoo.com"
+    ],
+    "file_permissions": {
+      "read": ["{{input.attachment_path}}"],
+      "write": []
+    },
+    "max_execution_time_ms": 30000,
+    "max_retries": 1,
+    "sandbox_level": "strict",
+    "dangerous_patterns": []
+  },
+  "mcp_compatible": true,
+  "required_mcp_capabilities": ["smtp", "filesystem"]
+}

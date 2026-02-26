@@ -1,0 +1,146 @@
+{
+  "jade_version": "1.0.0",
+  "skill_id": "base64_file_encode",
+  "metadata": {
+    "name": "Base64 File Encoder",
+    "version": "1.0.0",
+    "description": "Read a file and encode its content to Base64 string",
+    "author": "jadegate-community",
+    "tags": [
+      "base64",
+      "encode",
+      "file",
+      "binary"
+    ],
+    "license": "MIT",
+    "created_at": "2026-02-21T03:00:00Z",
+    "updated_at": "2026-02-21T03:00:00Z"
+  },
+  "trigger": {
+    "type": "task_intent",
+    "conditions": [
+      {
+        "field": "task.type",
+        "operator": "in",
+        "value": [
+          "encode_file",
+          "file_to_base64"
+        ]
+      }
+    ]
+  },
+  "input_schema": {
+    "required_params": [
+      {
+        "name": "file_path",
+        "type": "string",
+        "description": "Path to file to encode"
+      }
+    ]
+  },
+  "output_schema": {
+    "fields": [
+      {
+        "name": "base64_string",
+        "type": "string",
+        "description": "Base64 encoded content"
+      },
+      {
+        "name": "original_size",
+        "type": "number",
+        "description": "Original file size"
+      },
+      {
+        "name": "encoded_size",
+        "type": "number",
+        "description": "Encoded string length"
+      }
+    ]
+  },
+  "execution_dag": {
+    "nodes": [
+      {
+        "id": "read",
+        "action": "file_read",
+        "params": {
+          "path": "{{input.file_path}}"
+        }
+      },
+      {
+        "id": "check",
+        "action": "condition_check",
+        "params": {
+          "field": "{{read.output.size_bytes}}",
+          "operator": "greater_than",
+          "value": 0
+        }
+      },
+      {
+        "id": "encode",
+        "action": "base64_encode",
+        "params": {
+          "input": "{{read.output.content}}"
+        }
+      },
+      {
+        "id": "ret_ok",
+        "action": "return_result",
+        "params": {
+          "base64_string": "{{encode.output.result}}",
+          "original_size": "{{read.output.size_bytes}}",
+          "encoded_size": "{{encode.output.length}}"
+        }
+      },
+      {
+        "id": "ret_fail",
+        "action": "return_error",
+        "params": {
+          "error_code": "READ_FAILED",
+          "message": "Cannot read file"
+        }
+      }
+    ],
+    "edges": [
+      {
+        "from": "read",
+        "to": "check"
+      },
+      {
+        "from": "check",
+        "to": "encode",
+        "condition": "success"
+      },
+      {
+        "from": "check",
+        "to": "ret_fail",
+        "condition": "failure"
+      },
+      {
+        "from": "encode",
+        "to": "ret_ok"
+      }
+    ],
+    "entry_node": "read",
+    "exit_node": [
+      "ret_ok",
+      "ret_fail"
+    ]
+  },
+  "security": {
+    "network_whitelist": [],
+    "file_permissions": {
+      "read": [
+        "{{input.file_path}}"
+      ],
+      "write": []
+    },
+    "max_execution_time_ms": 30000,
+    "max_retries": 2,
+    "sandbox_level": "strict",
+    "dangerous_patterns": []
+  },
+  "mcp_compatible": true,
+  "required_mcp_capabilities": [
+    "file"
+  ]
+}

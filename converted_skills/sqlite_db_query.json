@@ -1,0 +1,180 @@
+{
+  "jade_version": "1.0.0",
+  "skill_id": "sqlite_db_query",
+  "metadata": {
+    "name": "SQLite Database Query",
+    "version": "1.0.0",
+    "description": "Execute read-only SQL queries on a local SQLite database file",
+    "author": "jadegate-community",
+    "tags": [
+      "database",
+      "sqlite",
+      "sql",
+      "query"
+    ],
+    "license": "MIT",
+    "created_at": "2026-02-21T03:00:00Z",
+    "updated_at": "2026-02-21T03:00:00Z"
+  },
+  "trigger": {
+    "type": "task_intent",
+    "conditions": [
+      {
+        "field": "task.type",
+        "operator": "in",
+        "value": [
+          "sqlite_query",
+          "db_query"
+        ]
+      }
+    ]
+  },
+  "input_schema": {
+    "required_params": [
+      {
+        "name": "db_path",
+        "type": "string",
+        "description": "Path to SQLite database file"
+      },
+      {
+        "name": "query",
+        "type": "string",
+        "description": "SQL SELECT query"
+      }
+    ]
+  },
+  "output_schema": {
+    "fields": [
+      {
+        "name": "rows",
+        "type": "array",
+        "description": "Query result rows"
+      },
+      {
+        "name": "columns",
+        "type": "array",
+        "description": "Column names"
+      },
+      {
+        "name": "row_count",
+        "type": "number",
+        "description": "Number of rows returned"
+      }
+    ]
+  },
+  "execution_dag": {
+    "nodes": [
+      {
+        "id": "check_ro",
+        "action": "condition_check",
+        "params": {
+          "field": "{{input.query}}",
+          "operator": "matches",
+          "value": "^\\s*SELECT"
+        }
+      },
+      {
+        "id": "exec_sql",
+        "action": "shell_exec",
+        "params": {
+          "command": "sqlite3 -json {{input.db_path}} '{{input.query}}'",
+          "timeout_ms": 10000
+        }
+      },
+      {
+        "id": "check_ok",
+        "action": "condition_check",
+        "params": {
+          "field": "{{exec_sql.output.exit_code}}",
+          "operator": "equals",
+          "value": 0
+        }
+      },
+      {
+        "id": "parse",
+        "action": "json_parse",
+        "params": {
+          "input": "{{exec_sql.output.stdout}}"
+        }
+      },
+      {
+        "id": "ret_ok",
+        "action": "return_result",
+        "params": {
+          "rows": "{{parse.output.data}}",
+          "columns": "{{parse.output.keys}}",
+          "row_count": "{{parse.output.length}}"
+        }
+      },
+      {
+        "id": "ret_readonly",
+        "action": "return_error",
+        "params": {
+          "error_code": "WRITE_BLOCKED",
+          "message": "Only SELECT queries allowed"
+        }
+      },
+      {
+        "id": "ret_fail",
+        "action": "return_error",
+        "params": {
+          "error_code": "SQL_ERROR",
+          "message": "{{exec_sql.output.stderr}}"
+        }
+      }
+    ],
+    "edges": [
+      {
+        "from": "check_ro",
+        "to": "exec_sql",
+        "condition": "success"
+      },
+      {
+        "from": "check_ro",
+        "to": "ret_readonly",
+        "condition": "failure"
+      },
+      {
+        "from": "exec_sql",
+        "to": "check_ok"
+      },
+      {
+        "from": "check_ok",
+        "to": "parse",
+        "condition": "success"
+      },
+      {
+        "from": "check_ok",
+        "to": "ret_fail",
+        "condition": "failure"
+      },
+      {
+        "from": "parse",
+        "to": "ret_ok"
+      }
+    ],
+    "entry_node": "check_ro",
+    "exit_node": [
+      "ret_ok",
+      "ret_readonly",
+      "ret_fail"
+    ]
+  },
+  "security": {
+    "network_whitelist": [],
+    "file_permissions": {
+      "read": [
+        "{{input.db_path}}"
+      ],
+      "write": []
+    },
+    "max_execution_time_ms": 30000,
+    "max_retries": 2,
+    "sandbox_level": "standard",
+    "dangerous_patterns": []
+  },
+  "mcp_compatible": true,
+  "required_mcp_capabilities": [
+    "shell"
+  ]
+}

@@ -1,0 +1,40 @@
+{
+  "jadegate_policy": {
+    "network_whitelist": [],
+    "blocked_domains": [
+      "169.254.169.254",
+      "metadata.google.internal",
+      "metadata.google",
+      "localhost"
+    ],
+    "file_read_paths": [],
+    "file_write_paths": [],
+    "blocked_file_patterns": [
+      "/etc/shadow",
+      "/etc/passwd",
+      "~/.ssh/id_*",
+      "~/.gnupg/*",
+      "~/.aws/credentials",
+      "~/.config/gcloud/*"
+    ],
+    "blocked_actions": [
+      "shell_exec",
+      "process_spawn",
+      "kernel_module",
+      "raw_socket"
+    ],
+    "require_human_approval": [
+      "email_send",
+      "git_push",
+      "file_delete",
+      "dns_modify"
+    ],
+    "max_calls_per_minute": 60,
+    "max_call_depth": 20,
+    "circuit_breaker_threshold": 5,
+    "circuit_breaker_timeout_sec": 60.0,
+    "enable_dangerous_pattern_scan": true,
+    "enable_executable_code_scan": true,
+    "enable_audit_log": true
+  }
+}

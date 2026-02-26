@@ -1,0 +1,58 @@
+{
+  "jade_registry_version": "1.0.0",
+  "description": "JADE Global Skill Registry Index",
+  "updated_at": "2026-02-21T00:00:00Z",
+  "total_skills": 5,
+  "entries": {
+    "web_anti_crawl_bypass": {
+      "skill_id": "web_anti_crawl_bypass",
+      "skill_hash": "",
+      "confidence_score": 0.5,
+      "success_count": 0,
+      "failure_count": 0,
+      "last_verified": 0,
+      "source_url": "jade_skills/web_anti_crawl.json",
+      "signature": ""
+    },
+    "pdf_table_parser": {
+      "skill_id": "pdf_table_parser",
+      "skill_hash": "",
+      "confidence_score": 0.5,
+      "success_count": 0,
+      "failure_count": 0,
+      "last_verified": 0,
+      "source_url": "jade_skills/pdf_table_parser.json",
+      "signature": ""
+    },
+    "weather_api_query": {
+      "skill_id": "weather_api_query",
+      "skill_hash": "",
+      "confidence_score": 0.5,
+      "success_count": 0,
+      "failure_count": 0,
+      "last_verified": 0,
+      "source_url": "jade_skills/weather_api.json",
+      "signature": ""
+    },
+    "file_batch_rename": {
+      "skill_id": "file_batch_rename",
+      "skill_hash": "",
+      "confidence_score": 0.5,
+      "success_count": 0,
+      "failure_count": 0,
+      "last_verified": 0,
+      "source_url": "jade_skills/file_batch_rename.json",
+      "signature": ""
+    },
+    "email_send_safe": {
+      "skill_id": "email_send_safe",
+      "skill_hash": "",
+      "confidence_score": 0.5,
+      "success_count": 0,
+      "failure_count": 0,
+      "last_verified": 0,
+      "source_url": "jade_skills/email_send_safe.json",
+      "signature": ""
+    }
+  }
+}

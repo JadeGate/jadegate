@@ -1,0 +1,158 @@
+name: JADE Skill Verification
+
+on:
+  pull_request:
+    paths:
+      - 'jade_skills/**/*.json'
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  verify-skill:
+    name: Verify JADE Skill
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install JADE
+        run: pip install -e .
+
+      - name: Get changed files
+        id: changed
+        run: |
+          echo "files=$(git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.sha }} -- 'jade_skills/*.json' | tr '\n' ' ')" >> $GITHUB_OUTPUT
+
+      - name: Validate changed skills
+        id: validate
+        run: |
+          ERRORS=0
+          VALIDATED=0
+          REPORT=""
+
+          for file in ${{ steps.changed.outputs.files }}; do
+            echo "========================================="
+            echo "Validating: $file"
+            echo "========================================="
+
+            RESULT=$(python -c "
+          import json, sys
+          from jade_core.validator import JadeValidator
+
+          validator = JadeValidator()
+          result = validator.validate_file('$file')
+
+          if result.valid:
+              print('PASS')
+          else:
+              print('FAIL')
+              for issue in result.issues:
+                  print(f'  [{issue.severity.value.upper()}] {issue.code}: {issue.message}')
+          ")
+
+            echo "$RESULT"
+
+            if echo "$RESULT" | grep -q "^PASS"; then
+              VALIDATED=$((VALIDATED + 1))
+              REPORT="$REPORT\n✅ \`$file\` - PASSED"
+            else
+              ERRORS=$((ERRORS + 1))
+              REPORT="$REPORT\n❌ \`$file\` - FAILED\n\`\`\`\n$RESULT\n\`\`\`"
+            fi
+          done
+
+          echo "validated=$VALIDATED" >> $GITHUB_OUTPUT
+          echo "errors=$ERRORS" >> $GITHUB_OUTPUT
+
+          # Write report to file for PR comment
+          echo -e "## 🟢 JADE Skill Verification Report\n" > report.md
+          echo -e "**Validated:** $VALIDATED | **Failed:** $ERRORS\n" >> report.md
+          echo -e "$REPORT" >> report.md
+
+          if [ $ERRORS -gt 0 ]; then
+            echo -e "\n---\n⚠️ **Some skills failed verification. Please fix the issues above.**" >> report.md
+            exit 1
+          else
+            echo -e "\n---\n✅ **All skills passed JADE verification. Safe to merge.**" >> report.md
+          fi
+
+      - name: Comment PR with results
+        if: always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const report = fs.readFileSync('report.md', 'utf8');
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: report
+            });
+
+      - name: Label PR
+        if: success()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.addLabels({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              labels: ['✅ jade-verified']
+            });
+
+  security-scan:
+    name: Deep Security Scan
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install JADE
+        run: pip install -e .
+
+      - name: Run security scan on all skills
+        run: |
+          python -c "
+          import json, sys, os
+          from jade_core.validator import JadeValidator
+          from jade_core.security import SecurityEngine
+
+          validator = JadeValidator()
+          skills_dir = 'jade_skills'
+          errors = 0
+
+          for fname in sorted(os.listdir(skills_dir)):
+              if not fname.endswith('.json'):
+                  continue
+              path = os.path.join(skills_dir, fname)
+              result = validator.validate_file(path)
+
+              sec_issues = [i for i in result.issues if i.code.startswith('SEC_')]
+              if sec_issues:
+                  errors += 1
+                  print(f'SECURITY ALERT: {fname}')
+                  for issue in sec_issues:
+                      print(f'  [{issue.severity.value}] {issue.code}: {issue.message}')
+
+          if errors > 0:
+              print(f'\n{errors} skill(s) have security issues!')
+              sys.exit(1)
+          else:
+              print('All skills passed security scan.')
+          "
