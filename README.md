@@ -9,6 +9,11 @@ pip install jadegate
 # That's it. All your MCP servers are now protected.
 ```
 
+<p align="center">
+  <img src="assets/demo.gif" alt="JadeGate Demo" width="730">
+</p>
+
+
 ---
 
 ## The Problem

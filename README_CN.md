@@ -9,6 +9,11 @@ pip install jadegate
 # 就这样。你的所有 MCP Server 已经被保护了。
 ```
 
+<p align="center">
+  <img src="assets/demo.gif" alt="JadeGate 演示" width="730">
+</p>
+
+
 ---
 
 ## 问题
