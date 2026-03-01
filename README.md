@@ -9,11 +9,6 @@ pip install jadegate
 # That's it. All your MCP servers are now protected.
 ```
 
-<p align="center">
-  <img src="assets/demo.gif" alt="JadeGate Demo" width="730">
-</p>
-
-
 ---
 
 ## The Problem
@@ -66,6 +61,25 @@ Next time you open Claude Desktop, Cursor, or any supported client — protectio
 jadegate uninstall   # Restores all original configs
 pip uninstall jadegate
 ```
+
+## Demo
+
+### Security Scan
+![scan](assets/demo.gif)
+
+### Protection Status
+![status](assets/demo_status.gif)
+
+### Certificate Management
+![cert list](assets/demo_cert.gif)
+
+### Policy
+![policy show](assets/demo_policy.gif)
+
+### Install
+![install](assets/demo_install.gif)
+
+---
 
 ## Commands
 
@@ -195,7 +209,7 @@ pytest tests/ -v
 
 ## License
 
-MIT
+BSL 1.1 — Converts to Apache 2.0 in 4 years
 
 ---
 

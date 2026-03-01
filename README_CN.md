@@ -9,11 +9,6 @@ pip install jadegate
 # 就这样。你的所有 MCP Server 已经被保护了。
 ```
 
-<p align="center">
-  <img src="assets/demo.gif" alt="JadeGate 演示" width="730">
-</p>
-
-
 ---
 
 ## 问题
@@ -66,6 +61,25 @@ pip install jadegate
 jadegate uninstall   # 恢复所有原始配置
 pip uninstall jadegate
 ```
+
+## 演示
+
+### 安全扫描
+![scan](assets/demo.gif)
+
+### 保护状态
+![status](assets/demo_status.gif)
+
+### 证书管理
+![cert list](assets/demo_cert.gif)
+
+### 策略配置
+![policy show](assets/demo_policy.gif)
+
+### 安装
+![install](assets/demo_install.gif)
+
+---
 
 ## 命令
 
@@ -181,7 +195,7 @@ pytest tests/ -v
 
 ## 许可证
 
-MIT
+BSL 1.1 — 4 年后转为 Apache 2.0
 
 ---
 
