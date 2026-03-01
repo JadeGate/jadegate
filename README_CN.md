@@ -2,7 +2,7 @@
 
 <div align="center">
 
-[English](README.md) · [中文](README_CN.md) · [官网](https://jadegate.io)
+[English](README.md) · [中文](README_CN.md) · [官网](https://jadegate.io) · [自助盖章 →](https://jadegate.io/guide/)
 
 </div>
 
