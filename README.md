@@ -1,5 +1,11 @@
 # JadeGate 💠
 
+<div align="center">
+
+[English](README.md) · [中文](README_CN.md) · [Website](https://jadegate.io)
+
+</div>
+
 **The TLS of AI Tool Calls.**
 
 One command. Every MCP server protected. Zero config.
@@ -64,8 +70,8 @@ pip uninstall jadegate
 
 ## Demo
 
-### Security Scan
-![scan](assets/demo.gif)
+### Security Audit Report
+![scan](assets/demo_scan_audit.gif)
 
 ### Protection Status
 ![status](assets/demo_status.gif)
@@ -75,9 +81,6 @@ pip uninstall jadegate
 
 ### Policy
 ![policy show](assets/demo_policy.gif)
-
-### Install
-![install](assets/demo_install.gif)
 
 ---
 
@@ -95,19 +98,28 @@ jadegate uninstall   # Revert all changes
 ```
 $ jadegate scan
 
-  💠 JadeGate v2.0.0 — AI Tool Call Security Protocol
+  💠 JadeGate Security Audit Report
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-  MCP Server Security Scan
+  Server: puppeteer  [CRITICAL]
+  Command: npx @modelcontextprotocol/server-puppeteer
 
-  ✓ filesystem  ● MEDIUM    filesystem access
-    tools: 3 discovered
-  ✓ github      ● MEDIUM    network access
-    tools: 5 discovered
-  ✓ puppeteer   ● CRITICAL  shell + network + browser
-    tools: 8 discovered
+    FINDINGS (2)
+    ──────────────────────────────────────────────────────────
 
-  3 servers scanned: 0 low, 2 medium, 0 high, 1 critical
-  All servers protected by JadeGate proxy.
+    [F-001] ⚫ CRITICAL · Arbitrary code / shell execution
+      Tool can execute shell commands or spawn processes.
+      → Action: BLOCK
+
+    [F-003] 🔴 HIGH · Browser automation (JS execution + DOM access)
+      Cookie theft, session hijacking, 2FA code capture via screenshot.
+      → Action: ASK on every call
+
+  SUMMARY
+  3 server(s) scanned · 0 low  1 medium  1 high  1 critical
+  5 finding(s) total  · 1 critical  2 high
+
+  ⚠  3 critical/high finding(s) require immediate action.
 ```
 
 ## Python SDK Protection
@@ -213,5 +225,6 @@ BSL 1.1 — Converts to Apache 2.0 in 4 years
 
 ---
 
-**GitHub**: https://github.com/JadeGate/jadegate
-**PyPI**: https://pypi.org/project/jadegate/
+**GitHub**: https://github.com/JadeGate/jadegate  
+**PyPI**: https://pypi.org/project/jadegate/  
+**Website**: https://jadegate.io
