@@ -143,17 +143,23 @@ class InstallResult:
 
 
 def _find_jadegate_binary() -> str:
-    """Find the jadegate CLI binary path."""
-    # Check common locations
+    """Find the jadegate CLI binary path.
+
+    Always return the short name 'jadegate' when it is resolvable via PATH,
+    so that generated MCP config files stay portable across machines and
+    Python environments (especially on Windows where shutil.which returns
+    the full .EXE path).
+    """
+    if shutil.which("jadegate"):
+        return "jadegate"
+    # Not on PATH yet — fall back to explicit locations
     candidates = [
-        shutil.which("jadegate"),
         os.path.expanduser("~/.local/bin/jadegate"),
         os.path.join(os.path.dirname(__file__), "..", "cli.py"),
     ]
     for c in candidates:
         if c and os.path.exists(c):
             return c
-    # Fallback: use python -m jadegate.cli
     return "jadegate"
 
 

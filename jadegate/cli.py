@@ -22,6 +22,12 @@ import sys
 import time
 from pathlib import Path
 
+# Force UTF-8 on Windows — prevents emoji crash on GBK/CP936 terminals
+if sys.platform == "win32":
+    import io
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8", errors="replace")
+    sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding="utf-8", errors="replace")
+
 # ANSI
 class _C:
     CYAN = "\033[36m"
@@ -34,7 +40,11 @@ class _C:
 
 
 def _banner():
-    return f"{_C.CYAN}💠 JadeGate{_C.RESET} {_C.DIM}v2.0.0 — AI Tool Call Security Protocol{_C.RESET}"
+    try:
+        from jadegate import __version__
+    except Exception:
+        __version__ = "2.0.0"
+    return f"{_C.CYAN}💠 JadeGate{_C.RESET} {_C.DIM}v{__version__} — AI Tool Call Security Protocol{_C.RESET}"
 
 
 # ─── scan ────────────────────────────────────────────────────

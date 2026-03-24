@@ -41,7 +41,7 @@ setup(
     long_description_content_type="text/markdown",
     author="Project JADE",
     url="https://github.com/JadeGate/jadegate",
-    license="MIT",
+    license="BSL-1.1",
     packages=find_packages(exclude=["tests", "tests.*"]),
     package_data={
         "jade_schema": ["*.json"],
@@ -68,7 +68,7 @@ setup(
     classifiers=[
         "Development Status :: 4 - Beta",
         "Intended Audience :: Developers",
-        "License :: OSI Approved :: MIT License",
+        "License :: Other/Proprietary License",
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
