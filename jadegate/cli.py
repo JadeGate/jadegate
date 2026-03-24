@@ -157,8 +157,34 @@ def cmd_policy(args):
             policy = JadePolicy.from_file(args.file)
         else:
             policy = JadePolicy.default()
+        d = policy.to_dict()
         print(f"  {_C.BOLD}Security Policy{_C.RESET}")
-        print(json.dumps(policy.to_dict(), indent=2))
+        print()
+        # Pretty-print as human-readable key: value pairs grouped by section
+        sections = {
+            "Network": ["network_whitelist", "blocked_domains", "upload_whitelist"],
+            "File Access": ["file_read_paths", "file_write_paths", "blocked_file_patterns"],
+            "Actions": ["blocked_actions", "require_human_approval"],
+            "Rate Limits": ["max_calls_per_minute", "max_call_depth", "circuit_breaker_threshold", "circuit_breaker_timeout_sec"],
+            "Scanning": ["enable_dangerous_pattern_scan", "enable_executable_code_scan", "enable_audit_log", "audit_log_path"],
+        }
+        for section, keys in sections.items():
+            print(f"  {_C.DIM}{section}{_C.RESET}")
+            for k in keys:
+                v = d.get(k)
+                if v is None:
+                    continue
+                if isinstance(v, list):
+                    if v:
+                        print(f"    {k}: {_C.CYAN}{', '.join(str(x) for x in v)}{_C.RESET}")
+                    else:
+                        print(f"    {k}: {_C.DIM}(none){_C.RESET}")
+                elif isinstance(v, bool):
+                    color = _C.GREEN if v else _C.DIM
+                    print(f"    {k}: {color}{v}{_C.RESET}")
+                elif v != "" and v != 0:
+                    print(f"    {k}: {_C.CYAN}{v}{_C.RESET}")
+            print()
 
     elif action == "init":
         from .policy.policy import JadePolicy
@@ -213,17 +239,21 @@ def cmd_install(args):
     total_wrapped = 0
     total_already = 0
     for r in results:
-        if r.success:
-            icon = f"{_C.GREEN}✓{_C.RESET}"
+        if not r.success:
+            print(f"  {_C.RED}✗{_C.RESET} {r.client_name}: error")
+            if r.error:
+                print(f"    {_C.RED}{r.error}{_C.RESET}")
+        elif r.servers_found == 0:
+            # Client config exists but has no MCP servers — skip silently
+            pass
+        elif r.servers_wrapped > 0:
             total_wrapped += r.servers_wrapped
+            print(f"  {_C.GREEN}✓{_C.RESET} {r.client_name}: {_C.GREEN}{r.servers_wrapped} server(s) now protected{_C.RESET}")
+            if r.backup_path:
+                print(f"    {_C.DIM}backup: {r.backup_path}{_C.RESET}")
+        elif r.already_protected > 0:
             total_already += r.already_protected
-        else:
-            icon = f"{_C.RED}✗{_C.RESET}"
-        print(f"  {icon} {r.client_name}: {r.servers_wrapped} wrapped, {r.already_protected} already protected")
-        if r.backup_path:
-            print(f"    {_C.DIM}backup: {r.backup_path}{_C.RESET}")
-        if r.error:
-            print(f"    {_C.RED}{r.error}{_C.RESET}")
+            print(f"  {_C.GREEN}✓{_C.RESET} {r.client_name}: {_C.DIM}already protected ({r.already_protected} server(s)){_C.RESET}")
 
     print()
     if total_wrapped > 0:
@@ -233,6 +263,52 @@ def cmd_install(args):
         print(f"  {_C.DIM}All servers already protected. Nothing to do.{_C.RESET}")
 
     print(f"\n  {_C.DIM}To undo: jadegate uninstall{_C.RESET}")
+
+
+# ─── helpers ─────────────────────────────────────────────────
+
+def _find_skill_by_name(name: str):
+    """Find a skill JSON file by name using jade_registry index.
+
+    Returns a Path if found, None otherwise.
+    Matches skill_id or filename stem (e.g. 'mcp_slack_send' or 'slack').
+    """
+    import importlib.util
+    name_lower = name.lower().replace("-", "_")
+
+    # Load registry index to find source_path
+    spec = importlib.util.find_spec("jade_registry")
+    if not spec or not spec.submodule_search_locations:
+        return None
+    registry_root = Path(list(spec.submodule_search_locations)[0])
+    idx_path = registry_root / "skill_index.json"
+    if not idx_path.exists():
+        return None
+
+    import json as _json
+    index = _json.loads(idx_path.read_text(encoding="utf-8"))
+    skills = index.get("skills", [])
+
+    # Resolve the package root (parent of jade_registry)
+    pkg_root = registry_root.parent
+
+    matched = None
+    for s in skills:
+        sid = s.get("skill_id", "").lower()
+        src = s.get("source_path", "")
+        stem = Path(src).stem.lower() if src else ""
+        if sid == name_lower or stem == name_lower:
+            matched = src
+            break
+        # Suffix / partial match: 'slack' matches 'mcp_slack_send'
+        if name_lower in sid or name_lower in stem:
+            matched = src  # keep searching for exact match
+
+    if matched:
+        full = pkg_root / matched
+        if full.exists():
+            return full
+    return None
 
 
 # ─── uninstall ───────────────────────────────────────────────
@@ -283,17 +359,20 @@ def cmd_verify(args):
     passed = 0
 
     for file_path in args.files:
-        # Support both absolute and relative paths
+        # 1. Try as absolute/relative path first
         p = Path(file_path).resolve()
-        if p.is_dir():
-            files = list(p.glob("*.json"))
-        elif p.exists():
-            files = [p]
-        else:
+        if not p.exists():
+            # 2. Try as skill name — search jade_skills/ inside the package
+            p = _find_skill_by_name(file_path)
+
+        if p is None or not p.exists():
             print(f"  {_C.RED}❌ FAIL{_C.RESET} {file_path}")
-            print(f"    [FILE_NOT_FOUND] File not found: {file_path}")
+            print(f"    [NOT_FOUND] No skill file found for: {file_path}")
+            print(f"    {_C.DIM}Try: jadegate list {file_path}  to search for matching skills{_C.RESET}")
             total += 1
             continue
+
+        files = list(p.glob("*.json")) if p.is_dir() else [p]
 
         for f in files:
             total += 1
@@ -568,10 +647,32 @@ def main():
 
     args = parser.parse_args()
     if not args.command:
-        parser.print_help()
+        _print_welcome()
         return
 
     args.func(args)
+
+
+def _print_welcome():
+    """Print a friendly welcome screen when no command is given."""
+    print(_banner())
+    print()
+    print(f"  {_C.BOLD}Quick start:{_C.RESET}")
+    print(f"  {_C.CYAN}jadegate install{_C.RESET}              {_C.DIM}Protect all MCP clients (Claude, Cursor, Windsurf…){_C.RESET}")
+    print(f"  {_C.CYAN}jadegate scan{_C.RESET}                 {_C.DIM}Audit installed MCP servers for security risks{_C.RESET}")
+    print(f"  {_C.CYAN}jadegate status{_C.RESET}               {_C.DIM}Show current protection status{_C.RESET}")
+    print()
+    print(f"  {_C.BOLD}Skills:{_C.RESET}")
+    print(f"  {_C.CYAN}jadegate list{_C.RESET}                 {_C.DIM}Browse 150+ verified built-in skills{_C.RESET}")
+    print(f"  {_C.CYAN}jadegate list github{_C.RESET}          {_C.DIM}Search skills by keyword{_C.RESET}")
+    print(f"  {_C.CYAN}jadegate skill add <github-url>{_C.RESET}  {_C.DIM}Install from awesome-claude-skills or any repo{_C.RESET}")
+    print()
+    print(f"  {_C.BOLD}More:{_C.RESET}")
+    print(f"  {_C.CYAN}jadegate verify <file>{_C.RESET}        {_C.DIM}Run 5-layer security check on a skill file{_C.RESET}")
+    print(f"  {_C.CYAN}jadegate policy show{_C.RESET}          {_C.DIM}View current security policy{_C.RESET}")
+    print(f"  {_C.CYAN}jadegate uninstall{_C.RESET}            {_C.DIM}Remove protection (restore original configs){_C.RESET}")
+    print()
+    print(f"  {_C.DIM}Docs → https://jadegate.io   GitHub → https://github.com/JadeGate/jadegate{_C.RESET}")
 
 
 if __name__ == "__main__":

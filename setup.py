@@ -45,7 +45,7 @@ setup(
     packages=find_packages(exclude=["tests", "tests.*"]),
     package_data={
         "jade_schema": ["*.json"],
-        "jade_skills": ["*.json"],
+        "jade_skills": ["*.json", "mcp/*.json", "mcp/*.sig.json", "tools/*.json", "tools/*.sig.json", "*.sig.json"],
         "jade_registry": ["*.json"],
         "jadegate": ["policy/*.json"],
     },
