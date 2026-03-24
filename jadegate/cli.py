@@ -17,9 +17,7 @@ from __future__ import annotations
 
 import argparse
 import json
-import os
 import sys
-import time
 from pathlib import Path
 
 # Force UTF-8 on Windows — prevents emoji crash on GBK/CP936 terminals
@@ -115,8 +113,9 @@ def cmd_proxy(args):
 
 # ─── status ──────────────────────────────────────────────────
 
-def cmd_status(args):
+def cmd_status(args: argparse.Namespace):  # args required by argparse dispatch
     """Show JadeGate protection status."""
+    del args  # unused but required by argparse callback interface
     print(_banner())
     print()
 
@@ -238,8 +237,9 @@ def cmd_install(args):
 
 # ─── uninstall ───────────────────────────────────────────────
 
-def cmd_uninstall(args):
+def cmd_uninstall(args: argparse.Namespace):  # args required by argparse dispatch
     """Remove jadegate proxy from all MCP client configs."""
+    del args  # unused but required by argparse callback interface
     print(_banner())
     print()
 
@@ -283,11 +283,17 @@ def cmd_verify(args):
     passed = 0
 
     for file_path in args.files:
-        p = Path(file_path)
+        # Support both absolute and relative paths
+        p = Path(file_path).resolve()
         if p.is_dir():
             files = list(p.glob("*.json"))
-        else:
+        elif p.exists():
             files = [p]
+        else:
+            print(f"  {_C.RED}❌ FAIL{_C.RESET} {file_path}")
+            print(f"    [FILE_NOT_FOUND] File not found: {file_path}")
+            total += 1
+            continue
 
         for f in files:
             total += 1
@@ -303,16 +309,192 @@ def cmd_verify(args):
     print(f"\n  {total} scanned, {_C.GREEN}{passed} passed{_C.RESET}, {_C.RED}{total - passed} failed{_C.RESET}")
 
 
-# ─── list (v1 compat) ───────────────────────────────────────
+# ─── list ────────────────────────────────────────────────────
 
 def cmd_list(args):
-    """List registered JADE skills (v1 compatibility)."""
-    # Delegate to old CLI if available
+    """List bundled JADE skills from the registry."""
+    print(_banner())
+    print()
+
+    # Try reading skill_index.json from jade_registry package
     try:
-        from jade_core.cli import cmd_list as old_list
-        old_list(args)
-    except ImportError:
-        print(f"  {_C.DIM}jade_core CLI not available{_C.RESET}")
+        import importlib.util
+        spec = importlib.util.find_spec("jade_registry")
+        if spec and spec.submodule_search_locations:
+            idx_path = Path(list(spec.submodule_search_locations)[0]) / "skill_index.json"
+            index = json.loads(idx_path.read_text(encoding="utf-8"))
+        else:
+            index = {}
+    except Exception:
+        index = {}
+
+    skills = index.get("skills", [])
+    if not skills:
+        print(f"  {_C.DIM}No skills found in registry.{_C.RESET}")
+        return
+
+    keyword = getattr(args, "keyword", None)
+    if keyword:
+        keyword = keyword.lower()
+        skills = [s for s in skills if keyword in s.get("name", "").lower()
+                  or keyword in s.get("description", "").lower()
+                  or keyword in " ".join(s.get("tags", [])).lower()]
+
+    for s in skills:
+        name = s.get("name", "?")
+        desc = s.get("description", "")[:60]
+        print(f"  {_C.CYAN}💠{_C.RESET} {_C.BOLD}{name:<28}{_C.RESET} {_C.DIM}{desc}{_C.RESET}")
+
+    print(f"\n  {_C.DIM}{len(skills)} skill(s){_C.RESET}")
+
+
+# ─── skill (install from GitHub / URL) ───────────────────────
+
+def cmd_skill(args):
+    """Install and verify a JADE skill from GitHub or URL."""
+    action = getattr(args, "skill_action", "help")
+
+    if action == "add":
+        _skill_add(args)
+    elif action == "list":
+        cmd_list(args)
+    else:
+        print(_banner())
+        print()
+        print(f"  {_C.BOLD}jadegate skill add <url>{_C.RESET}   Install a skill from GitHub or URL")
+        print(f"  {_C.BOLD}jadegate skill list{_C.RESET}         List installed skills")
+        print()
+        print(f"  {_C.DIM}Supports:{_C.RESET}")
+        print(f"  {_C.DIM}  github.com/ComposioHQ/awesome-claude-skills/tree/master/file-organizer{_C.RESET}")
+        print(f"  {_C.DIM}  github.com/JimLiu/baoyu-skills  (installs all skills){_C.RESET}")
+        print(f"  {_C.DIM}  any raw URL to a SKILL.md or .json skill file{_C.RESET}")
+
+
+def _skill_add(args):
+    """Install a skill from GitHub repo or raw URL, with security scan."""
+    import urllib.request
+    import urllib.error
+
+    print(_banner())
+    print()
+
+    url = args.url
+    print(f"  {_C.DIM}Fetching skill from: {url}{_C.RESET}")
+    print()
+
+    # Normalise GitHub URLs → raw content URLs
+    raw_urls = _resolve_skill_urls(url)
+    if not raw_urls:
+        print(f"  {_C.RED}✗ Could not resolve skill URL{_C.RESET}")
+        print(f"  {_C.DIM}Expected: GitHub repo/folder URL or raw URL to SKILL.md / .json{_C.RESET}")
+        return
+
+    skills_dir = Path.home() / ".jadegate" / "skills"
+    skills_dir.mkdir(parents=True, exist_ok=True)
+
+    installed = 0
+    for raw_url, skill_name in raw_urls:
+        print(f"  📦 {_C.BOLD}{skill_name}{_C.RESET}")
+        try:
+            req = urllib.request.Request(raw_url, headers={"User-Agent": "jadegate/2.0"})
+            with urllib.request.urlopen(req, timeout=10) as resp:
+                content = resp.read().decode("utf-8")
+        except urllib.error.URLError as e:
+            print(f"     {_C.RED}✗ Download failed: {e}{_C.RESET}")
+            continue
+
+        # Security scan the content
+        issues = _scan_skill_content(content)
+        if issues:
+            print(f"     {_C.RED}✗ Security issues found — NOT installed:{_C.RESET}")
+            for issue in issues:
+                print(f"       • {issue}")
+            continue
+
+        # Save to ~/.jadegate/skills/
+        ext = ".md" if raw_url.endswith(".md") else ".json"
+        dest = skills_dir / f"{skill_name}{ext}"
+        dest.write_text(content, encoding="utf-8")
+        print(f"     {_C.GREEN}✓ Verified & installed{_C.RESET} → {_C.DIM}{dest}{_C.RESET}")
+        installed += 1
+
+    print()
+    if installed:
+        print(f"  {_C.GREEN}✓ {installed} skill(s) installed to ~/.jadegate/skills/{_C.RESET}")
+        print(f"  {_C.DIM}Skills are available to Claude Code via CLAUDE.md or MCP.{_C.RESET}")
+    else:
+        print(f"  {_C.YELLOW}No skills installed.{_C.RESET}")
+
+
+def _resolve_skill_urls(url: str):
+    """Convert a GitHub URL or raw URL into a list of (raw_url, skill_name) tuples."""
+    import urllib.request
+    import urllib.error
+
+    # Already a raw URL
+    if "raw.githubusercontent.com" in url or url.endswith(".md") or url.endswith(".json"):
+        name = url.rstrip("/").split("/")[-1].replace(".md", "").replace(".json", "")
+        return [(url, name)]
+
+    # GitHub repo/folder URL: https://github.com/ORG/REPO[/tree/BRANCH/PATH]
+    import re
+    m = re.match(
+        r"https?://github\.com/([^/]+)/([^/]+)(?:/tree/([^/]+)(/.*)?)?", url
+    )
+    if not m:
+        return []
+
+    org, repo, branch, subpath = m.group(1), m.group(2), m.group(3), m.group(4)
+    branch = branch or "main"
+    subpath = (subpath or "").strip("/")
+
+    # Single skill folder (has a SKILL.md inside)
+    if subpath:
+        raw = f"https://raw.githubusercontent.com/{org}/{repo}/{branch}/{subpath}/SKILL.md"
+        name = subpath.split("/")[-1]
+        return [(raw, name)]
+
+    # Whole repo — discover all SKILL.md files via GitHub API
+    api = f"https://api.github.com/repos/{org}/{repo}/git/trees/{branch}?recursive=1"
+    try:
+        req = urllib.request.Request(api, headers={"User-Agent": "jadegate/2.0", "Accept": "application/vnd.github+json"})
+        with urllib.request.urlopen(req, timeout=10) as resp:
+            tree = json.loads(resp.read())
+        results = []
+        for item in tree.get("tree", []):
+            path = item.get("path", "")
+            if path.endswith("/SKILL.md") or path == "SKILL.md":
+                skill_name = path.replace("/SKILL.md", "").replace("SKILL.md", repo).split("/")[-1]
+                raw = f"https://raw.githubusercontent.com/{org}/{repo}/{branch}/{path}"
+                results.append((raw, skill_name))
+        return results
+    except Exception:
+        # Fallback: try as single SKILL.md at root
+        raw = f"https://raw.githubusercontent.com/{org}/{repo}/{branch}/SKILL.md"
+        return [(raw, repo)]
+
+
+def _scan_skill_content(content: str) -> list:
+    """Quick security scan of SKILL.md or skill JSON content. Returns list of issue strings."""
+    issues = []
+    danger_patterns = [
+        (r"curl\s+.*\|\s*(bash|sh|zsh)", "Remote code execution via curl|bash"),
+        (r"wget\s+.*-O\s*-\s*\|", "Remote code execution via wget"),
+        (r"eval\s*\(", "Use of eval()"),
+        (r"exec\s*\(", "Use of exec()"),
+        (r"__import__\s*\(", "Dynamic import attempt"),
+        (r"os\.system\s*\(", "Shell execution via os.system"),
+        (r"subprocess\.(run|Popen|call)\s*\(.*shell\s*=\s*True", "Shell injection risk"),
+        (r"rm\s+-rf\s+/", "Destructive rm -rf /"),
+        (r"chmod\s+777", "Overly permissive chmod 777"),
+        (r"(ssh|scp)\s+.*@.*\bpassword\b", "Hardcoded SSH credential"),
+        (r"https?://[^\s]+\.(onion|bit)\b", "Suspicious TLD in URL"),
+    ]
+    import re
+    for pattern, desc in danger_patterns:
+        if re.search(pattern, content, re.IGNORECASE):
+            issues.append(desc)
+    return issues
 
 
 # ─── main ────────────────────────────────────────────────────
@@ -367,9 +549,22 @@ def main():
     p_verify.add_argument("files", nargs="+")
     p_verify.set_defaults(func=cmd_verify)
 
-    # list (v1 compat)
+    # list
     p_list = sub.add_parser("list", help="List registered skills")
+    p_list.add_argument("keyword", nargs="?", help="Filter by keyword")
     p_list.set_defaults(func=cmd_list)
+
+    # skill (install from GitHub / ecosystem)
+    p_skill = sub.add_parser("skill", help="Install skills from GitHub / skill ecosystems")
+    skill_sub = p_skill.add_subparsers(dest="skill_action")
+    p_skill.set_defaults(func=cmd_skill)
+
+    p_skill_add = skill_sub.add_parser("add", help="Install a skill from GitHub or URL")
+    p_skill_add.add_argument("url", help="GitHub repo/folder URL or raw URL to SKILL.md")
+    p_skill_add.set_defaults(func=cmd_skill)
+
+    p_skill_list = skill_sub.add_parser("list", help="List installed skills")
+    p_skill_list.set_defaults(func=cmd_skill)
 
     args = parser.parse_args()
     if not args.command:

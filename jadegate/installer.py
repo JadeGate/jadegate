@@ -19,16 +19,68 @@ import json
 import logging
 import os
 import platform
+import re
 import shutil
-import time
 from dataclasses import dataclass, field
-from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
 logger = logging.getLogger("jadegate.installer")
 
 JADEGATE_MARKER = "__jadegate_protected__"
 BACKUP_SUFFIX = ".jadegate-backup"
+
+
+def _load_jsonc(path: str) -> Any:
+    """Load a JSON or JSONC (JSON-with-comments) file.
+
+    VS Code settings.json and many MCP config files use JSONC format
+    which allows // line comments and /* block comments */.
+    This parser only removes comments that are outside of string literals,
+    avoiding false positives like URLs (https://) or strings containing //.
+    """
+    with open(path, "r", encoding="utf-8") as f:
+        text = f.read()
+
+    # State-machine strip: skip comment chars only when outside strings
+    result = []
+    i = 0
+    n = len(text)
+    in_string = False
+    while i < n:
+        c = text[i]
+        if in_string:
+            if c == '\\' and i + 1 < n:
+                result.append(c)
+                result.append(text[i + 1])
+                i += 2
+                continue
+            if c == '"':
+                in_string = False
+            result.append(c)
+            i += 1
+        else:
+            if c == '"':
+                in_string = True
+                result.append(c)
+                i += 1
+            elif c == '/' and i + 1 < n and text[i + 1] == '/':
+                # Line comment — skip to end of line
+                while i < n and text[i] != '\n':
+                    i += 1
+            elif c == '/' and i + 1 < n and text[i + 1] == '*':
+                # Block comment — skip to */
+                i += 2
+                while i < n - 1 and not (text[i] == '*' and text[i + 1] == '/'):
+                    i += 1
+                i += 2  # skip */
+            else:
+                result.append(c)
+                i += 1
+
+    stripped = ''.join(result)
+    # Remove trailing commas before } or ] (common JSONC pattern)
+    stripped = re.sub(r',(\s*[}\]])', r'\1', stripped)
+    return json.loads(stripped)
 
 
 @dataclass
@@ -299,8 +351,7 @@ class JadeGateInstaller:
     def _install_config(self, client: MCPClientConfig, path: str) -> InstallResult:
         """Install jadegate into a single config file."""
         try:
-            with open(path, "r", encoding="utf-8") as f:
-                data = json.load(f)
+            data = _load_jsonc(path)
 
             servers = _get_servers_from_config(data, client)
             if not servers or not isinstance(servers, dict):
@@ -357,8 +408,7 @@ class JadeGateInstaller:
                 )
 
             # No backup, manually unwrap
-            with open(path, "r", encoding="utf-8") as f:
-                data = json.load(f)
+            data = _load_jsonc(path)
 
             servers = _get_servers_from_config(data, client)
             if not servers:
@@ -368,7 +418,7 @@ class JadeGateInstaller:
                 )
 
             unwrapped = 0
-            for name, server_conf in servers.items():
+            for _, server_conf in servers.items():
                 if isinstance(server_conf, dict) and _unwrap_server_command(server_conf):
                     unwrapped += 1
 
@@ -396,8 +446,7 @@ class JadeGateInstaller:
                 path = _expand(path_template)
                 if os.path.exists(path):
                     try:
-                        with open(path, "r", encoding="utf-8") as f:
-                            data = json.load(f)
+                        data = _load_jsonc(path)
                         servers = _get_servers_from_config(data, client)
                         if servers:
                             protected = sum(
