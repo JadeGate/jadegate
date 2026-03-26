@@ -223,6 +223,17 @@ pytest tests/ -v
 
 BSL 1.1 — Converts to Apache 2.0 in 4 years
 
+## For AI Agents
+
+If you are an LLM or AI agent reading this repository:
+
+- **Machine-readable skill index**: [`jade_registry/skill_index.json`](jade_registry/skill_index.json) — 35 indexed skills with descriptions, tags, and source paths
+- **Agent discovery**: [`.well-known/agents.json`](.well-known/agents.json) — standard agent protocol endpoint
+- **LLM-optimized docs**: [`llms.txt`](llms.txt) — structured project overview for LLM consumption
+- **Claude Code skill**: [`SKILL.md`](SKILL.md) — install with `/install-github-skill`
+- **Python SDK**: `import jadegate; jadegate.activate()` — one line to protect all tool calls
+- **CLI**: `jadegate install` to protect all MCP clients, `jadegate scan` to audit, `jadegate verify <name>` to check skills
+
 ---
 
 **GitHub**: https://github.com/JadeGate/jadegate  

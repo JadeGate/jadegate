@@ -42,6 +42,11 @@ setup(
     author="Project JADE",
     url="https://github.com/JadeGate/jadegate",
     license="BSL-1.1",
+    keywords=[
+        "mcp", "security", "ai-agent", "tool-call", "llm", "proxy",
+        "claude", "cursor", "windsurf", "cline", "model-context-protocol",
+        "zero-trust", "skill-verification", "jadegate",
+    ],
     packages=find_packages(exclude=["tests", "tests.*"]),
     package_data={
         "jade_schema": ["*.json"],

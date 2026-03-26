@@ -1,0 +1,58 @@
+{
+  "name": "JadeGate",
+  "description": "The TLS of AI Tool Calls. Transparent security proxy for MCP servers.",
+  "url": "https://jadegate.io",
+  "version": "2.0.0",
+  "protocol": "MCP",
+  "capabilities": {
+    "security_proxy": {
+      "description": "Wraps MCP servers with 6-layer security verification",
+      "command": "jadegate proxy <upstream-command>"
+    },
+    "auto_install": {
+      "description": "Auto-inject security proxy into all detected MCP client configs",
+      "command": "jadegate install"
+    },
+    "security_scan": {
+      "description": "Audit installed MCP servers for security risks",
+      "command": "jadegate scan"
+    },
+    "skill_verification": {
+      "description": "5-layer deterministic security check on skill files",
+      "command": "jadegate verify <file-or-name>"
+    },
+    "skill_registry": {
+      "description": "Browse and search 150+ verified skills",
+      "command": "jadegate list [keyword]"
+    },
+    "skill_install": {
+      "description": "Install skills from GitHub or any URL",
+      "command": "jadegate skill add <url>"
+    },
+    "python_sdk": {
+      "description": "One-line protection for Python AI applications",
+      "code": "import jadegate; jadegate.activate()"
+    }
+  },
+  "installation": {
+    "pip": "pip install jadegate",
+    "requires": "Python 3.8+",
+    "dependencies": "none"
+  },
+  "supported_clients": [
+    "Claude Desktop",
+    "Cursor",
+    "Windsurf",
+    "Cline",
+    "Continue",
+    "Zed"
+  ],
+  "links": {
+    "github": "https://github.com/JadeGate/jadegate",
+    "pypi": "https://pypi.org/project/jadegate/",
+    "website": "https://jadegate.io",
+    "skill_index": "https://raw.githubusercontent.com/JadeGate/jadegate/main/jade_registry/skill_index.json",
+    "llms_txt": "https://raw.githubusercontent.com/JadeGate/jadegate/main/llms.txt"
+  },
+  "license": "BSL-1.1"
+}

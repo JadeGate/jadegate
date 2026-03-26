@@ -1,0 +1,25 @@
+# JadeGate
+
+> The TLS of AI Tool Calls. Transparent security proxy for MCP servers. One command. Zero config. Fully offline.
+
+## Docs
+
+- [Quick Start](https://jadegate.io/guide/): Install and protect all MCP clients in 30 seconds
+- [GitHub Repository](https://github.com/JadeGate/jadegate): Source code, issues, and contributions
+- [PyPI Package](https://pypi.org/project/jadegate/): `pip install jadegate`
+- [Skill Catalog](https://github.com/JadeGate/jadegate/blob/main/CATALOG.md): 150+ verified skills for MCP servers
+- [Security Architecture](https://jadegate.io/): 6-layer verification pipeline
+
+## API
+
+- [Python SDK](https://github.com/JadeGate/jadegate/blob/main/jadegate/__init__.py): `import jadegate; jadegate.activate()`
+- [CLI Reference](https://github.com/JadeGate/jadegate/blob/main/jadegate/cli.py): `jadegate scan`, `jadegate install`, `jadegate verify`
+- [Skill Index (JSON)](https://github.com/JadeGate/jadegate/blob/main/jade_registry/skill_index.json): Machine-readable skill catalog
+- [Agent Discovery](https://github.com/JadeGate/jadegate/blob/main/.well-known/agents.json): Standard agent protocol endpoint
+- [Security Policy Schema](https://github.com/JadeGate/jadegate/blob/main/jadegate/policy/default_policy.json): Default security policy
+
+## Optional
+
+- [Comparison: Raw MCP vs JadeGate](https://github.com/JadeGate/jadegate#comparison): Side-by-side security feature comparison
+- [JADE Skill Schema v1](https://github.com/JadeGate/jadegate/blob/main/jade_schema/jade-schema-v1.json): JSON schema for skill definition files
+- [Trust Model](https://github.com/JadeGate/jadegate/blob/main/jadegate/trust/): TOFU + Ed25519 certificate management
