@@ -71,4 +71,5 @@ jadegate.activate()  # All tool calls now protected
 - Machine-readable skill index: `jade_registry/skill_index.json`
 - Agent discovery spec: `.well-known/agents.json`
 - LLM-optimized docs: `llms.txt`
-- Installable as Claude Code skill: `SKILL.md`
+- 43 Claude Code skills: `skills/*/SKILL.md` — installable via cc-switch or `/install-github-skill`
+- Skill index: `SKILLS_INDEX.md`
