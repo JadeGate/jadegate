@@ -1,0 +1,139 @@
+{
+  "jade_version": "1.0.0",
+  "skill_id": "text_sentiment",
+  "metadata": {
+    "name": "Text Sentiment Analysis",
+    "version": "1.0.0",
+    "description": "Analyze sentiment of text using LLM classification (positive/negative/neutral)",
+    "author": "jadegate-community",
+    "tags": [
+      "sentiment",
+      "nlp",
+      "analysis",
+      "text"
+    ],
+    "license": "MIT",
+    "created_at": "2026-02-21T03:00:00Z",
+    "updated_at": "2026-02-21T03:00:00Z"
+  },
+  "trigger": {
+    "type": "task_intent",
+    "conditions": [
+      {
+        "field": "task.type",
+        "operator": "in",
+        "value": [
+          "analyze_sentiment",
+          "sentiment_analysis"
+        ]
+      }
+    ]
+  },
+  "input_schema": {
+    "required_params": [
+      {
+        "name": "text",
+        "type": "string",
+        "description": "Text to analyze"
+      }
+    ]
+  },
+  "output_schema": {
+    "fields": [
+      {
+        "name": "sentiment",
+        "type": "string",
+        "description": "positive, negative, or neutral"
+      },
+      {
+        "name": "confidence",
+        "type": "number",
+        "description": "Confidence score 0-1"
+      },
+      {
+        "name": "explanation",
+        "type": "string",
+        "description": "Brief explanation"
+      }
+    ]
+  },
+  "execution_dag": {
+    "nodes": [
+      {
+        "id": "classify",
+        "action": "llm_classify",
+        "params": {
+          "input": "{{input.text}}",
+          "categories": [
+            "positive",
+            "negative",
+            "neutral"
+          ],
+          "prompt": "Classify the sentiment of this text"
+        }
+      },
+      {
+        "id": "check",
+        "action": "condition_check",
+        "params": {
+          "field": "{{classify.output.category}}",
+          "operator": "exists",
+          "value": true
+        }
+      },
+      {
+        "id": "ret_ok",
+        "action": "return_result",
+        "params": {
+          "sentiment": "{{classify.output.category}}",
+          "confidence": "{{classify.output.confidence}}",
+          "explanation": "{{classify.output.reasoning}}"
+        }
+      },
+      {
+        "id": "ret_fail",
+        "action": "return_error",
+        "params": {
+          "error_code": "SENTIMENT_FAILED",
+          "message": "Sentiment analysis failed"
+        }
+      }
+    ],
+    "edges": [
+      {
+        "from": "classify",
+        "to": "check"
+      },
+      {
+        "from": "check",
+        "to": "ret_ok",
+        "condition": "success"
+      },
+      {
+        "from": "check",
+        "to": "ret_fail",
+        "condition": "failure"
+      }
+    ],
+    "entry_node": "classify",
+    "exit_node": [
+      "ret_ok",
+      "ret_fail"
+    ]
+  },
+  "security": {
+    "network_whitelist": [],
+    "file_permissions": {
+      "read": [],
+      "write": []
+    },
+    "max_execution_time_ms": 30000,
+    "max_retries": 2,
+    "sandbox_level": "strict",
+    "dangerous_patterns": []
+  },
+  "mcp_compatible": true,
+  "required_mcp_capabilities": [
+    "llm"
+  ]
+}

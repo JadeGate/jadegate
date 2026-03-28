@@ -1,0 +1,141 @@
+{
+  "jade_version": "1.0.0",
+  "skill_id": "http_health_check",
+  "metadata": {
+    "name": "HTTP Health Check",
+    "version": "1.0.0",
+    "description": "Check if a website is up by sending HTTP GET and measuring response time",
+    "author": "jadegate-community",
+    "tags": [
+      "ping",
+      "health",
+      "uptime",
+      "monitor"
+    ],
+    "license": "MIT",
+    "created_at": "2026-02-21T03:00:00Z",
+    "updated_at": "2026-02-21T03:00:00Z"
+  },
+  "trigger": {
+    "type": "task_intent",
+    "conditions": [
+      {
+        "field": "task.type",
+        "operator": "in",
+        "value": [
+          "health_check",
+          "ping_check",
+          "site_check"
+        ]
+      }
+    ]
+  },
+  "input_schema": {
+    "required_params": [
+      {
+        "name": "url",
+        "type": "string",
+        "description": "URL to check"
+      }
+    ]
+  },
+  "output_schema": {
+    "fields": [
+      {
+        "name": "status",
+        "type": "string",
+        "description": "up or down"
+      },
+      {
+        "name": "status_code",
+        "type": "number",
+        "description": "HTTP status code"
+      },
+      {
+        "name": "response_ms",
+        "type": "number",
+        "description": "Response time in ms"
+      }
+    ]
+  },
+  "execution_dag": {
+    "nodes": [
+      {
+        "id": "fetch",
+        "action": "http_get",
+        "params": {
+          "url": "{{input.url}}",
+          "headers": {
+            "User-Agent": "JadeBot/1.0"
+          },
+          "timeout_ms": 15000
+        }
+      },
+      {
+        "id": "check_ok",
+        "action": "condition_check",
+        "params": {
+          "field": "{{fetch.output.status_code}}",
+          "operator": "less_than",
+          "value": 400
+        }
+      },
+      {
+        "id": "ret_up",
+        "action": "return_result",
+        "params": {
+          "status": "up",
+          "status_code": "{{fetch.output.status_code}}",
+          "response_ms": "{{fetch.output.elapsed_ms}}"
+        }
+      },
+      {
+        "id": "ret_down",
+        "action": "return_result",
+        "params": {
+          "status": "down",
+          "status_code": "{{fetch.output.status_code}}",
+          "response_ms": "{{fetch.output.elapsed_ms}}"
+        }
+      }
+    ],
+    "edges": [
+      {
+        "from": "fetch",
+        "to": "check_ok"
+      },
+      {
+        "from": "check_ok",
+        "to": "ret_up",
+        "condition": "success"
+      },
+      {
+        "from": "check_ok",
+        "to": "ret_down",
+        "condition": "failure"
+      }
+    ],
+    "entry_node": "fetch",
+    "exit_node": [
+      "ret_up",
+      "ret_down"
+    ]
+  },
+  "security": {
+    "network_whitelist": [
+      "*"
+    ],
+    "file_permissions": {
+      "read": [],
+      "write": []
+    },
+    "max_execution_time_ms": 30000,
+    "max_retries": 2,
+    "sandbox_level": "strict",
+    "dangerous_patterns": []
+  },
+  "mcp_compatible": true,
+  "required_mcp_capabilities": [
+    "http"
+  ]
+}

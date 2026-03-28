@@ -1,0 +1,183 @@
+{
+  "jade_version": "1.0.0",
+  "skill_id": "ssh_remote_exec",
+  "metadata": {
+    "name": "SSH Remote Command",
+    "version": "1.0.0",
+    "description": "Execute a command on a remote server via SSH proxy API",
+    "author": "jadegate-community",
+    "tags": [
+      "ssh",
+      "remote",
+      "server",
+      "command"
+    ],
+    "license": "MIT",
+    "created_at": "2026-02-21T03:00:00Z",
+    "updated_at": "2026-02-21T03:00:00Z"
+  },
+  "trigger": {
+    "type": "task_intent",
+    "conditions": [
+      {
+        "field": "task.type",
+        "operator": "in",
+        "value": [
+          "ssh_exec",
+          "remote_exec"
+        ]
+      }
+    ]
+  },
+  "input_schema": {
+    "required_params": [
+      {
+        "name": "host",
+        "type": "string",
+        "description": "SSH host address"
+      },
+      {
+        "name": "command",
+        "type": "string",
+        "description": "Command to execute"
+      }
+    ]
+  },
+  "output_schema": {
+    "fields": [
+      {
+        "name": "stdout",
+        "type": "string",
+        "description": "Command stdout"
+      },
+      {
+        "name": "exit_code",
+        "type": "number",
+        "description": "Exit code"
+      },
+      {
+        "name": "stderr",
+        "type": "string",
+        "description": "Command stderr"
+      }
+    ]
+  },
+  "execution_dag": {
+    "nodes": [
+      {
+        "id": "sanitize",
+        "action": "text_sanitize",
+        "params": {
+          "input": "{{input.command}}",
+          "rules": [
+            "no_pipe_to_shell",
+            "no_rm_rf",
+            "no_sudo"
+          ]
+        }
+      },
+      {
+        "id": "check_safe",
+        "action": "condition_check",
+        "params": {
+          "field": "{{sanitize.output.is_safe}}",
+          "operator": "equals",
+          "value": true
+        }
+      },
+      {
+        "id": "exec_cmd",
+        "action": "shell_exec",
+        "params": {
+          "command": "ssh {{input.host}} '{{sanitize.output.sanitized}}'",
+          "timeout_ms": 30000
+        }
+      },
+      {
+        "id": "check_exec",
+        "action": "condition_check",
+        "params": {
+          "field": "{{exec_cmd.output.exit_code}}",
+          "operator": "equals",
+          "value": 0
+        }
+      },
+      {
+        "id": "ret_ok",
+        "action": "return_result",
+        "params": {
+          "stdout": "{{exec_cmd.output.stdout}}",
+          "exit_code": "{{exec_cmd.output.exit_code}}",
+          "stderr": "{{exec_cmd.output.stderr}}"
+        }
+      },
+      {
+        "id": "ret_unsafe",
+        "action": "return_error",
+        "params": {
+          "error_code": "UNSAFE_COMMAND",
+          "message": "Command rejected by sanitizer"
+        }
+      },
+      {
+        "id": "ret_fail",
+        "action": "return_error",
+        "params": {
+          "error_code": "SSH_FAILED",
+          "message": "{{exec_cmd.output.stderr}}"
+        }
+      }
+    ],
+    "edges": [
+      {
+        "from": "sanitize",
+        "to": "check_safe"
+      },
+      {
+        "from": "check_safe",
+        "to": "exec_cmd",
+        "condition": "success"
+      },
+      {
+        "from": "check_safe",
+        "to": "ret_unsafe",
+        "condition": "failure"
+      },
+      {
+        "from": "exec_cmd",
+        "to": "check_exec"
+      },
+      {
+        "from": "check_exec",
+        "to": "ret_ok",
+        "condition": "success"
+      },
+      {
+        "from": "check_exec",
+        "to": "ret_fail",
+        "condition": "failure"
+      }
+    ],
+    "entry_node": "sanitize",
+    "exit_node": [
+      "ret_ok",
+      "ret_unsafe",
+      "ret_fail"
+    ]
+  },
+  "security": {
+    "network_whitelist": [],
+    "file_permissions": {
+      "read": [],
+      "write": []
+    },
+    "max_execution_time_ms": 60000,
+    "max_retries": 2,
+    "sandbox_level": "standard",
+    "dangerous_patterns": []
+  },
+  "mcp_compatible": true,
+  "required_mcp_capabilities": [
+    "shell"
+  ]
+}

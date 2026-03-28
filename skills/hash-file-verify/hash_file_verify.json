@@ -1,0 +1,181 @@
+{
+  "jade_version": "1.0.0",
+  "skill_id": "hash_file_verify",
+  "metadata": {
+    "name": "File Hash Verification",
+    "version": "1.0.0",
+    "description": "Compute and verify SHA-256 hash of a file for integrity checking",
+    "author": "jadegate-community",
+    "tags": [
+      "hash",
+      "sha256",
+      "verify",
+      "integrity"
+    ],
+    "license": "MIT",
+    "created_at": "2026-02-21T03:00:00Z",
+    "updated_at": "2026-02-21T03:00:00Z"
+  },
+  "trigger": {
+    "type": "task_intent",
+    "conditions": [
+      {
+        "field": "task.type",
+        "operator": "in",
+        "value": [
+          "verify_hash",
+          "hash_file"
+        ]
+      }
+    ]
+  },
+  "input_schema": {
+    "required_params": [
+      {
+        "name": "file_path",
+        "type": "string",
+        "description": "Path to file"
+      },
+      {
+        "name": "expected_hash",
+        "type": "string",
+        "description": "Expected SHA-256 hash (optional)"
+      }
+    ]
+  },
+  "output_schema": {
+    "fields": [
+      {
+        "name": "hash",
+        "type": "string",
+        "description": "Computed SHA-256 hash"
+      },
+      {
+        "name": "match",
+        "type": "boolean",
+        "description": "Whether hash matches expected"
+      },
+      {
+        "name": "file_size",
+        "type": "number",
+        "description": "File size in bytes"
+      }
+    ]
+  },
+  "execution_dag": {
+    "nodes": [
+      {
+        "id": "read_file",
+        "action": "file_read",
+        "params": {
+          "path": "{{input.file_path}}"
+        }
+      },
+      {
+        "id": "check_read",
+        "action": "condition_check",
+        "params": {
+          "field": "{{read_file.output.size_bytes}}",
+          "operator": "greater_than",
+          "value": 0
+        }
+      },
+      {
+        "id": "compute",
+        "action": "hash_compute",
+        "params": {
+          "input": "{{read_file.output.content}}",
+          "algorithm": "sha256"
+        }
+      },
+      {
+        "id": "compare",
+        "action": "condition_check",
+        "params": {
+          "field": "{{compute.output.hash}}",
+          "operator": "equals",
+          "value": "{{input.expected_hash}}"
+        }
+      },
+      {
+        "id": "ret_match",
+        "action": "return_result",
+        "params": {
+          "hash": "{{compute.output.hash}}",
+          "match": true,
+          "file_size": "{{read_file.output.size_bytes}}"
+        }
+      },
+      {
+        "id": "ret_nomatch",
+        "action": "return_result",
+        "params": {
+          "hash": "{{compute.output.hash}}",
+          "match": false,
+          "file_size": "{{read_file.output.size_bytes}}"
+        }
+      },
+      {
+        "id": "ret_fail",
+        "action": "return_error",
+        "params": {
+          "error_code": "READ_FAILED",
+          "message": "Cannot read file"
+        }
+      }
+    ],
+    "edges": [
+      {
+        "from": "read_file",
+        "to": "check_read"
+      },
+      {
+        "from": "check_read",
+        "to": "compute",
+        "condition": "success"
+      },
+      {
+        "from": "check_read",
+        "to": "ret_fail",
+        "condition": "failure"
+      },
+      {
+        "from": "compute",
+        "to": "compare"
+      },
+      {
+        "from": "compare",
+        "to": "ret_match",
+        "condition": "success"
+      },
+      {
+        "from": "compare",
+        "to": "ret_nomatch",
+        "condition": "failure"
+      }
+    ],
+    "entry_node": "read_file",
+    "exit_node": [
+      "ret_match",
+      "ret_nomatch",
+      "ret_fail"
+    ]
+  },
+  "security": {
+    "network_whitelist": [],
+    "file_permissions": {
+      "read": [
+        "{{input.file_path}}"
+      ],
+      "write": []
+    },
+    "max_execution_time_ms": 30000,
+    "max_retries": 2,
+    "sandbox_level": "strict",
+    "dangerous_patterns": []
+  },
+  "mcp_compatible": true,
+  "required_mcp_capabilities": [
+    "file"
+  ]
+}

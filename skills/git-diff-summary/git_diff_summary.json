@@ -1,0 +1,162 @@
+{
+  "jade_version": "1.0.0",
+  "skill_id": "git_diff_summary",
+  "metadata": {
+    "name": "Git Diff Summary",
+    "version": "1.0.0",
+    "description": "Get git diff and summarize changes using LLM",
+    "author": "jadegate-community",
+    "tags": [
+      "git",
+      "diff",
+      "summary",
+      "changes"
+    ],
+    "license": "MIT",
+    "created_at": "2026-02-21T03:00:00Z",
+    "updated_at": "2026-02-21T03:00:00Z"
+  },
+  "trigger": {
+    "type": "task_intent",
+    "conditions": [
+      {
+        "field": "task.type",
+        "operator": "in",
+        "value": [
+          "git_diff",
+          "diff_summary"
+        ]
+      }
+    ]
+  },
+  "input_schema": {
+    "required_params": [
+      {
+        "name": "repo_path",
+        "type": "string",
+        "description": "Path to git repository"
+      }
+    ]
+  },
+  "output_schema": {
+    "fields": [
+      {
+        "name": "files_changed",
+        "type": "number",
+        "description": "Number of files changed"
+      },
+      {
+        "name": "diff",
+        "type": "string",
+        "description": "Raw diff output"
+      },
+      {
+        "name": "summary",
+        "type": "string",
+        "description": "LLM-generated summary"
+      }
+    ]
+  },
+  "execution_dag": {
+    "nodes": [
+      {
+        "id": "get_diff",
+        "action": "shell_exec",
+        "params": {
+          "command": "git -C {{input.repo_path}} diff --stat",
+          "timeout_ms": 10000
+        }
+      },
+      {
+        "id": "check_diff",
+        "action": "condition_check",
+        "params": {
+          "field": "{{get_diff.output.exit_code}}",
+          "operator": "equals",
+          "value": 0
+        }
+      },
+      {
+        "id": "get_full",
+        "action": "shell_exec",
+        "params": {
+          "command": "git -C {{input.repo_path}} diff",
+          "timeout_ms": 15000
+        }
+      },
+      {
+        "id": "summarize",
+        "action": "llm_summarize",
+        "params": {
+          "input": "{{get_full.output.stdout}}",
+          "max_length": 200,
+          "language": "en"
+        }
+      },
+      {
+        "id": "ret_ok",
+        "action": "return_result",
+        "params": {
+          "files_changed": "{{get_diff.output.stdout}}",
+          "diff": "{{get_full.output.stdout}}",
+          "summary": "{{summarize.output.summary}}"
+        }
+      },
+      {
+        "id": "ret_fail",
+        "action": "return_error",
+        "params": {
+          "error_code": "GIT_ERROR",
+          "message": "{{get_diff.output.stderr}}"
+        }
+      }
+    ],
+    "edges": [
+      {
+        "from": "get_diff",
+        "to": "check_diff"
+      },
+      {
+        "from": "check_diff",
+        "to": "get_full",
+        "condition": "success"
+      },
+      {
+        "from": "check_diff",
+        "to": "ret_fail",
+        "condition": "failure"
+      },
+      {
+        "from": "get_full",
+        "to": "summarize"
+      },
+      {
+        "from": "summarize",
+        "to": "ret_ok"
+      }
+    ],
+    "entry_node": "get_diff",
+    "exit_node": [
+      "ret_ok",
+      "ret_fail"
+    ]
+  },
+  "security": {
+    "network_whitelist": [],
+    "file_permissions": {
+      "read": [
+        "{{input.repo_path}}"
+      ],
+      "write": []
+    },
+    "max_execution_time_ms": 30000,
+    "max_retries": 2,
+    "sandbox_level": "standard",
+    "dangerous_patterns": []
+  },
+  "mcp_compatible": true,
+  "required_mcp_capabilities": [
+    "shell",
+    "llm"
+  ]
+}

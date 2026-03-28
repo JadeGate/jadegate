@@ -1,0 +1,181 @@
+{
+  "jade_version": "1.0.0",
+  "skill_id": "webpage_content_extract",
+  "metadata": {
+    "name": "Webpage Content Extractor",
+    "version": "1.0.0",
+    "description": "Fetch a webpage and extract main content, removing navigation and ads",
+    "author": "jadegate-community",
+    "tags": [
+      "webpage",
+      "extract",
+      "content",
+      "readability"
+    ],
+    "license": "MIT",
+    "created_at": "2026-02-21T03:00:00Z",
+    "updated_at": "2026-02-21T03:00:00Z"
+  },
+  "trigger": {
+    "type": "task_intent",
+    "conditions": [
+      {
+        "field": "task.type",
+        "operator": "in",
+        "value": [
+          "extract_content",
+          "read_webpage"
+        ]
+      }
+    ]
+  },
+  "input_schema": {
+    "required_params": [
+      {
+        "name": "url",
+        "type": "string",
+        "description": "URL to extract content from"
+      }
+    ]
+  },
+  "output_schema": {
+    "fields": [
+      {
+        "name": "title",
+        "type": "string",
+        "description": "Page title"
+      },
+      {
+        "name": "content",
+        "type": "string",
+        "description": "Main text content"
+      },
+      {
+        "name": "word_count",
+        "type": "number",
+        "description": "Word count"
+      }
+    ]
+  },
+  "execution_dag": {
+    "nodes": [
+      {
+        "id": "fetch",
+        "action": "http_get",
+        "params": {
+          "url": "{{input.url}}",
+          "headers": {
+            "User-Agent": "JadeBot/1.0"
+          },
+          "timeout_ms": 15000
+        }
+      },
+      {
+        "id": "check",
+        "action": "condition_check",
+        "params": {
+          "field": "{{fetch.output.status_code}}",
+          "operator": "equals",
+          "value": 200
+        }
+      },
+      {
+        "id": "extract_title",
+        "action": "text_extract",
+        "params": {
+          "input": "{{fetch.output.body}}",
+          "pattern": "title",
+          "max_items": 1
+        }
+      },
+      {
+        "id": "extract_body",
+        "action": "text_extract",
+        "params": {
+          "input": "{{fetch.output.body}}",
+          "pattern": "article_body",
+          "max_items": 1
+        }
+      },
+      {
+        "id": "sanitize",
+        "action": "text_sanitize",
+        "params": {
+          "input": "{{extract_body.output.items}}",
+          "rules": [
+            "strip_html",
+            "strip_scripts",
+            "normalize_whitespace"
+          ]
+        }
+      },
+      {
+        "id": "ret_ok",
+        "action": "return_result",
+        "params": {
+          "title": "{{extract_title.output.items}}",
+          "content": "{{sanitize.output.sanitized}}",
+          "word_count": "{{sanitize.output.word_count}}"
+        }
+      },
+      {
+        "id": "ret_fail",
+        "action": "return_error",
+        "params": {
+          "error_code": "EXTRACT_FAILED",
+          "message": "Failed to fetch or extract content"
+        }
+      }
+    ],
+    "edges": [
+      {
+        "from": "fetch",
+        "to": "check"
+      },
+      {
+        "from": "check",
+        "to": "extract_title",
+        "condition": "success"
+      },
+      {
+        "from": "check",
+        "to": "ret_fail",
+        "condition": "failure"
+      },
+      {
+        "from": "extract_title",
+        "to": "extract_body"
+      },
+      {
+        "from": "extract_body",
+        "to": "sanitize"
+      },
+      {
+        "from": "sanitize",
+        "to": "ret_ok"
+      }
+    ],
+    "entry_node": "fetch",
+    "exit_node": [
+      "ret_ok",
+      "ret_fail"
+    ]
+  },
+  "security": {
+    "network_whitelist": [
+      "*"
+    ],
+    "file_permissions": {
+      "read": [],
+      "write": []
+    },
+    "max_execution_time_ms": 30000,
+    "max_retries": 2,
+    "sandbox_level": "strict",
+    "dangerous_patterns": []
+  },
+  "mcp_compatible": true,
+  "required_mcp_capabilities": [
+    "http"
+  ]
+}

@@ -1,0 +1,150 @@
+{
+  "jade_version": "1.0.0",
+  "skill_id": "slack_send_message",
+  "metadata": {
+    "name": "Slack Message Sender",
+    "version": "1.0.0",
+    "description": "Send messages to Slack channels via webhook or API with formatting support",
+    "author": "jadegate-community",
+    "tags": [
+      "slack",
+      "message",
+      "chat",
+      "notification"
+    ],
+    "license": "MIT",
+    "created_at": "2026-02-21T03:00:00Z",
+    "updated_at": "2026-02-21T03:00:00Z"
+  },
+  "trigger": {
+    "type": "task_intent",
+    "conditions": [
+      {
+        "field": "task.type",
+        "operator": "in",
+        "value": [
+          "slack_send",
+          "send_slack"
+        ]
+      }
+    ]
+  },
+  "input_schema": {
+    "required_params": [
+      {
+        "name": "webhook_url",
+        "type": "string",
+        "description": "Slack webhook URL"
+      },
+      {
+        "name": "text",
+        "type": "string",
+        "description": "Message text"
+      }
+    ]
+  },
+  "output_schema": {
+    "fields": [
+      {
+        "name": "sent",
+        "type": "boolean",
+        "description": "Whether message was sent"
+      },
+      {
+        "name": "status_code",
+        "type": "number",
+        "description": "HTTP response code"
+      }
+    ]
+  },
+  "execution_dag": {
+    "nodes": [
+      {
+        "id": "build_payload",
+        "action": "text_template",
+        "params": {
+          "template": "{\"text\":\"{{input.text}}\"}"
+        }
+      },
+      {
+        "id": "send",
+        "action": "http_post",
+        "params": {
+          "url": "{{input.webhook_url}}",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "body": "{{build_payload.output.result}}",
+          "timeout_ms": 10000
+        }
+      },
+      {
+        "id": "check",
+        "action": "condition_check",
+        "params": {
+          "field": "{{send.output.status_code}}",
+          "operator": "equals",
+          "value": 200
+        }
+      },
+      {
+        "id": "ret_ok",
+        "action": "return_result",
+        "params": {
+          "sent": true,
+          "status_code": "{{send.output.status_code}}"
+        }
+      },
+      {
+        "id": "ret_fail",
+        "action": "return_error",
+        "params": {
+          "error_code": "SLACK_FAILED",
+          "message": "Slack webhook returned {{send.output.status_code}}"
+        }
+      }
+    ],
+    "edges": [
+      {
+        "from": "build_payload",
+        "to": "send"
+      },
+      {
+        "from": "send",
+        "to": "check"
+      },
+      {
+        "from": "check",
+        "to": "ret_ok",
+        "condition": "success"
+      },
+      {
+        "from": "check",
+        "to": "ret_fail",
+        "condition": "failure"
+      }
+    ],
+    "entry_node": "build_payload",
+    "exit_node": [
+      "ret_ok",
+      "ret_fail"
+    ]
+  },
+  "security": {
+    "network_whitelist": [
+      "hooks.slack.com"
+    ],
+    "file_permissions": {
+      "read": [],
+      "write": []
+    },
+    "max_execution_time_ms": 30000,
+    "max_retries": 2,
+    "sandbox_level": "strict",
+    "dangerous_patterns": []
+  },
+  "mcp_compatible": true,
+  "required_mcp_capabilities": [
+    "http"
+  ]
+}

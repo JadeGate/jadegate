@@ -1,0 +1,137 @@
+{
+  "name": "JadeGate Skills",
+  "description": "The TLS of AI Tool Calls - 43 security-verified skills for MCP servers",
+  "version": "2.0.0",
+  "author": "JadeGate",
+  "skills": [
+    {
+      "path": "skills/base64-file-encode"
+    },
+    {
+      "path": "skills/csv-data-analysis"
+    },
+    {
+      "path": "skills/discord-webhook-send"
+    },
+    {
+      "path": "skills/dns-lookup"
+    },
+    {
+      "path": "skills/docker-container-list"
+    },
+    {
+      "path": "skills/email-send-safe"
+    },
+    {
+      "path": "skills/exa-semantic-search"
+    },
+    {
+      "path": "skills/file-batch-rename"
+    },
+    {
+      "path": "skills/git-clone-repo"
+    },
+    {
+      "path": "skills/git-diff-summary"
+    },
+    {
+      "path": "skills/github-create-issue"
+    },
+    {
+      "path": "skills/hash-file-verify"
+    },
+    {
+      "path": "skills/http-health-check"
+    },
+    {
+      "path": "skills/image-resize-convert"
+    },
+    {
+      "path": "skills/ip-geolocation"
+    },
+    {
+      "path": "skills/jadegate"
+    },
+    {
+      "path": "skills/jadegate-install"
+    },
+    {
+      "path": "skills/jadegate-policy"
+    },
+    {
+      "path": "skills/jadegate-scan"
+    },
+    {
+      "path": "skills/jadegate-sdk"
+    },
+    {
+      "path": "skills/jadegate-skill-browse"
+    },
+    {
+      "path": "skills/jadegate-trust"
+    },
+    {
+      "path": "skills/jadegate-verify"
+    },
+    {
+      "path": "skills/json-data-transform"
+    },
+    {
+      "path": "skills/log-error-analyzer"
+    },
+    {
+      "path": "skills/notion-page-read"
+    },
+    {
+      "path": "skills/pdf-table-parser"
+    },
+    {
+      "path": "skills/qr-code-generate"
+    },
+    {
+      "path": "skills/rss-feed-reader"
+    },
+    {
+      "path": "skills/slack-send-message"
+    },
+    {
+      "path": "skills/sqlite-db-query"
+    },
+    {
+      "path": "skills/ssh-remote-exec"
+    },
+    {
+      "path": "skills/ssl-cert-check"
+    },
+    {
+      "path": "skills/telegram-send-msg"
+    },
+    {
+      "path": "skills/text-sentiment"
+    },
+    {
+      "path": "skills/text-translation"
+    },
+    {
+      "path": "skills/timezone-query"
+    },
+    {
+      "path": "skills/weather-api-query"
+    },
+    {
+      "path": "skills/web-anti-crawl-bypass"
+    },
+    {
+      "path": "skills/web-search-query"
+    },
+    {
+      "path": "skills/webpage-content-extract"
+    },
+    {
+      "path": "skills/webpage-screenshot"
+    },
+    {
+      "path": "skills/whois-lookup"
+    }
+  ]
+}

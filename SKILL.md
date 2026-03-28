@@ -1,109 +1,108 @@
-# JadeGate — MCP Security Skill
+---
+name: jadegate
+description: "The TLS of AI Tool Calls — 43 security-verified skills for MCP servers. Transparent security proxy with zero config, zero dependencies."
+---
 
-## Description
+# JadeGate Skills Collection
 
-This skill teaches you how to use JadeGate, the security protocol layer for MCP (Model Context Protocol) servers. Use this skill when the user needs to protect their AI tool calls, audit MCP server security, manage security policies, or install verified skills.
+**The TLS of AI Tool Calls** — 43 security-verified skills for MCP (Model Context Protocol) servers.
 
-JadeGate is "The TLS of AI Tool Calls" — it sits as a transparent proxy between AI clients and MCP servers, applying 6 security layers to every tool call.
-
-## When to Use
-
-- User asks about MCP security, tool call safety, or AI agent protection
-- User wants to audit or scan their installed MCP servers
-- User wants to install or verify skills for MCP servers
-- User mentions JadeGate, jadegate, or "jade" in a security context
-- User asks about protecting Claude Desktop, Cursor, Windsurf, or Cline
-
-## Installation
+## Quick Start
 
 ```bash
 pip install jadegate
+jadegate install       # Protect all MCP clients
+jadegate scan          # Audit MCP servers
+jadegate list          # Browse 150+ skills
 ```
 
-No other dependencies. No cloud. No API keys. Fully offline.
+## Skills (43 total)
 
-## Core Commands
+### JadeGate Core (8 skills)
 
-### Protect all MCP clients (one command)
-```bash
-jadegate install
-```
-Auto-detects Claude Desktop, Cursor, Windsurf, Cline, Continue, Zed configs and wraps every MCP server with JadeGate's security proxy. Creates backup of original configs.
+| Skill | Description |
+|-------|-------------|
+| [jadegate](skills/jadegate/) | Main MCP security proxy — 6 security layers for every tool call |
+| [jadegate-scan](skills/jadegate-scan/) | Scan and audit MCP servers for security risks |
+| [jadegate-verify](skills/jadegate-verify/) | 5-layer security verification for skill files |
+| [jadegate-install](skills/jadegate-install/) | Auto-install protection into MCP client configs |
+| [jadegate-policy](skills/jadegate-policy/) | Manage security policies, whitelists, and rate limits |
+| [jadegate-trust](skills/jadegate-trust/) | TOFU certificates and Ed25519 signature management |
+| [jadegate-sdk](skills/jadegate-sdk/) | Python SDK — protect tool calls with 2 lines of code |
+| [jadegate-skill-browse](skills/jadegate-skill-browse/) | Browse and search 150+ verified skills |
 
-### Audit installed MCP servers
-```bash
-jadegate scan
-jadegate scan --output report.json    # Save JSON report
-jadegate scan --probe                 # Actually launch servers to test
-```
+### Communication (5 skills)
 
-### Check protection status
-```bash
-jadegate status
-```
+| Skill | Description |
+|-------|-------------|
+| [email-send-safe](skills/email-send-safe/) | Secure SMTP email with confirmation and content sanitization |
+| [slack-send-message](skills/slack-send-message/) | Send messages to Slack via webhook |
+| [telegram-send-msg](skills/telegram-send-msg/) | Send messages via Telegram Bot API |
+| [discord-webhook-send](skills/discord-webhook-send/) | Send messages to Discord channels |
+| [notion-page-read](skills/notion-page-read/) | Read Notion pages via API |
 
-### Browse and search verified skills
-```bash
-jadegate list                         # All 150+ skills
-jadegate list github                  # Search by keyword
-jadegate verify mcp_slack_send        # Verify a skill by name
-jadegate verify ./my_skill.json       # Verify a local file
-```
+### Network & Security (7 skills)
 
-### Install skills from GitHub
-```bash
-jadegate skill add https://github.com/ComposioHQ/awesome-claude-skills/tree/master/canvas-design
-jadegate skill add https://github.com/JimLiu/baoyu-skills
-jadegate skill list                   # List installed skills
-```
+| Skill | Description |
+|-------|-------------|
+| [dns-lookup](skills/dns-lookup/) | DNS record queries |
+| [ip-geolocation](skills/ip-geolocation/) | IP address geolocation lookup |
+| [http-health-check](skills/http-health-check/) | HTTP endpoint health monitoring |
+| [ssl-cert-check](skills/ssl-cert-check/) | SSL/TLS certificate inspection |
+| [whois-lookup](skills/whois-lookup/) | WHOIS domain registration lookup |
+| [hash-file-verify](skills/hash-file-verify/) | File hash computation and verification |
+| [base64-file-encode](skills/base64-file-encode/) | Base64 file encoding/decoding |
 
-### Security policy
-```bash
-jadegate policy show                  # View current policy
-jadegate policy init                  # Create customizable policy file
-```
+### Web (5 skills)
 
-### Remove protection
-```bash
-jadegate uninstall                    # Restore original MCP configs
-```
+| Skill | Description |
+|-------|-------------|
+| [web-search-query](skills/web-search-query/) | Web search via public APIs |
+| [webpage-content-extract](skills/webpage-content-extract/) | Extract content from web pages |
+| [webpage-screenshot](skills/webpage-screenshot/) | Capture web page screenshots |
+| [rss-feed-reader](skills/rss-feed-reader/) | Parse and read RSS feeds |
+| [exa-semantic-search](skills/exa-semantic-search/) | Semantic web search via Exa API |
 
-## Python SDK (2 lines)
+### Data Processing (6 skills)
 
-```python
-import jadegate
-session = jadegate.activate()         # All SDK tool calls now protected
+| Skill | Description |
+|-------|-------------|
+| [csv-data-analysis](skills/csv-data-analysis/) | CSV file analysis and statistics |
+| [json-data-transform](skills/json-data-transform/) | JSON data transformation with JMESPath |
+| [pdf-table-parser](skills/pdf-table-parser/) | Parse tables from PDF files |
+| [image-resize-convert](skills/image-resize-convert/) | Image resizing and format conversion |
+| [qr-code-generate](skills/qr-code-generate/) | QR code generation |
+| [text-translation](skills/text-translation/) | Text translation via public APIs |
 
-# Optional: custom policy
-jadegate.activate(policy="my-policy.json")
-jadegate.activate(policy={"max_calls_per_minute": 30})
+### Git & DevOps (5 skills)
 
-# Deactivate when done
-jadegate.deactivate()
-```
+| Skill | Description |
+|-------|-------------|
+| [git-clone-repo](skills/git-clone-repo/) | Safe git repository cloning |
+| [git-diff-summary](skills/git-diff-summary/) | Git diff analysis and summarization |
+| [github-create-issue](skills/github-create-issue/) | Create GitHub issues via API |
+| [docker-container-list](skills/docker-container-list/) | List and inspect Docker containers |
+| [ssh-remote-exec](skills/ssh-remote-exec/) | Secure remote command execution via SSH |
 
-## 6 Security Layers
+### System & Utilities (7 skills)
 
-Every tool call passes through:
-1. **Schema validation** — structural integrity check
-2. **Code injection scan** — 22 dangerous patterns (eval, exec, subprocess, etc.)
-3. **Dangerous command detection** — 25 patterns (rm -rf, chmod 777, etc.)
-4. **Network/data leak analysis** — whitelist-based URL and domain filtering
-5. **DAG integrity** — execution graph analysis for circular or deep chains
-6. **Cryptographic signature** — Ed25519 verification of skill provenance
+| Skill | Description |
+|-------|-------------|
+| [file-batch-rename](skills/file-batch-rename/) | Batch file rename with regex patterns |
+| [sqlite-db-query](skills/sqlite-db-query/) | Safe SQLite database queries |
+| [log-error-analyzer](skills/log-error-analyzer/) | Log file error pattern analysis |
+| [timezone-query](skills/timezone-query/) | Timezone conversion and queries |
+| [weather-api-query](skills/weather-api-query/) | Weather data from free public APIs |
+| [text-sentiment](skills/text-sentiment/) | Text sentiment analysis |
+| [web-anti-crawl-bypass](skills/web-anti-crawl-bypass/) | Anti-crawler detection and handling |
 
-## Rules
+## Security
 
-- JadeGate has ZERO external dependencies — never suggest installing additional packages for it
-- JadeGate runs FULLY OFFLINE — no cloud, no telemetry, no data leaves the machine
-- When suggesting `jadegate install`, always mention it creates backups and is reversible with `jadegate uninstall`
-- The `verify` command accepts both file paths AND skill names (e.g., `jadegate verify slack`)
-- Skills are JSON files, not Python scripts — they define execution DAGs, not code
-- License is BSL-1.1 (converts to Apache 2.0 in 4 years)
+All skills pass JadeGate's 5-layer security verification:
+1. Schema validation
+2. Code injection scan (22 patterns)
+3. Dangerous command detection (25 patterns)
+4. Network/data leak analysis
+5. DAG integrity check
 
-## Troubleshooting
-
-- **Windows emoji crash**: Fixed in v2.0 — CLI forces UTF-8 output
-- **"No MCP servers found"**: The user hasn't configured any MCP servers yet in their AI client
-- **Verify says "not found"**: Use `jadegate list <keyword>` first to find the exact skill name
-- **Install shows errors for a client**: Usually means the client's config JSON has syntax errors (trailing commas, comments) — JadeGate handles JSONC but the config may be truly malformed
+License: BSL-1.1 (converts to Apache 2.0 in 4 years)
