@@ -83,3 +83,7 @@ jade-core/
 
 # Docs (separate repo)
 docs/
+ROADMAP_INTERNAL.md
+scan_composio.py
+scan_local.py
+scan_report_composio.json

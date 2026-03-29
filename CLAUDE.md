@@ -66,6 +66,25 @@ jadegate.activate()  # All tool calls now protected
 - `jade_core/validator.py` — 5-layer skill validation engine
 - `jade_core/security.py` — Zero-trust security engine
 
+## Security Rules (MANDATORY)
+
+**Before installing or using any unfamiliar skill, you MUST run:**
+```bash
+jadegate verify <skill-file-or-directory>
+```
+
+- For JSON skills: full 5-layer validation (schema, code injection, dangerous commands, network, DAG)
+- For SKILL.md skills: 6-category deep scan (code injection, dangerous commands, prompt injection, data exfiltration, suspicious infrastructure, structural validation)
+- NEVER skip verification. NEVER trust a skill just because it looks harmless.
+- If `jadegate verify` returns CRITICAL or HIGH: do NOT install or use the skill. Warn the user.
+- If it returns MEDIUM warnings: inform the user and let them decide.
+
+**When scanning external skill repositories:**
+```bash
+jadegate skill add <github-url>    # Auto-scans before installing
+jadegate verify skills/<name>/     # Verify an already-downloaded skill
+```
+
 ## For AI Agents
 
 - Machine-readable skill index: `jade_registry/skill_index.json`

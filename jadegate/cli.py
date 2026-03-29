@@ -372,18 +372,59 @@ def cmd_verify(args):
             total += 1
             continue
 
-        files = list(p.glob("*.json")) if p.is_dir() else [p]
+        # Collect files: JSON for full validation, SKILL.md for content scan
+        if p.is_dir():
+            files = list(p.glob("*.json")) + list(p.glob("SKILL.md"))
+        else:
+            files = [p]
 
         for f in files:
             total += 1
-            result = validator.validate_file(str(f))
-            if result.valid:
-                passed += 1
-                print(f"  {_C.GREEN}✅ PASS{_C.RESET} {f.name}")
+
+            if f.suffix == ".md" or f.name == "SKILL.md":
+                # SKILL.md → deep content scan (6-category)
+                try:
+                    content = f.read_text(encoding="utf-8")
+                except Exception as e:
+                    print(f"  {_C.RED}❌ FAIL{_C.RESET} {f.name}")
+                    print(f"    [READ_ERROR] {e}")
+                    continue
+
+                issues = _scan_skill_content(content, verbose=True)
+                critical = [(s, d) for s, d in issues if s == "CRITICAL"]
+                high = [(s, d) for s, d in issues if s == "HIGH"]
+                medium = [(s, d) for s, d in issues if s == "MEDIUM"]
+                low = [(s, d) for s, d in issues if s == "LOW"]
+
+                if critical or high:
+                    print(f"  {_C.RED}❌ FAIL{_C.RESET} {f.name}  ({len(critical)} critical, {len(high)} high)")
+                    for sev, desc in critical + high:
+                        print(f"    {_C.RED}[{sev}]{_C.RESET} {desc}")
+                    for sev, desc in medium:
+                        print(f"    {_C.YELLOW}[{sev}]{_C.RESET} {desc}")
+                elif medium:
+                    passed += 1
+                    print(f"  {_C.YELLOW}⚠ WARN{_C.RESET} {f.name}  ({len(medium)} warnings)")
+                    for sev, desc in medium:
+                        print(f"    {_C.YELLOW}[{sev}]{_C.RESET} {desc}")
+                else:
+                    passed += 1
+                    if low:
+                        print(f"  {_C.GREEN}✅ PASS{_C.RESET} {f.name}  ({len(low)} info)")
+                        for sev, desc in low:
+                            print(f"    {_C.DIM}[{sev}]{_C.RESET} {desc}")
+                    else:
+                        print(f"  {_C.GREEN}✅ PASS{_C.RESET} {f.name}")
             else:
-                print(f"  {_C.RED}❌ FAIL{_C.RESET} {f.name}")
-                for issue in result.errors:
-                    print(f"    [{issue.code}] {issue.message}")
+                # JSON → full 5-layer JadeValidator
+                result = validator.validate_file(str(f))
+                if result.valid:
+                    passed += 1
+                    print(f"  {_C.GREEN}✅ PASS{_C.RESET} {f.name}")
+                else:
+                    print(f"  {_C.RED}❌ FAIL{_C.RESET} {f.name}")
+                    for issue in result.errors:
+                        print(f"    [{issue.code}] {issue.message}")
 
     print(f"\n  {total} scanned, {_C.GREEN}{passed} passed{_C.RESET}, {_C.RED}{total - passed} failed{_C.RESET}")
 
@@ -553,27 +594,135 @@ def _resolve_skill_urls(url: str):
         return [(raw, repo)]
 
 
-def _scan_skill_content(content: str) -> list:
-    """Quick security scan of SKILL.md or skill JSON content. Returns list of issue strings."""
+def _scan_skill_content(content: str, verbose: bool = False) -> list:
+    """
+    Deep security scan of SKILL.md or skill JSON content.
+    6-category scan: code injection, dangerous commands, prompt injection,
+    data exfiltration, social engineering, suspicious infrastructure.
+    Returns list of (severity, issue_description) tuples.
+    """
+    import re
     issues = []
-    danger_patterns = [
+
+    def _flag(severity, desc):
+        issues.append((severity, desc))
+
+    # ── Category 1: Code injection (22 patterns from SecurityEngine) ──
+    code_injection = [
         (r"curl\s+.*\|\s*(bash|sh|zsh)", "Remote code execution via curl|bash"),
-        (r"wget\s+.*-O\s*-\s*\|", "Remote code execution via wget"),
-        (r"eval\s*\(", "Use of eval()"),
-        (r"exec\s*\(", "Use of exec()"),
+        (r"wget\s+.*(-O\s*-\s*\||\|\s*(bash|sh))", "Remote code execution via wget"),
+        (r"(?<!\w)eval\s*\(", "Use of eval()"),
+        (r"(?<!\w)exec\s*\(", "Use of exec()"),
         (r"__import__\s*\(", "Dynamic import attempt"),
         (r"os\.system\s*\(", "Shell execution via os.system"),
-        (r"subprocess\.(run|Popen|call)\s*\(.*shell\s*=\s*True", "Shell injection risk"),
-        (r"rm\s+-rf\s+/", "Destructive rm -rf /"),
-        (r"chmod\s+777", "Overly permissive chmod 777"),
-        (r"(ssh|scp)\s+.*@.*\bpassword\b", "Hardcoded SSH credential"),
-        (r"https?://[^\s]+\.(onion|bit)\b", "Suspicious TLD in URL"),
+        (r"subprocess\.(run|Popen|call)\s*\(.*shell\s*=\s*True", "Shell injection via subprocess"),
+        (r"\bcompile\s*\(.*\bexec\b", "Dynamic code compilation"),
+        (r"<script\b", "Embedded script tag"),
+        (r"javascript:", "JavaScript protocol injection"),
+        (r"\bnew\s+Function\s*\(", "Dynamic function constructor"),
+        (r"\bchild_process\b", "Node.js child_process usage"),
+        (r"\bShellExecute\b", "Windows ShellExecute call"),
+        (r"\bWScript\b", "Windows scripting host"),
+        (r"\bpowershell\s+-[eE]", "PowerShell encoded command"),
     ]
-    import re
-    for pattern, desc in danger_patterns:
+    for pattern, desc in code_injection:
         if re.search(pattern, content, re.IGNORECASE):
-            issues.append(desc)
-    return issues
+            _flag("CRITICAL", f"[CODE_INJECT] {desc}")
+
+    # ── Category 2: Dangerous system commands (28 patterns) ──
+    dangerous_cmds = [
+        (r"\brm\s+-rf\s+/", "Destructive rm -rf /"),
+        (r"\brm\s+-fr\s+/", "Destructive rm -fr /"),
+        (r"\bmkfs\b", "Filesystem format command"),
+        (r"\bdd\s+if=", "Raw disk write via dd"),
+        (r"\bformat\s+[cCdD]:", "Windows disk format"),
+        (r"\bfdisk\b", "Disk partition command"),
+        (r"\bchmod\s+777\b", "World-writable permissions"),
+        (r"\bchmod\s+-R\s+777\b", "Recursive world-writable"),
+        (r":\(\)\s*\{\s*:\|:&\s*\}\s*;:", "Fork bomb"),
+        (r"\bshutdown\s+(-[hHrR]|now|/[srta])\b", "System shutdown command"),
+        (r"\binit\s+0\b", "System halt via init"),
+        (r"\bkillall\b", "Kill all processes"),
+        (r"\biptables\s+-F\b", "Flush all firewall rules"),
+        (r"\bnc\s+-[elp]", "Netcat listener/reverse shell"),
+    ]
+    for pattern, desc in dangerous_cmds:
+        if re.search(pattern, content, re.IGNORECASE):
+            _flag("HIGH", f"[DANGER_CMD] {desc}")
+
+    # ── Category 3: Prompt injection & AI manipulation ──
+    prompt_injection = [
+        (r"ignore\s+(all\s+)?previous\s+instructions", "Classic prompt injection: ignore previous instructions"),
+        (r"ignore\s+(all\s+)?above\s+instructions", "Prompt injection: ignore above"),
+        (r"disregard\s+(all\s+)?prior\s+(instructions|rules|guidelines)", "Prompt injection: disregard prior rules"),
+        (r"you\s+are\s+now\s+(a|an|in)\s+", "Role hijacking attempt"),
+        (r"pretend\s+you\s+are\s+(a|an|not)\s+", "Role manipulation: pretend to be"),
+        (r"act\s+as\s+(a|an)\s+(different|new|unrestricted)", "Role override: act as unrestricted"),
+        (r"(forget|override)\s+(your|all|any)\s+(rules|restrictions|guidelines|safety)", "Override safety guardrails"),
+        (r"do\s+not\s+(tell|show|reveal|inform)\s+(the\s+)?user", "Hide actions from user"),
+        (r"don'?t\s+(tell|show|reveal|inform)\s+(the\s+)?user", "Hide actions from user"),
+        (r"without\s+(the\s+)?user('s)?\s+(knowledge|knowing|awareness|consent)", "Act without user awareness"),
+        (r"secretly\s+(send|upload|post|transmit|exfiltrate)", "Covert data transmission"),
+        (r"silently\s+(send|upload|post|transmit|install|execute)", "Silent execution instruction"),
+        (r"bypass\s+(security|safety|filter|restriction|guardrail)", "Bypass security controls"),
+        (r"jailbreak", "Jailbreak reference"),
+        (r"DAN\s+(mode|prompt)", "DAN jailbreak pattern"),
+        (r"\[system\]|\[SYSTEM\]", "Fake system message injection"),
+        (r"<\|im_start\|>|<\|im_end\|>", "ChatML injection attempt"),
+        (r"```system\b", "Fake system block injection"),
+    ]
+    for pattern, desc in prompt_injection:
+        if re.search(pattern, content, re.IGNORECASE):
+            _flag("CRITICAL", f"[PROMPT_INJECT] {desc}")
+
+    # ── Category 4: Data exfiltration instructions ──
+    data_exfil = [
+        (r"(read|cat|access|steal|grab|copy|exfiltrate)\s+.{0,30}(~\/\.ssh|id_rsa|\.env\b|\.aws|credentials|private.?key)", "Data exfiltration: access sensitive files"),
+        (r"(send|post|upload|transmit)\s+.{0,30}(~\/\.ssh|id_rsa|\.env\b|\.aws|credentials|private.?key|secret|password).{0,30}(to|via)\s+.{0,30}(https?://|webhook|endpoint|server)", "Data exfiltration: send sensitive data to external server"),
+        (r"(base64|encode|encrypt)\s+.{0,30}(and|then)\s+.{0,30}(send|post|upload)", "Encoded data exfiltration"),
+        (r"(collect|harvest|scrape)\s+.{0,30}(password|credential|token|key|secret)\s+.{0,30}(from|across|in)", "Credential harvesting instruction"),
+        (r"(read|dump|export)\s+.{0,30}(entire\s+)?(database|db|sqlite|mongo)\s+.{0,30}(and|then)\s+.{0,30}(send|post|upload)", "Database exfiltration instruction"),
+        (r"(api[_-]?key|secret[_-]?key|access[_-]?token)\s*[:=]\s*['\"][a-zA-Z0-9]{16,}", "Hardcoded API key/secret"),
+        (r"(password|passwd)\s*[:=]\s*['\"][^\s'\"]{8,}", "Hardcoded password"),
+    ]
+    for pattern, desc in data_exfil:
+        if re.search(pattern, content, re.IGNORECASE):
+            _flag("HIGH", f"[DATA_EXFIL] {desc}")
+
+    # ── Category 5: Suspicious infrastructure ──
+    infra_patterns = [
+        (r"https?://[^\s]+\.(onion|i2p|bit)\b", "Suspicious TLD (.onion/.i2p/.bit)"),
+        (r"\b169\.254\.169\.254\b", "AWS metadata endpoint"),
+        (r"\bmetadata\.google\b", "GCP metadata endpoint"),
+        (r"\b100\.100\.100\.200\b", "Alibaba Cloud metadata"),
+        (r"ngrok\.io|localtunnel\.me|serveo\.net", "Tunneling service URL"),
+        (r"pastebin\.com|hastebin\.com|ghostbin\.", "Paste site (potential C2 channel)"),
+        (r"discord\.com/api/webhooks", "Discord webhook (potential C2)"),
+        (r"https?://\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}[:/]", "Raw IP address URL"),
+    ]
+    for pattern, desc in infra_patterns:
+        if re.search(pattern, content, re.IGNORECASE):
+            _flag("MEDIUM", f"[INFRA] {desc}")
+
+    # ── Category 6: SKILL.md structural validation ──
+    if content.strip().startswith("---"):
+        # Has frontmatter — check required fields
+        fm_match = re.match(r'^---\s*\n(.*?)\n---', content, re.DOTALL)
+        if fm_match:
+            fm = fm_match.group(1)
+            if not re.search(r'^name\s*:', fm, re.MULTILINE):
+                _flag("LOW", "[STRUCTURE] Missing 'name' in YAML frontmatter")
+            if not re.search(r'^description\s*:', fm, re.MULTILINE):
+                _flag("LOW", "[STRUCTURE] Missing 'description' in YAML frontmatter")
+        else:
+            _flag("LOW", "[STRUCTURE] Malformed YAML frontmatter")
+    else:
+        _flag("LOW", "[STRUCTURE] No YAML frontmatter (---) found")
+
+    # Return as simple strings for backward compat, or full tuples if verbose
+    if verbose:
+        return issues
+    return [desc for _, desc in issues if _ in ("CRITICAL", "HIGH")]
 
 
 # ─── main ────────────────────────────────────────────────────
