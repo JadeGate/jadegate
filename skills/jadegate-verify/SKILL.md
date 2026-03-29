@@ -24,7 +24,7 @@ jadegate verify slack                  # Verify a skill by name from registry
 
 1. **Schema validation** - Structural integrity against jade-schema-v1
 2. **Code injection scan** - 22 dangerous patterns (eval, exec, subprocess, etc.)
-3. **Dangerous command detection** - 25 patterns (rm -rf, chmod 777, etc.)
+3. **Dangerous command detection** - 25 patterns covering destructive ops, permission escalation, etc.
 4. **Network/data leak analysis** - Whitelist-based URL and domain filtering
 5. **DAG integrity** - Circular dependency and reachability analysis
 

@@ -92,7 +92,7 @@ jadegate.deactivate()
 Every tool call passes through:
 1. **Schema validation** — structural integrity check
 2. **Code injection scan** — 22 dangerous patterns (eval, exec, subprocess, etc.)
-3. **Dangerous command detection** — 25 patterns (rm -rf, chmod 777, etc.)
+3. **Dangerous command detection** — 25 patterns covering destructive file ops, permission escalation, etc.
 4. **Network/data leak analysis** — whitelist-based URL and domain filtering
 5. **DAG integrity** — execution graph analysis for circular or deep chains
 6. **Cryptographic signature** — Ed25519 verification of skill provenance
